@@ -93,7 +93,7 @@ export default function WorkoutTimer() {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-40">
+    <div className="fixed bottom-20 left-4 md:bottom-6 md:left-6 z-40">
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}

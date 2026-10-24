@@ -2,170 +2,201 @@ import React, { useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Utensils, Dumbbell, BookOpen, 
-  Sparkles, LineChart, Settings, Menu, X, Flame 
+  Sparkles, LineChart, Settings, Flame, Menu, X, User 
 } from 'lucide-react';
 import { getProfile, getFoodLog } from '../utils/storage';
 
 export default function AppNavbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const location = useLocation();
 
   const profile = getProfile();
   const todayFoods = getFoodLog();
   const consumedCalories = todayFoods.reduce((acc, f) => acc + f.calories, 0);
   const remainingCalories = Math.round(profile.calorieTarget - consumedCalories);
+  const caloriePercent = Math.min(100, Math.round((consumedCalories / profile.calorieTarget) * 100)) || 0;
 
-  const navItems = [
+  const primaryNavItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Food Tracker', path: '/food', icon: Utensils },
-    { name: 'Workout Planner', path: '/workouts', icon: Dumbbell },
-    { name: 'Exercise Library', path: '/exercises', icon: BookOpen },
+    { name: 'Workouts', path: '/workouts', icon: Dumbbell },
+    { name: 'Exercises', path: '/exercises', icon: BookOpen },
     { name: 'AI Coach', path: '/coach', icon: Sparkles, badge: 'AI' },
     { name: 'Progress', path: '/progress', icon: LineChart },
-    { name: 'Profile & Goals', path: '/profile', icon: Settings }
+  ];
+
+  // Mobile Bottom Navigation items (5 key pillars)
+  const mobileBottomItems = [
+    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Food', path: '/food', icon: Utensils },
+    { name: 'Workouts', path: '/workouts', icon: Dumbbell },
+    { name: 'Coach', path: '/coach', icon: Sparkles },
+    { name: 'Progress', path: '/progress', icon: LineChart },
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#09090d]/95 backdrop-blur-md border-b border-zinc-800/80 shadow-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ccff00] to-[#99cc00] flex items-center justify-center text-black shadow-[0_0_15px_rgba(204,255,0,0.4)] group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 fill-black stroke-black" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-heading text-xl sm:text-2xl font-black tracking-wider text-white">
-                  NUTRI<span className="text-[#ccff00]">COACH</span>
-                </span>
-                <span className="text-[10px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/30">
-                  AI
-                </span>
+    <>
+      {/* Top Header */}
+      <header className="sticky top-0 z-40 bg-[#090a0f]/90 backdrop-blur-xl border-b border-white/[0.07] transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 gap-4">
+            {/* Brand Logo */}
+            <Link to="/" className="flex items-center gap-3 shrink-0 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ccff00] to-[#a3e635] flex items-center justify-center text-black shadow-[0_0_15px_rgba(204,255,0,0.35)] group-hover:scale-105 transition-transform">
+                <Sparkles className="w-5 h-5 fill-black stroke-black" />
               </div>
-              <span className="text-[9px] font-bold tracking-widest uppercase text-zinc-400 block -mt-0.5">
-                PERSONAL FITNESS COMPANION
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Nav Items */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.path === '/'}
-                  className={({ isActive }) =>
-                    `px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 ${
-                      isActive
-                        ? 'text-black bg-[#ccff00] shadow-[0_0_15px_rgba(204,255,0,0.3)]'
-                        : 'text-zinc-300 hover:text-white hover:bg-zinc-900/80'
-                    }`
-                  }
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
-                  {item.badge && (
-                    <span className="text-[9px] font-mono px-1 rounded bg-black/30 font-bold ml-0.5">
-                      {item.badge}
-                    </span>
-                  )}
-                </NavLink>
-              );
-            })}
-          </nav>
-
-          {/* Quick Header Widget & Mobile Trigger */}
-          <div className="flex items-center gap-3">
-            {/* Today's Remaining Calorie Mini Indicator */}
-            <Link
-              to="/food"
-              className="hidden sm:flex items-center gap-2 bg-zinc-900 border border-zinc-800 hover:border-[#ccff00]/40 rounded-xl px-3 py-1.5 transition-colors group"
-              title="Click to view today's food log"
-            >
-              <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
-              <div className="text-right">
-                <span className="text-[9px] text-zinc-400 uppercase font-mono block leading-none">
-                  CALORIES LEFT
-                </span>
-                <span className="text-xs font-mono font-bold text-[#ccff00] leading-tight">
-                  {remainingCalories > 0 ? `${remainingCalories} kcal` : 'Goal Hit!'}
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5 leading-none">
+                  <span className="font-heading text-xl sm:text-2xl font-black tracking-wider text-white">
+                    NUTRI<span className="text-[#ccff00]">COACH</span>
+                  </span>
+                  <span className="text-[9px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/30 leading-none">
+                    AI
+                  </span>
+                </div>
+                <span className="text-[9px] font-semibold tracking-wider uppercase text-zinc-400 mt-0.5 hidden sm:block">
+                  PERSONAL HEALTH INTELLIGENCE
                 </span>
               </div>
             </Link>
 
-            {/* User Profile Mini Pill */}
-            <Link
-              to="/profile"
-              className="hidden md:flex items-center gap-2 bg-zinc-950 border border-zinc-800 hover:border-zinc-700 px-3 py-1.5 rounded-xl transition-colors"
-            >
-              <div className="w-6 h-6 rounded-full bg-[#ccff00]/20 border border-[#ccff00]/40 flex items-center justify-center text-[11px] font-black text-[#ccff00]">
-                {profile.name.charAt(0)}
-              </div>
-              <span className="text-xs font-bold text-zinc-200 max-w-[100px] truncate">
-                {profile.name}
-              </span>
-            </Link>
-
-            {/* Hamburger for Mobile */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-xl transition-colors"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6 text-[#ccff00]" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#09090d]/98 border-b border-zinc-800 px-4 py-5 shadow-2xl animate-fade-in">
-          <div className="flex flex-col gap-1.5">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider flex items-center justify-between transition-colors ${
-                    isActive
-                      ? 'bg-[#ccff00] text-black shadow-[0_0_15px_rgba(204,255,0,0.3)]'
-                      : 'text-zinc-200 hover:bg-zinc-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4" />
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-1 bg-[#12141c]/80 p-1 rounded-2xl border border-white/[0.06]">
+              {primaryNavItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    end={item.path === '/'}
+                    className={({ isActive }) =>
+                      `px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide flex items-center gap-2 transition-all duration-200 ${
+                        isActive
+                          ? 'bg-[#ccff00] text-black font-bold shadow-[0_0_15px_rgba(204,255,0,0.3)]'
+                          : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                      }`
+                    }
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
                     <span>{item.name}</span>
-                  </div>
-                  {item.badge && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/40 font-bold">
-                      {item.badge}
-                    </span>
-                  )}
-                </NavLink>
-              );
-            })}
-          </div>
+                    {item.badge && (
+                      <span className="text-[9px] font-mono px-1 rounded bg-black/40 text-black font-bold">
+                        {item.badge}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </nav>
 
-          <div className="mt-4 pt-4 border-t border-zinc-800 flex items-center justify-between text-xs text-zinc-400 px-2">
-            <div>
-              <span className="text-zinc-500 block text-[10px]">CURRENT GOAL</span>
-              <span className="text-white font-bold">{profile.goal.replace('_', ' ').toUpperCase()}</span>
-            </div>
-            <div className="text-right">
-              <span className="text-zinc-500 block text-[10px]">DAILY TARGET</span>
-              <span className="text-[#ccff00] font-mono font-bold">{profile.calorieTarget} kcal</span>
+            {/* Right Widget: Calorie Chip & Profile */}
+            <div className="flex items-center gap-3">
+              {/* Daily Calorie Summary Mini Chip */}
+              <Link
+                to="/food"
+                className="flex items-center gap-2.5 bg-[#12141c] hover:bg-[#181b24] border border-white/[0.08] hover:border-[#ccff00]/40 rounded-xl px-3 py-1.5 transition-all group"
+                title="View today's food log"
+              >
+                <div className="relative w-5 h-5 flex items-center justify-center">
+                  <Flame className="w-4 h-4 text-orange-400 fill-orange-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-[9px] text-zinc-400 font-mono leading-none uppercase">
+                    {remainingCalories >= 0 ? 'CALORIES LEFT' : 'OVER TARGET'}
+                  </span>
+                  <span className="text-xs font-mono font-bold text-[#ccff00] leading-tight">
+                    {Math.abs(remainingCalories)} kcal
+                  </span>
+                </div>
+              </Link>
+
+              {/* Profile & Settings Button */}
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all ${
+                    isActive
+                      ? 'bg-[#ccff00] text-black border-[#ccff00] shadow-[0_0_15px_rgba(204,255,0,0.3)]'
+                      : 'bg-[#12141c] hover:bg-[#181b24] text-zinc-300 border-white/[0.08]'
+                  }`
+                }
+                title="Profile & Settings"
+              >
+                <div className="w-6 h-6 rounded-lg bg-black/30 flex items-center justify-center text-xs font-bold">
+                  {profile.name.charAt(0)}
+                </div>
+                <span className="text-xs font-semibold hidden md:inline max-w-[90px] truncate">
+                  {profile.name.split(' ')[0]}
+                </span>
+                <Settings className="w-3.5 h-3.5 opacity-60" />
+              </NavLink>
+
+              {/* Mobile Drawer Toggle (Tablet/Mobile) */}
+              <button
+                onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+                className="lg:hidden p-2 text-zinc-400 hover:text-white rounded-xl bg-[#12141c] border border-white/[0.08] transition-colors"
+                aria-label="Toggle menu"
+              >
+                {mobileDrawerOpen ? <X className="w-5 h-5 text-[#ccff00]" /> : <Menu className="w-5 h-5" />}
+              </button>
             </div>
           </div>
         </div>
-      )}
-    </header>
+
+        {/* Mobile Dropdown Drawer */}
+        {mobileDrawerOpen && (
+          <div className="lg:hidden bg-[#0d0f15]/98 border-b border-white/[0.08] px-4 py-4 shadow-2xl animate-fade-in">
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              {primaryNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-colors ${
+                      isActive
+                        ? 'bg-[#ccff00] text-black font-bold shadow'
+                        : 'bg-[#141720] text-zinc-300 hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span>{item.name}</span>
+                  </NavLink>
+                );
+              })}
+            </div>
+
+            <div className="pt-3 border-t border-white/[0.08] flex justify-between items-center text-xs text-zinc-400 px-1">
+              <span>Goal: <strong className="text-white uppercase">{profile.goal.replace('_', ' ')}</strong></span>
+              <span className="text-[#ccff00] font-mono font-bold">{profile.calorieTarget} kcal/day</span>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Mobile Bottom Fixed Bar (App Experience on Phones) */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#090a0f]/95 backdrop-blur-xl border-t border-white/[0.08] px-3 py-2 flex items-center justify-around shadow-2xl">
+        {mobileBottomItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.path;
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
+                isActive
+                  ? 'text-[#ccff00] font-bold'
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              <Icon className={`w-5 h-5 ${isActive ? 'stroke-[#ccff00] stroke-[2.5]' : ''}`} />
+              <span className="text-[10px] tracking-tight">{item.name}</span>
+            </NavLink>
+          );
+        })}
+      </nav>
+    </>
   );
 }

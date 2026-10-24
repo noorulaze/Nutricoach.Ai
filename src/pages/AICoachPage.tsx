@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, Send, Bot, User, ShieldCheck, 
-  RefreshCcw, AlertCircle, ArrowRight, Lightbulb 
+  RefreshCcw, AlertCircle, ArrowRight, Lightbulb, Trash2 
 } from 'lucide-react';
 import { 
   getProfile, getFoodLog, getWorkoutPlan, 
@@ -23,11 +23,11 @@ export default function AICoachPage() {
     sender: 'ai',
     text: `Hello ${profile.name}! I am your **NutriCoach AI** personal fitness & nutrition advisor.
 
-I currently have access to your personal stats:
-- **Goal:** ${profile.goal.replace('_', ' ').toUpperCase()} (${profile.calorieTarget} kcal / ${profile.proteinTargetGrams}g Protein)
-- **Today's Logged Meals:** ${todayFoods.length} items logged so far
-- **Equipment:** ${profile.availableEquipment.replace('_', ' ')}
-- **Diet / Budget:** ${profile.dietType} • ${profile.budget}
+I currently have access to your personal parameters:
+• **Goal:** ${profile.goal.replace('_', ' ').toUpperCase()} (${profile.calorieTarget} kcal / ${profile.proteinTargetGrams}g Protein)
+• **Today's Logged Meals:** ${todayFoods.length} items logged so far
+• **Equipment:** ${profile.availableEquipment.replace('_', ' ')}
+• **Diet / Budget:** ${profile.dietType} • ${profile.budget}
 
 Ask me to review your meals today, calculate remaining protein sources, or adapt your workout routine if your time or equipment is limited.`,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -54,13 +54,13 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
     try {
       localStorage.setItem('nutricoach_chat_history_v1', JSON.stringify(messages));
     } catch {}
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const quickPrompts = [
     'Analyze my nutrition gaps today',
     'What should I eat for dinner within my macros?',
     'I only have 30 minutes today, adapt my workout',
-    'Give me cheap high-protein grocery staples'
+    'Give me budget-friendly high-protein grocery staples'
   ];
 
   const handleSendMessage = async (textToSend: string) => {
@@ -114,54 +114,59 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       {/* Header & Connectivity Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#ccff00]/15 text-[#ccff00] px-2.5 py-0.5 rounded border border-[#ccff00]/40">
-              AI FITNESS & NUTRITION COACH
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#ccff00] bg-[#ccff00]/10 px-2 py-0.5 rounded-full border border-[#ccff00]/20">
+              AI PERFORMANCE ENGINE
             </span>
+            <span className="text-xs text-zinc-500 font-mono">Context-Aware Advisory</span>
           </div>
-          <h1 className="text-3xl font-black font-heading text-white uppercase tracking-tight">
-            INTELLIGENT PERFORMANCE CHAT
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            AI Fitness & Nutrition Coach
           </h1>
+          <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
+            Real-time meal critiques, macro gap analysis, workout regressions, and physiological advice.
+          </p>
         </div>
 
         {/* Engine Connectivity Status Banner */}
-        <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs">
+        <div className="flex items-center gap-2.5 bg-zinc-900/80 border border-zinc-800 rounded-2xl px-4 py-2 self-start sm:self-auto">
           <span
             className={`w-2.5 h-2.5 rounded-full ${
-              isGeminiKeyConfigured ? 'bg-[#ccff00] animate-pulse' : 'bg-blue-400'
+              isGeminiKeyConfigured ? 'bg-[#ccff00] shadow-[0_0_8px_#ccff00]' : 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]'
             }`}
           />
-          <span className="text-zinc-300 font-mono text-[11px]">
-            {isGeminiKeyConfigured ? (
-              <strong className="text-[#ccff00]">Gemini Live API Connected</strong>
-            ) : (
-              <span>Local Intelligence Mode (No API key needed)</span>
-            )}
-          </span>
+          <div className="text-left">
+            <span className="text-white font-medium text-xs block">
+              {isGeminiKeyConfigured ? 'Gemini 2.5 Flash Online' : 'Local Deterministic Engine'}
+            </span>
+            <span className="text-[10px] text-zinc-500 font-mono block">
+              {isGeminiKeyConfigured ? 'Cloud reasoning active' : 'Fast zero-latency local intelligence'}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Main Chat Box Container */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[600px]">
+      <div className="app-card-elevated overflow-hidden shadow-2xl flex flex-col h-[640px]">
         {/* Messages Scroll Area */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex items-start gap-3 max-w-3xl ${
+              className={`flex items-start gap-3 max-w-2xl ${
                 msg.sender === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'
               }`}
             >
               {/* Avatar */}
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold transition-transform ${
                   msg.sender === 'user'
-                    ? 'bg-[#ccff00] text-black shadow-[0_0_10px_rgba(204,255,0,0.3)]'
-                    : 'bg-zinc-800 border border-zinc-700 text-[#ccff00]'
+                    ? 'bg-[#ccff00] text-black shadow-[0_0_10px_rgba(204,255,0,0.25)]'
+                    : 'bg-zinc-900 border border-zinc-700/80 text-[#ccff00]'
                 }`}
               >
                 {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
@@ -169,15 +174,15 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
 
               {/* Message Bubble */}
               <div
-                className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
+                className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-sm ${
                   msg.sender === 'user'
-                    ? 'bg-[#ccff00] text-black font-medium'
-                    : 'bg-zinc-900 border border-zinc-800 text-zinc-200'
+                    ? 'bg-[#ccff00] text-black font-medium rounded-tr-none'
+                    : 'bg-zinc-900/90 border border-zinc-800 text-zinc-200 rounded-tl-none'
                 }`}
               >
                 <div className="whitespace-pre-wrap">{msg.text}</div>
                 <span
-                  className={`text-[9px] font-mono mt-1.5 block ${
+                  className={`text-[10px] font-mono mt-2 block ${
                     msg.sender === 'user' ? 'text-black/60 text-right' : 'text-zinc-500'
                   }`}
                 >
@@ -192,7 +197,7 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
               <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-bounce" />
               <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-bounce [animation-delay:0.2s]" />
               <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-bounce [animation-delay:0.4s]" />
-              <span className="ml-2">Analyzing nutrition & training context...</span>
+              <span className="ml-2 text-zinc-400">Analyzing nutrition & training context...</span>
             </div>
           )}
 
@@ -200,15 +205,15 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
         </div>
 
         {/* Quick Suggestion Prompts */}
-        <div className="px-4 py-2 border-t border-zinc-800/80 bg-zinc-900/60 overflow-x-auto flex items-center gap-2 scrollbar-none">
-          <span className="text-[10px] text-zinc-500 font-mono font-bold shrink-0 flex items-center gap-1">
-            <Lightbulb className="w-3 h-3 text-yellow-400" /> SUGGESTED:
+        <div className="px-4 py-2.5 border-t border-[var(--border-subtle)] bg-zinc-900/60 overflow-x-auto flex items-center gap-2 scrollbar-none">
+          <span className="text-[10px] text-zinc-400 font-mono font-semibold shrink-0 flex items-center gap-1">
+            <Lightbulb className="w-3.5 h-3.5 text-yellow-400" /> SUGGESTED:
           </span>
           {quickPrompts.map((prompt, i) => (
             <button
               key={i}
               onClick={() => handleSendMessage(prompt)}
-              className="bg-zinc-800 hover:bg-[#ccff00] text-zinc-300 hover:text-black text-[11px] px-2.5 py-1 rounded-lg border border-zinc-700 whitespace-nowrap transition-colors"
+              className="bg-zinc-900 hover:bg-[#ccff00] text-zinc-300 hover:text-black text-xs px-3 py-1 rounded-xl border border-zinc-700/70 whitespace-nowrap transition-colors font-medium"
             >
               {prompt}
             </button>
@@ -216,7 +221,7 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
         </div>
 
         {/* Input Field Bar */}
-        <div className="p-4 bg-zinc-950 border-t border-zinc-800">
+        <div className="p-4 bg-[var(--bg-card)] border-t border-[var(--border-subtle)]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -229,28 +234,28 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Ask about meal choices, adapting workouts, protein targets, or plateaus..."
-              className="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#ccff00]"
+              className="flex-1 bg-zinc-900 border border-zinc-700/80 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#ccff00]"
             />
             <button
               type="submit"
               disabled={!inputValue.trim() || isTyping}
-              className="bg-[#ccff00] hover:bg-[#b8e600] disabled:opacity-50 text-black p-3 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] shrink-0"
+              className="bg-[#ccff00] hover:bg-[#b8e600] disabled:opacity-40 text-black p-3 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] shrink-0"
               aria-label="Send prompt"
             >
               <Send className="w-4 h-4 fill-black" />
             </button>
           </form>
 
-          <div className="flex items-center justify-between text-[10px] text-zinc-500 mt-2 px-1">
+          <div className="flex items-center justify-between text-[11px] text-zinc-500 mt-2.5 px-1 font-mono">
             <span>
-              NutriCoach provides sports nutrition & fitness education. Consult a physician for medical conditions.
+              NutriCoach provides sports nutrition & fitness education.
             </span>
             <button
               type="button"
               onClick={handleClearHistory}
-              className="hover:text-zinc-300 transition-colors"
+              className="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1"
             >
-              Clear chat history
+              <Trash2 className="w-3 h-3" /> Clear history
             </button>
           </div>
         </div>

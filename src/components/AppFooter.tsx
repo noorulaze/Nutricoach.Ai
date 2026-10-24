@@ -4,7 +4,7 @@ import { Sparkles, ShieldCheck, Heart, Dumbbell } from 'lucide-react';
 
 export default function AppFooter() {
   return (
-    <footer className="bg-[#060608] border-t border-zinc-800 text-zinc-500 text-xs py-10 mt-16">
+    <footer className="bg-[#06070a] border-t border-[var(--border-subtle)] text-zinc-500 text-xs pt-10 pb-24 md:pb-10 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-zinc-800/80">
           <div className="flex items-center gap-3">

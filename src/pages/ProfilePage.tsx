@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Settings, User, Target, Dumbbell, Utensils, 
-  Key, ShieldCheck, Save, RotateCcw, Check, Sparkles 
+  Key, ShieldCheck, Save, RotateCcw, Check, Sparkles, Activity 
 } from 'lucide-react';
 import { 
   getProfile, saveProfile, calculateBMR, 
@@ -66,33 +66,41 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="pb-6 border-b border-zinc-800">
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#ccff00] block mb-1">
-          CUSTOMIZATION & SCIENTIFIC TARGETS
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-black font-heading text-white uppercase tracking-tight">
-          PERSONAL PROFILE & SETTINGS
+      <div className="pb-6 border-b border-[var(--border-subtle)]">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#ccff00] bg-[#ccff00]/10 px-2 py-0.5 rounded-full border border-[#ccff00]/20">
+            PERSONAL CONFIGURATION
+          </span>
+          <span className="text-xs text-zinc-500 font-mono">BMR & Macronutrient Architecture</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Personal Profile & Fitness Parameters
         </h1>
-        <p className="text-zinc-400 text-xs sm:text-sm mt-0.5">
-          Configure your physiological stats, training schedule, equipment access, dietary preferences, and optional AI model key.
+        <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
+          Configure your physiological parameters, training split, equipment access, dietary preferences, and optional AI model key.
         </p>
       </div>
 
-      <form onSubmit={handleSaveProfile} className="space-y-8">
+      <form onSubmit={handleSaveProfile} className="space-y-6">
         {/* SECTION 1: BIOMETRIC BASELINE */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-zinc-800">
-            <User className="w-5 h-5 text-[#ccff00]" />
-            <h2 className="text-xl font-bold font-heading text-white uppercase">
-              BIOMETRIC BASELINE
-            </h2>
+        <div className="app-card p-6 sm:p-8 space-y-6">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
+            <div className="w-8 h-8 rounded-xl bg-[#ccff00]/10 border border-[#ccff00]/20 flex items-center justify-center text-[#ccff00]">
+              <User className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Biometric Baseline
+              </h2>
+              <span className="text-xs text-zinc-400 font-mono">Physical parameters for energy expenditure modeling</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Your Name
               </label>
               <input
@@ -100,12 +108,12 @@ export default function ProfilePage() {
                 required
                 value={profile.name}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Age
               </label>
               <input
@@ -115,12 +123,12 @@ export default function ProfilePage() {
                 required
                 value={profile.age}
                 onChange={(e) => setProfile({ ...profile, age: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Height (CM)
               </label>
               <input
@@ -130,12 +138,12 @@ export default function ProfilePage() {
                 required
                 value={profile.heightCm}
                 onChange={(e) => setProfile({ ...profile, heightCm: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Current Weight (KG)
               </label>
               <input
@@ -146,20 +154,20 @@ export default function ProfilePage() {
                 required
                 value={profile.weightKg}
                 onChange={(e) => setProfile({ ...profile, weightKg: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
-                Gender (for BMR Calculation)
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+                Gender (for BMR)
               </label>
               <select
                 value={profile.gender}
                 onChange={(e) => setProfile({ ...profile, gender: e.target.value as 'male' | 'female' | 'other' })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -168,13 +176,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Daily Activity Level
               </label>
               <select
                 value={profile.activityLevel}
                 onChange={(e) => setProfile({ ...profile, activityLevel: e.target.value as ActivityLevel })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
                 <option value="sedentary">Sedentary (Desk work, minimal exercise)</option>
                 <option value="light">Light Active (1-3 workout days/wk)</option>
@@ -185,17 +193,17 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Primary Goal
               </label>
               <select
                 value={profile.goal}
                 onChange={(e) => setProfile({ ...profile, goal: e.target.value as GoalType })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
                 <option value="fat_loss">Fat Loss (-450 kcal deficit)</option>
                 <option value="muscle_gain">Lean Muscle Hypertrophy (+300 kcal surplus)</option>
-                <option value="maintenance">Body Recomposition & Maintenance (TDEE)</option>
+                <option value="maintenance">Body Recomposition & Maintenance</option>
                 <option value="strength">Raw Barbell Strength (+150 kcal)</option>
                 <option value="athletic_performance">Athletic Speed & Conditioning (+200 kcal)</option>
               </select>
@@ -204,26 +212,31 @@ export default function ProfilePage() {
         </div>
 
         {/* SECTION 2: TRAINING PARAMETERS & EQUIPMENT */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-zinc-800">
-            <Dumbbell className="w-5 h-5 text-[#ccff00]" />
-            <h2 className="text-xl font-bold font-heading text-white uppercase">
-              TRAINING PARAMETERS & EQUIPMENT ACCESS
-            </h2>
+        <div className="app-card p-6 sm:p-8 space-y-6">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
+            <div className="w-8 h-8 rounded-xl bg-orange-400/10 border border-orange-400/20 flex items-center justify-center text-orange-400">
+              <Dumbbell className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Training Parameters & Equipment
+              </h2>
+              <span className="text-xs text-zinc-400 font-mono">Routine tailoring based on gear access</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Available Equipment
               </label>
               <select
                 value={profile.availableEquipment}
                 onChange={(e) => setProfile({ ...profile, availableEquipment: e.target.value as EquipmentType })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
-                <option value="full_gym">Full Gym (Barbells, Racks, Cables, Dumbbells)</option>
-                <option value="dumbbells_only">Dumbbells Only (Adjustable/Fixed Dumbbells)</option>
+                <option value="full_gym">Full Gym (Barbells, Racks, Cables)</option>
+                <option value="dumbbells_only">Dumbbells Only (Home Free Weights)</option>
                 <option value="home_minimal">Home Minimal (Dumbbells + Pull-Up Bar)</option>
                 <option value="bodyweight_only">Bodyweight / Calisthenics Only</option>
                 <option value="resistance_bands">Resistance Bands & Bodyweight</option>
@@ -231,13 +244,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
-                Training Days Per Week
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+                Training Days / Week
               </label>
               <select
                 value={profile.trainingDaysPerWeek}
                 onChange={(e) => setProfile({ ...profile, trainingDaysPerWeek: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
                 <option value={2}>2 Days / Week</option>
                 <option value={3}>3 Days / Week (Full Body Split)</option>
@@ -248,16 +261,16 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
-                Preferred Session Duration
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+                Target Session Length
               </label>
               <select
                 value={profile.preferredWorkoutDurationMin}
                 onChange={(e) => setProfile({ ...profile, preferredWorkoutDurationMin: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
                 <option value={30}>30 Minutes (High Density)</option>
-                <option value={45}>45 Minutes (Standard Optimal)</option>
+                <option value={45}>45 Minutes (Optimal Balance)</option>
                 <option value={60}>60 Minutes (Complete Strength)</option>
                 <option value={90}>90 Minutes (Powerlifting / High Volume)</option>
               </select>
@@ -265,24 +278,29 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* SECTION 3: DIETARY PREFERENCES, ALLERGIES & BUDGET */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-zinc-800">
-            <Utensils className="w-5 h-5 text-[#ccff00]" />
-            <h2 className="text-xl font-bold font-heading text-white uppercase">
-              DIETARY PREFERENCES, ALLERGIES & BUDGET
-            </h2>
+        {/* SECTION 3: DIETARY PREFERENCES & BUDGET */}
+        <div className="app-card p-6 sm:p-8 space-y-6">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
+            <div className="w-8 h-8 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400">
+              <Utensils className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Dietary Framework & Grocery Budget
+              </h2>
+              <span className="text-xs text-zinc-400 font-mono">Nutritional style and budget constraints</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Dietary Framework
               </label>
               <select
                 value={profile.dietType}
                 onChange={(e) => setProfile({ ...profile, dietType: e.target.value as DietType })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
                 <option value="omnivore">Omnivore (Standard Complete)</option>
                 <option value="vegetarian">Vegetarian (Dairy & Eggs included)</option>
@@ -294,17 +312,17 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
                 Food Budget Tier
               </label>
               <select
                 value={profile.budget}
                 onChange={(e) => setProfile({ ...profile, budget: e.target.value as BudgetTier })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00]"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
               >
-                <option value="budget">Budget-Conscious (Eggs, oats, tuna, lentils, bulk rice)</option>
-                <option value="moderate">Moderate (Chicken breast, Greek yogurt, seasonal fruits)</option>
-                <option value="flexible">Flexible (Fresh salmon, specialty powders, lean steaks)</option>
+                <option value="budget">Budget-Conscious (Eggs, oats, canned tuna, lentils, rice)</option>
+                <option value="moderate">Moderate (Chicken breast, Greek yogurt, seasonal produce)</option>
+                <option value="flexible">Flexible (Fresh salmon, specialty powders, lean beef cuts)</option>
               </select>
             </div>
           </div>
@@ -312,7 +330,7 @@ export default function ProfilePage() {
           {/* Allergens Checklist */}
           <div>
             <label className="block text-xs font-semibold text-zinc-300 uppercase mb-2">
-              Allergies & Intolerances (Filtered Out from AI Food Recommendations)
+              Allergies & Intolerances (Filtered out from recommendations)
             </label>
             <div className="flex flex-wrap gap-2">
               {ALLERGEN_OPTIONS.map((allergy) => {
@@ -322,9 +340,9 @@ export default function ProfilePage() {
                     key={allergy}
                     type="button"
                     onClick={() => handleAllergyToggle(allergy)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
                       isSelected
-                        ? 'bg-red-500/20 text-red-400 border border-red-500/50'
+                        ? 'bg-red-500/20 text-red-400 border border-red-500/40'
                         : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white'
                     }`}
                   >
@@ -338,28 +356,29 @@ export default function ProfilePage() {
         </div>
 
         {/* SECTION 4: NUTRITIONAL TARGETS & RECALCULATE */}
-        <div className="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+        <div className="app-card-elevated p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
             <div>
               <span className="text-[10px] font-mono font-bold uppercase text-[#ccff00] tracking-widest block">
                 SCIENTIFIC FORMULAS (MIFFLIN-ST JEOR)
               </span>
-              <h2 className="text-xl font-bold font-heading text-white uppercase">
-                CALCULATED NUTRITION TARGETS
+              <h2 className="text-lg font-bold text-white">
+                Daily Macro & Energy Architecture
               </h2>
             </div>
             <button
               type="button"
               onClick={handleRecalculateTargets}
-              className="bg-[#ccff00] hover:bg-[#b8e600] text-black font-extrabold uppercase text-xs tracking-wider px-4 py-2 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] flex items-center gap-1.5 self-start sm:self-auto"
+              className="bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] flex items-center gap-1.5 self-start sm:self-auto"
             >
-              <RotateCcw className="w-3.5 h-3.5" /> RECALCULATE FROM STATS
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Recalculate From Stats</span>
             </button>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs font-mono">
-            <div className="bg-black/60 p-3.5 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">DAILY CALORIES</span>
+            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
+              <span className="text-zinc-500 text-[10px] block font-semibold">DAILY CALORIES</span>
               <input
                 type="number"
                 value={profile.calorieTarget}
@@ -369,8 +388,8 @@ export default function ProfilePage() {
               <span className="text-zinc-400 text-[10px]">kcal/day</span>
             </div>
 
-            <div className="bg-black/60 p-3.5 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">PROTEIN</span>
+            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
+              <span className="text-zinc-500 text-[10px] block font-semibold">PROTEIN</span>
               <input
                 type="number"
                 value={profile.proteinTargetGrams}
@@ -380,57 +399,59 @@ export default function ProfilePage() {
               <span className="text-zinc-400 text-[10px]">grams (~2.0g/kg)</span>
             </div>
 
-            <div className="bg-black/60 p-3.5 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">CARBOHYDRATES</span>
+            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
+              <span className="text-zinc-500 text-[10px] block font-semibold">CARBOHYDRATES</span>
               <input
                 type="number"
                 value={profile.carbsTargetGrams}
                 onChange={(e) => setProfile({ ...profile, carbsTargetGrams: Number(e.target.value) })}
                 className="w-full bg-transparent text-cyan-400 font-bold text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams (fuel)</span>
+              <span className="text-zinc-400 text-[10px]">grams</span>
             </div>
 
-            <div className="bg-black/60 p-3.5 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">FATS</span>
+            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
+              <span className="text-zinc-500 text-[10px] block font-semibold">FATS</span>
               <input
                 type="number"
                 value={profile.fatTargetGrams}
                 onChange={(e) => setProfile({ ...profile, fatTargetGrams: Number(e.target.value) })}
                 className="w-full bg-transparent text-amber-400 font-bold text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams (hormones)</span>
+              <span className="text-zinc-400 text-[10px]">grams</span>
             </div>
 
-            <div className="bg-black/60 p-3.5 rounded-xl border border-zinc-800 col-span-2 sm:col-span-1">
-              <span className="text-zinc-500 text-[10px] block">DIETARY FIBER</span>
+            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800 col-span-2 sm:col-span-1">
+              <span className="text-zinc-500 text-[10px] block font-semibold">DIETARY FIBER</span>
               <input
                 type="number"
                 value={profile.fiberTargetGrams}
                 onChange={(e) => setProfile({ ...profile, fiberTargetGrams: Number(e.target.value) })}
                 className="w-full bg-transparent text-emerald-400 font-bold text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams (motility)</span>
+              <span className="text-zinc-400 text-[10px]">grams</span>
             </div>
           </div>
         </div>
 
-        {/* SECTION 5: OPTIONAL GOOGLE GEMINI API KEY CONFIGURATION */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-zinc-800">
-            <Key className="w-5 h-5 text-[#ccff00]" />
+        {/* SECTION 5: OPTIONAL GOOGLE GEMINI API KEY */}
+        <div className="app-card p-6 sm:p-8 space-y-4">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
+            <div className="w-8 h-8 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-400">
+              <Key className="w-4 h-4" />
+            </div>
             <div>
-              <h2 className="text-xl font-bold font-heading text-white uppercase">
-                AI ENGINE CONFIGURATION (OPTIONAL)
+              <h2 className="text-base font-bold text-white">
+                AI Engine Configuration (Optional)
               </h2>
               <span className="text-xs text-zinc-400">
-                NutriCoach works fully out of the box with built-in sports science logic. You can optionally connect your personal Google Gemini API Key for open conversational inference.
+                NutriCoach operates out of the box with built-in sports intelligence. You may optionally connect your Gemini key.
               </span>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
+            <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
               Google Gemini API Key
             </label>
             <div className="flex items-center gap-2">
@@ -439,32 +460,33 @@ export default function ProfilePage() {
                 value={profile.geminiApiKey || ''}
                 onChange={(e) => setProfile({ ...profile, geminiApiKey: e.target.value })}
                 placeholder="AIzaSy..."
-                className="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="flex-1 bg-zinc-900 border border-zinc-700/80 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setApiKeyVisible(!apiKeyVisible)}
-                className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-2.5 rounded-xl text-xs font-mono"
+                className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 px-3.5 py-2.5 rounded-xl text-xs font-mono transition-colors"
               >
                 {apiKeyVisible ? 'Hide' : 'Show'}
               </button>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-zinc-500 mt-2">
-              <ShieldCheck className="w-4 h-4 text-[#ccff00]" />
+            <div className="flex items-center gap-2 text-[11px] text-zinc-400 mt-2 font-mono">
+              <ShieldCheck className="w-4 h-4 text-[#ccff00] shrink-0" />
               <span>
-                Your API key is stored strictly inside your browser's private localStorage and is never transmitted to any third-party server.
+                Your API key is stored securely in your private browser localStorage and is never transmitted to any third-party server.
               </span>
             </div>
           </div>
         </div>
 
         {/* ACTIONS */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-800">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[var(--border-subtle)]">
           <button
             type="submit"
-            className="w-full sm:w-auto bg-[#ccff00] hover:bg-[#b8e600] text-black font-extrabold uppercase text-xs tracking-wider py-4 px-10 rounded-xl transition-all shadow-[0_0_20px_rgba(204,255,0,0.35)] flex items-center justify-center gap-2"
+            className="w-full sm:w-auto bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold uppercase text-xs tracking-wider py-3.5 px-8 rounded-xl transition-all shadow-[0_0_20px_rgba(204,255,0,0.3)] flex items-center justify-center gap-2"
           >
-            <Save className="w-4 h-4" /> SAVE ALL PROFILE SETTINGS
+            <Save className="w-4 h-4" />
+            <span>Save All Profile Settings</span>
           </button>
 
           <button

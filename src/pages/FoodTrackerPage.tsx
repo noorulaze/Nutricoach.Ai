@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Utensils, Plus, Trash2, Edit2, Search, 
-  Check, X, AlertCircle, Sparkles, Filter, ChevronDown, CheckCircle2 
+  ChevronLeft, ChevronRight, Calendar, Sparkles, X, 
+  CheckCircle2, Flame, Apple, Coffee, Moon, Sun, AlertCircle
 } from 'lucide-react';
 import { 
   getProfile, getFoodLog, addFoodEntry, 
@@ -15,7 +16,6 @@ export default function FoodTrackerPage() {
   const { showToast } = useToast();
   const [selectedDate, setSelectedDate] = useState<string>(getTodayKey());
   const [foods, setFoods] = useState<FoodItem[]>(() => getFoodLog(selectedDate));
-  const [refreshKey, setRefreshKey] = useState(0);
 
   // Add / Edit Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,11 +43,21 @@ export default function FoodTrackerPage() {
     setFoods(getFoodLog(newDate));
   };
 
-  const meals: { key: MealType; label: string; icon: string }[] = [
-    { key: 'breakfast', label: 'Breakfast', icon: '🌅' },
-    { key: 'lunch', label: 'Lunch', icon: '☀️' },
-    { key: 'dinner', label: 'Dinner', icon: '🌙' },
-    { key: 'snack', label: 'Snacks & Supplements', icon: '🍎' }
+  const handleStepDay = (direction: 'prev' | 'next') => {
+    const current = new Date(selectedDate);
+    if (isNaN(current.getTime())) return;
+    current.setDate(current.getDate() + (direction === 'prev' ? -1 : 1));
+    const nextStr = current.toISOString().split('T')[0];
+    handleDateChange(nextStr);
+  };
+
+  const isToday = selectedDate === getTodayKey();
+
+  const meals: { key: MealType; label: string; icon: React.ReactNode; period: string }[] = [
+    { key: 'breakfast', label: 'Breakfast', icon: <Coffee className="w-4 h-4 text-amber-400" />, period: 'Morning fuel' },
+    { key: 'lunch', label: 'Lunch', icon: <Sun className="w-4 h-4 text-yellow-400" />, period: 'Midday recovery' },
+    { key: 'dinner', label: 'Dinner', icon: <Moon className="w-4 h-4 text-cyan-400" />, period: 'Evening repair' },
+    { key: 'snack', label: 'Snacks & Supplements', icon: <Apple className="w-4 h-4 text-[#ccff00]" />, period: 'Metabolic boost' }
   ];
 
   const handleOpenAddModal = (meal: MealType) => {
@@ -57,10 +67,10 @@ export default function FoodTrackerPage() {
     setSearchQuery('');
     setFormName('');
     setFormPortion('1 serving');
-    setFormCalories(150);
-    setFormProtein(15);
+    setFormCalories(180);
+    setFormProtein(18);
     setFormCarbs(15);
-    setFormFat(3);
+    setFormFat(4);
     setFormFiber(2);
     setIsModalOpen(true);
   };
@@ -119,7 +129,7 @@ export default function FoodTrackerPage() {
         fat: Number(formFat) || 0,
         fiber: Number(formFiber) || 0
       });
-      showToast(`${formName} added to ${activeMealCategory}`, 'success');
+      showToast(`${formName} logged to ${activeMealCategory}`, 'success');
     }
 
     const updatedLog = getFoodLog(selectedDate);
@@ -131,10 +141,9 @@ export default function FoodTrackerPage() {
     deleteFoodEntry(selectedDate, id);
     const updatedLog = getFoodLog(selectedDate);
     setFoods(updatedLog);
-    showToast(`${name} deleted`, 'info');
+    showToast(`${name} removed`, 'info');
   };
 
-  // Quick add suggestion directly into today's log
   const handleQuickAddSuggestion = (preset: PresetFood, meal: MealType = 'dinner') => {
     addFoodEntry(selectedDate, {
       name: preset.name,
@@ -170,215 +179,340 @@ export default function FoodTrackerPage() {
     f.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const caloriesRemaining = Math.max(0, profile.calorieTarget - totals.calories);
+  const caloriePercent = Math.min(100, Math.round((totals.calories / profile.calorieTarget) * 100));
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header & Date Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+      {/* Page Header with Sleek Date Navigation */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">
         <div>
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#ccff00] block mb-1">
-            DAILY NUTRITION TRACKER
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-black font-heading text-white uppercase tracking-tight">
-            MEALS & MACRONUTRIENT BALANCE
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#ccff00] bg-[#ccff00]/10 px-2 py-0.5 rounded-full border border-[#ccff00]/20">
+              PRECISION NUTRITION
+            </span>
+            <span className="text-xs text-zinc-500 font-mono">Macro & Micronutrient Audit</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Food & Macronutrient Tracker
           </h1>
-          <p className="text-zinc-400 text-xs sm:text-sm mt-0.5">
-            Estimated nutrient values. Track food by portion size and observe nutritional completeness.
+          <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
+            Log foods by portion size, monitor macro distribution, and address nutrition gaps in real time.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => handleDateChange(e.target.value)}
-            className="bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#ccff00]"
-          />
+        {/* Date Selector Pill */}
+        <div className="flex items-center gap-2 bg-[var(--bg-card)] border border-[var(--border-subtle)] p-1.5 rounded-2xl shadow-sm self-start md:self-auto">
+          <button
+            onClick={() => handleStepDay('prev')}
+            className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-colors"
+            title="Previous Day"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => handleDateChange(getTodayKey())}
+            className={`px-3 py-1 rounded-xl text-xs font-mono font-semibold transition-all ${
+              isToday
+                ? 'bg-[#ccff00] text-black shadow-[0_0_12px_rgba(204,255,0,0.3)]'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+            }`}
+          >
+            Today
+          </button>
+
+          <div className="flex items-center gap-1.5 px-2 text-xs font-mono text-white">
+            <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => handleDateChange(e.target.value)}
+              className="bg-transparent text-white font-mono text-xs focus:outline-none cursor-pointer"
+            />
+          </div>
+
+          <button
+            onClick={() => handleStepDay('next')}
+            className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-colors"
+            title="Next Day"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
-      {/* DAILY TARGET VS CONSUMED PROGRESS DASHBOARD */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl">
-        <div className="flex justify-between items-center mb-6">
-          <span className="text-xs font-mono font-bold uppercase text-zinc-400">
-            DAY SUMMARY ({selectedDate})
-          </span>
-          <span className="text-[11px] text-zinc-500 font-mono">
+      {/* DAILY NUTRITION DASHBOARD CARD */}
+      <div className="app-card-elevated p-6 sm:p-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#ccff00]/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <div>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 font-bold block">
+              DAILY NUTRITION TARGETS
+            </span>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-sm font-semibold text-white">
+                {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+              </span>
+              <span className="text-zinc-600">•</span>
+              <span className="text-xs text-zinc-400 font-mono">
+                {profile.dietType} • {profile.goal.replace('_', ' ')}
+              </span>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-zinc-500">
             *Nutritional values are calculated estimates
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          {/* Calories */}
-          <div className="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800">
-            <span className="text-[10px] font-mono text-zinc-500 uppercase block font-bold">CALORIES</span>
-            <div className="text-xl sm:text-2xl font-black font-heading text-white mt-1">
-              {Math.round(totals.calories)}
-              <span className="text-xs font-normal text-zinc-400 font-mono"> / {profile.calorieTarget}</span>
+        {/* 5-Column Macro Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+          {/* Calories Hero Card */}
+          <div className="col-span-2 lg:col-span-1 bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5 text-orange-400" /> CALORIES
+                </span>
+                <span className="text-[10px] font-mono text-[#ccff00] font-bold">
+                  {caloriePercent}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-white font-mono tracking-tight">
+                {Math.round(totals.calories)}
+                <span className="text-xs text-zinc-500 font-normal"> / {profile.calorieTarget}</span>
+              </div>
             </div>
-            <div className="h-1.5 w-full bg-zinc-800 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full bg-orange-400 rounded-full"
-                style={{ width: `${Math.min(100, (totals.calories / profile.calorieTarget) * 100)}%` }}
-              />
+
+            <div className="mt-3">
+              <div className="h-2 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-500"
+                  style={{ width: `${caloriePercent}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
+                {caloriesRemaining > 0 ? `${caloriesRemaining} kcal remaining` : 'Target achieved!'}
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
-              {Math.round(profile.calorieTarget - totals.calories)} kcal remaining
-            </span>
           </div>
 
           {/* Protein */}
-          <div className="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800">
-            <span className="text-[10px] font-mono text-zinc-500 uppercase block font-bold">PROTEIN</span>
-            <div className="text-xl sm:text-2xl font-black font-heading text-[#ccff00] mt-1">
-              {Math.round(totals.protein)}g
-              <span className="text-xs font-normal text-zinc-400 font-mono"> / {profile.proteinTargetGrams}g</span>
+          <div className="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col justify-between hover:border-[#ccff00]/30 transition-colors">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono text-[#ccff00] uppercase font-bold">PROTEIN</span>
+                <span className="text-[10px] font-mono text-zinc-400">
+                  {Math.round((totals.protein / profile.proteinTargetGrams) * 100)}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-white font-mono tracking-tight">
+                {Math.round(totals.protein)}g
+                <span className="text-xs text-zinc-500 font-normal"> / {profile.proteinTargetGrams}g</span>
+              </div>
             </div>
-            <div className="h-1.5 w-full bg-zinc-800 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full bg-[#ccff00] rounded-full"
-                style={{ width: `${Math.min(100, (totals.protein / profile.proteinTargetGrams) * 100)}%` }}
-              />
+            <div className="mt-3">
+              <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#ccff00] rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.protein / profile.proteinTargetGrams) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
+                {Math.max(0, Math.round(profile.proteinTargetGrams - totals.protein))}g to reach target
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
-              {Math.round(profile.proteinTargetGrams - totals.protein)}g to target
-            </span>
           </div>
 
           {/* Carbs */}
-          <div className="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800">
-            <span className="text-[10px] font-mono text-zinc-500 uppercase block font-bold">CARBOHYDRATES</span>
-            <div className="text-xl sm:text-2xl font-black font-heading text-cyan-400 mt-1">
-              {Math.round(totals.carbs)}g
-              <span className="text-xs font-normal text-zinc-400 font-mono"> / {profile.carbsTargetGrams}g</span>
+          <div className="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col justify-between hover:border-cyan-400/30 transition-colors">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold">CARBOHYDRATES</span>
+                <span className="text-[10px] font-mono text-zinc-400">
+                  {Math.round((totals.carbs / profile.carbsTargetGrams) * 100)}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-white font-mono tracking-tight">
+                {Math.round(totals.carbs)}g
+                <span className="text-xs text-zinc-500 font-normal"> / {profile.carbsTargetGrams}g</span>
+              </div>
             </div>
-            <div className="h-1.5 w-full bg-zinc-800 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full bg-cyan-400 rounded-full"
-                style={{ width: `${Math.min(100, (totals.carbs / profile.carbsTargetGrams) * 100)}%` }}
-              />
+            <div className="mt-3">
+              <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-cyan-400 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.carbs / profile.carbsTargetGrams) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
+                {Math.max(0, Math.round(profile.carbsTargetGrams - totals.carbs))}g remaining
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
-              {Math.round(profile.carbsTargetGrams - totals.carbs)}g remaining
-            </span>
           </div>
 
           {/* Fat */}
-          <div className="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800">
-            <span className="text-[10px] font-mono text-zinc-500 uppercase block font-bold">FATS</span>
-            <div className="text-xl sm:text-2xl font-black font-heading text-amber-400 mt-1">
-              {Math.round(totals.fat)}g
-              <span className="text-xs font-normal text-zinc-400 font-mono"> / {profile.fatTargetGrams}g</span>
+          <div className="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col justify-between hover:border-amber-400/30 transition-colors">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">FATS</span>
+                <span className="text-[10px] font-mono text-zinc-400">
+                  {Math.round((totals.fat / profile.fatTargetGrams) * 100)}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-white font-mono tracking-tight">
+                {Math.round(totals.fat)}g
+                <span className="text-xs text-zinc-500 font-normal"> / {profile.fatTargetGrams}g</span>
+              </div>
             </div>
-            <div className="h-1.5 w-full bg-zinc-800 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full bg-amber-400 rounded-full"
-                style={{ width: `${Math.min(100, (totals.fat / profile.fatTargetGrams) * 100)}%` }}
-              />
+            <div className="mt-3">
+              <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.fat / profile.fatTargetGrams) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
+                {Math.max(0, Math.round(profile.fatTargetGrams - totals.fat))}g remaining
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
-              {Math.round(profile.fatTargetGrams - totals.fat)}g remaining
-            </span>
           </div>
 
           {/* Fiber */}
-          <div className="bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800 col-span-2 sm:col-span-1">
-            <span className="text-[10px] font-mono text-zinc-500 uppercase block font-bold">DIETARY FIBER</span>
-            <div className="text-xl sm:text-2xl font-black font-heading text-emerald-400 mt-1">
-              {Math.round(totals.fiber)}g
-              <span className="text-xs font-normal text-zinc-400 font-mono"> / {profile.fiberTargetGrams}g</span>
+          <div className="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col justify-between hover:border-emerald-400/30 transition-colors">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono text-emerald-400 uppercase font-bold">FIBER</span>
+                <span className="text-[10px] font-mono text-zinc-400">
+                  {Math.round((totals.fiber / profile.fiberTargetGrams) * 100)}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-white font-mono tracking-tight">
+                {Math.round(totals.fiber)}g
+                <span className="text-xs text-zinc-500 font-normal"> / {profile.fiberTargetGrams}g</span>
+              </div>
             </div>
-            <div className="h-1.5 w-full bg-zinc-800 rounded-full mt-3 overflow-hidden">
-              <div
-                className="h-full bg-emerald-400 rounded-full"
-                style={{ width: `${Math.min(100, (totals.fiber / profile.fiberTargetGrams) * 100)}%` }}
-              />
+            <div className="mt-3">
+              <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.fiber / profile.fiberTargetGrams) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
+                {Math.max(0, Math.round(profile.fiberTargetGrams - totals.fiber))}g needed
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 block mt-1.5">
-              {Math.max(0, Math.round(profile.fiberTargetGrams - totals.fiber))}g needed
-            </span>
           </div>
         </div>
       </div>
 
       {/* 4 MEAL CATEGORIES LIST */}
-      <div className="space-y-6">
+      <div className="space-y-5">
         {meals.map((meal) => {
           const mealFoods = foods.filter((f) => f.meal === meal.key);
           const mealCalories = mealFoods.reduce((acc, f) => acc + f.calories, 0);
           const mealProtein = mealFoods.reduce((acc, f) => acc + f.protein, 0);
+          const mealCarbs = mealFoods.reduce((acc, f) => acc + f.carbs, 0);
+          const mealFat = mealFoods.reduce((acc, f) => acc + f.fat, 0);
 
           return (
-            <div
-              key={meal.key}
-              className="bg-zinc-950 border border-zinc-800/90 rounded-3xl p-6 shadow-xl"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800">
+            <div key={meal.key} className="app-card p-5 sm:p-6 transition-all hover:border-zinc-700/80">
+              {/* Meal Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[var(--border-subtle)]">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{meal.icon}</span>
+                  <div className="w-9 h-9 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                    {meal.icon}
+                  </div>
                   <div>
-                    <h3 className="text-lg font-bold font-heading text-white tracking-wide">
-                      {meal.label}
-                    </h3>
-                    <span className="text-xs text-zinc-400 font-mono">
-                      {mealCalories} kcal • {mealProtein.toFixed(1)}g Protein
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-white">
+                        {meal.label}
+                      </h3>
+                      <span className="text-[11px] text-zinc-500 font-mono hidden sm:inline">
+                        • {meal.period}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs font-mono text-zinc-400 mt-0.5">
+                      <span className="text-white font-bold">{Math.round(mealCalories)} kcal</span>
+                      <span className="text-zinc-600">|</span>
+                      <span className="text-[#ccff00]">{mealProtein.toFixed(1)}g P</span>
+                      <span className="text-zinc-600">|</span>
+                      <span className="text-cyan-400">{mealCarbs.toFixed(1)}g C</span>
+                      <span className="text-zinc-600">|</span>
+                      <span className="text-amber-400">{mealFat.toFixed(1)}g F</span>
+                    </div>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleOpenAddModal(meal.key)}
-                  className="bg-zinc-900 hover:bg-[#ccff00] text-zinc-200 hover:text-black border border-zinc-700 font-bold uppercase text-xs tracking-wider px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 self-start sm:self-auto"
+                  className="px-3 py-1.5 bg-zinc-900 hover:bg-[#ccff00] text-zinc-200 hover:text-black border border-zinc-700/80 hover:border-[#ccff00] rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 self-start sm:self-auto"
                 >
-                  <Plus className="w-3.5 h-3.5" /> ADD TO {meal.label.toUpperCase()}
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Log Food</span>
                 </button>
               </div>
 
               {/* Items in Meal */}
-              <div className="divide-y divide-zinc-900 mt-2">
+              <div className="mt-3">
                 {mealFoods.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-zinc-500">
-                    No items logged for {meal.label.toLowerCase()} yet.
+                  <div
+                    onClick={() => handleOpenAddModal(meal.key)}
+                    className="py-5 px-4 rounded-xl border border-dashed border-zinc-800 hover:border-[#ccff00]/40 text-center cursor-pointer transition-colors group"
+                  >
+                    <span className="text-xs text-zinc-500 group-hover:text-zinc-300 transition-colors flex items-center justify-center gap-2">
+                      <Plus className="w-3.5 h-3.5 text-zinc-600 group-hover:text-[#ccff00]" />
+                      No items logged for {meal.label.toLowerCase()} yet. Click to add a meal or food entry.
+                    </span>
                   </div>
                 ) : (
-                  mealFoods.map((item) => (
-                    <div
-                      key={item.id}
-                      className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 group hover:bg-zinc-900/30 px-2 rounded-xl transition-colors"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-sm text-white">{item.name}</h4>
-                          <span className="text-[10px] font-mono text-zinc-500">
-                            ({item.portion})
-                          </span>
+                  <div className="divide-y divide-zinc-900">
+                    {mealFoods.map((item) => (
+                      <div
+                        key={item.id}
+                        className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2.5 rounded-xl hover:bg-zinc-900/40 transition-colors group"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-sm text-white">{item.name}</h4>
+                            <span className="text-[11px] font-mono text-zinc-500">
+                              ({item.portion})
+                            </span>
+                          </div>
+                          <div className="text-xs text-zinc-400 font-mono mt-0.5 flex flex-wrap items-center gap-2.5">
+                            <span className="text-white font-bold">{item.calories} kcal</span>
+                            <span className="text-zinc-700">•</span>
+                            <span className="text-[#ccff00]">{item.protein}g Protein</span>
+                            <span className="text-zinc-700">•</span>
+                            <span className="text-cyan-400">{item.carbs}g Carbs</span>
+                            <span className="text-zinc-700">•</span>
+                            <span className="text-amber-400">{item.fat}g Fat</span>
+                            <span className="text-zinc-700">•</span>
+                            <span className="text-emerald-400">{item.fiber}g Fiber</span>
+                          </div>
                         </div>
-                        <div className="text-xs text-zinc-400 font-mono mt-0.5 space-x-3">
-                          <span className="text-white font-bold">{item.calories} kcal</span>
-                          <span className="text-[#ccff00]">{item.protein}g P</span>
-                          <span className="text-cyan-400">{item.carbs}g C</span>
-                          <span className="text-amber-400">{item.fat}g F</span>
-                          <span className="text-emerald-400">{item.fiber}g Fiber</span>
-                        </div>
-                      </div>
 
-                      <div className="flex items-center gap-2 self-end sm:self-auto opacity-80 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => handleOpenEditModal(item)}
-                          className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors"
-                          title="Edit portion or macros"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteFood(item.id, item.name)}
-                          className="p-1.5 text-zinc-400 hover:text-red-400 rounded-lg hover:bg-zinc-800 transition-colors"
-                          title="Delete entry"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1.5 self-end sm:self-auto opacity-75 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleOpenEditModal(item)}
+                            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors"
+                            title="Edit entry"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFood(item.id, item.name)}
+                            className="p-1.5 text-zinc-400 hover:text-red-400 rounded-lg hover:bg-zinc-800 transition-colors"
+                            title="Delete entry"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
@@ -387,37 +521,48 @@ export default function FoodTrackerPage() {
       </div>
 
       {/* COMPLEMENTARY FOOD SUGGESTIONS BASED ON GAPS */}
-      <div className="bg-gradient-to-r from-zinc-950 via-[#101507] to-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <span className="text-[10px] font-mono font-bold uppercase text-[#ccff00] tracking-widest block">
-              NUTRIENT COMPLIANCE ASSISTANT
-            </span>
-            <h3 className="text-xl font-bold font-heading text-white">
-              SMART MEAL RECOMMENDATIONS
-            </h3>
+      <div className="app-card-elevated p-6 sm:p-8 relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#ccff00]/10 border border-[#ccff00]/20 flex items-center justify-center text-[#ccff00]">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#ccff00] font-bold block">
+                MACRO GAP ANALYSIS
+              </span>
+              <h3 className="text-lg font-bold text-white">
+                Recommended Foods to Complete Today's Targets
+              </h3>
+            </div>
           </div>
-          <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
-            Tailored to {profile.dietType} • {profile.budget} budget
+          <span className="text-xs text-zinc-400 font-mono self-start sm:self-auto bg-zinc-900 px-3 py-1 rounded-full border border-zinc-800">
+            {profile.dietType} • {profile.budget} budget
           </span>
         </div>
 
-        <p className="text-xs text-zinc-300 mb-6 max-w-2xl leading-relaxed">
-          Based on your recorded meals today, here are practical, nutrient-dense foods that will help close your remaining macro and fiber gaps without exceeding your calorie ceiling.
+        <p className="text-xs text-zinc-400 mb-6 max-w-2xl leading-relaxed">
+          Based on what you have logged today, here are practical, nutrient-dense foods that will close your remaining protein and micronutrient gaps without exceeding your calorie ceiling.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {gapAnalysis.suggestedFoods.map((preset, i) => (
             <div
               key={i}
-              className="bg-zinc-900/90 border border-zinc-800 p-4 rounded-2xl flex flex-col justify-between hover:border-[#ccff00]/40 transition-colors"
+              className="bg-zinc-900/80 border border-zinc-800/90 p-4 rounded-2xl flex flex-col justify-between hover:border-[#ccff00]/40 transition-all group"
             >
               <div>
-                <span className="text-[10px] font-mono text-[#ccff00] block">{preset.category}</span>
-                <h4 className="font-bold text-sm text-white mt-0.5">{preset.name}</h4>
-                <span className="text-[11px] text-zinc-400 block">{preset.defaultPortion}</span>
+                <span className="text-[10px] font-mono text-[#ccff00] uppercase font-bold block">
+                  {preset.category}
+                </span>
+                <h4 className="font-bold text-sm text-white mt-1 group-hover:text-[#ccff00] transition-colors">
+                  {preset.name}
+                </h4>
+                <span className="text-[11px] text-zinc-400 block mt-0.5">
+                  {preset.defaultPortion}
+                </span>
 
-                <div className="grid grid-cols-2 gap-1 bg-black/60 p-2 rounded-lg my-3 text-[11px] font-mono">
+                <div className="grid grid-cols-2 gap-1.5 bg-black/60 p-2.5 rounded-xl my-3 text-[11px] font-mono border border-zinc-850">
                   <div>
                     <span className="text-zinc-500 block text-[9px]">CALORIES</span>
                     <span className="text-white font-bold">{preset.calories} kcal</span>
@@ -428,20 +573,21 @@ export default function FoodTrackerPage() {
                   </div>
                   <div>
                     <span className="text-zinc-500 block text-[9px]">CARBS</span>
-                    <span className="text-cyan-400">{preset.carbs}g</span>
+                    <span className="text-cyan-400 font-medium">{preset.carbs}g</span>
                   </div>
                   <div>
                     <span className="text-zinc-500 block text-[9px]">FIBER</span>
-                    <span className="text-emerald-400">{preset.fiber}g</span>
+                    <span className="text-emerald-400 font-medium">{preset.fiber}g</span>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => handleQuickAddSuggestion(preset, 'dinner')}
-                className="w-full py-2 bg-zinc-800 hover:bg-[#ccff00] text-zinc-200 hover:text-black font-bold uppercase text-[10px] tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5"
+                className="w-full py-2 bg-zinc-800 hover:bg-[#ccff00] text-zinc-200 hover:text-black font-semibold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5"
               >
-                <Plus className="w-3 h-3" /> ADD TO DINNER
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add to Dinner</span>
               </button>
             </div>
           ))}
@@ -450,20 +596,20 @@ export default function FoodTrackerPage() {
 
       {/* ADD / EDIT FOOD MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-zinc-950 border border-zinc-700 rounded-3xl p-6 sm:p-8 shadow-2xl my-8 animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-3xl p-6 sm:p-8 shadow-2xl my-8 animate-fade-in">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-lg bg-zinc-900"
+              className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
             <span className="text-[10px] font-mono font-bold uppercase text-[#ccff00] tracking-widest block mb-1">
               {editingItem ? 'EDIT LOGGED ENTRY' : 'LOG FOOD ENTRY'}
             </span>
-            <h3 className="text-2xl font-black font-heading text-white uppercase tracking-tight mb-4">
-              {editingItem ? 'MODIFY NUTRITION VALUES' : `ADD TO ${activeMealCategory.toUpperCase()}`}
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
+              {editingItem ? 'Modify Nutrition Values' : `Add Food to ${activeMealCategory.charAt(0).toUpperCase() + activeMealCategory.slice(1)}`}
             </h3>
 
             {/* Quick Preset Search for Adding New Foods */}
@@ -479,20 +625,20 @@ export default function FoodTrackerPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search chicken, eggs, rice, tofu, oats, tuna..."
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#ccff00]"
+                    className="w-full bg-zinc-950 border border-zinc-700/80 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#ccff00]"
                   />
                 </div>
 
-                <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1 scrollbar-none">
+                <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1">
                   {filteredPresetFoods.slice(0, 8).map((preset, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => handleSelectPreset(preset)}
-                      className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
+                      className={`w-full text-left p-2.5 rounded-xl text-xs flex items-center justify-between transition-colors ${
                         selectedPreset?.name === preset.name
                           ? 'bg-[#ccff00] text-black font-bold'
-                          : 'bg-zinc-950 text-zinc-300 hover:bg-zinc-800'
+                          : 'bg-zinc-950 text-zinc-300 hover:bg-zinc-850'
                       }`}
                     >
                       <div>
@@ -521,7 +667,7 @@ export default function FoodTrackerPage() {
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     placeholder="e.g. Scrambled Eggs with Sourdough"
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#ccff00]"
+                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#ccff00]"
                   />
                 </div>
 
@@ -535,14 +681,14 @@ export default function FoodTrackerPage() {
                     value={formPortion}
                     onChange={(e) => setFormPortion(e.target.value)}
                     placeholder="e.g. 2 eggs + 1 slice (120g)"
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#ccff00]"
+                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#ccff00]"
                   />
                 </div>
               </div>
 
               {/* Meal Selector */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
                   Designated Meal
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -551,10 +697,10 @@ export default function FoodTrackerPage() {
                       key={m.key}
                       type="button"
                       onClick={() => setActiveMealCategory(m.key)}
-                      className={`py-2 rounded-xl text-xs font-bold uppercase transition-all ${
+                      className={`py-2 rounded-xl text-xs font-bold transition-all ${
                         activeMealCategory === m.key
                           ? 'bg-[#ccff00] text-black shadow'
-                          : 'bg-zinc-900 text-zinc-400 hover:text-white'
+                          : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
                       }`}
                     >
                       {m.label.split(' ')[0]}
@@ -570,57 +716,57 @@ export default function FoodTrackerPage() {
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-xs">
                   <div>
-                    <label className="text-zinc-500 block text-[10px]">CALORIES</label>
+                    <label className="text-zinc-400 block text-[10px] mb-1">CALORIES</label>
                     <input
                       type="number"
                       min="0"
                       value={formCalories}
                       onChange={(e) => setFormCalories(Number(e.target.value))}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-white font-mono"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2 text-white font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-zinc-500 block text-[10px]">PROTEIN (G)</label>
+                    <label className="text-zinc-400 block text-[10px] mb-1">PROTEIN (G)</label>
                     <input
                       type="number"
                       min="0"
                       step="0.5"
                       value={formProtein}
                       onChange={(e) => setFormProtein(Number(e.target.value))}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-white font-mono"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2 text-white font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-zinc-500 block text-[10px]">CARBS (G)</label>
+                    <label className="text-zinc-400 block text-[10px] mb-1">CARBS (G)</label>
                     <input
                       type="number"
                       min="0"
                       step="0.5"
                       value={formCarbs}
                       onChange={(e) => setFormCarbs(Number(e.target.value))}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-white font-mono"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2 text-white font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-zinc-500 block text-[10px]">FAT (G)</label>
+                    <label className="text-zinc-400 block text-[10px] mb-1">FAT (G)</label>
                     <input
                       type="number"
                       min="0"
                       step="0.5"
                       value={formFat}
                       onChange={(e) => setFormFat(Number(e.target.value))}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-white font-mono"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2 text-white font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-zinc-500 block text-[10px]">FIBER (G)</label>
+                    <label className="text-zinc-400 block text-[10px] mb-1">FIBER (G)</label>
                     <input
                       type="number"
                       min="0"
                       step="0.5"
                       value={formFiber}
                       onChange={(e) => setFormFiber(Number(e.target.value))}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-white font-mono"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-2 text-white font-mono"
                     />
                   </div>
                 </div>
@@ -629,16 +775,16 @@ export default function FoodTrackerPage() {
               <div className="pt-4 flex gap-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#ccff00] hover:bg-[#b8e600] text-black font-extrabold uppercase text-xs tracking-wider py-3.5 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)]"
+                  className="flex-1 bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold uppercase text-xs tracking-wider py-3.5 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)]"
                 >
-                  {editingItem ? 'SAVE CHANGES' : 'LOG FOOD ENTRY'}
+                  {editingItem ? 'Save Changes' : 'Log Food Entry'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-3.5 bg-zinc-900 text-zinc-400 hover:text-white rounded-xl text-xs font-bold"
+                  className="px-5 py-3.5 bg-zinc-900 text-zinc-400 hover:text-white rounded-xl text-xs font-semibold border border-zinc-800"
                 >
-                  CANCEL
+                  Cancel
                 </button>
               </div>
             </form>
