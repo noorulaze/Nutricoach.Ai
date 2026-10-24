@@ -113,7 +113,7 @@ export default function WorkoutTimer() {
           <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
             <div className="flex items-center gap-1.5 text-xs font-black uppercase text-white font-heading tracking-wide">
               <TimerIcon className="w-4 h-4 text-[#ccff00]" />
-              <span>IRON INTERVAL CLOCK</span>
+              <span>NUTRICOACH INTERVAL CLOCK</span>
             </div>
             <div className="flex items-center gap-1">
               <button

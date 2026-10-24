@@ -1,86 +1,139 @@
-export interface Program {
-  id: string;
-  title: string;
-  category: 'Hypertrophy' | 'Strength' | 'HIIT' | 'Athletics' | 'Recovery' | 'Women';
-  tagline: string;
-  description: string;
-  intensity: 1 | 2 | 3 | 4 | 5;
-  durationWeeks: number;
-  sessionsPerWeek: number;
-  targetFocus: string;
-  coach: string;
-  coachRole: string;
-  image: string;
-  features: string[];
-  curriculum: { phase: string; focus: string; duration: string }[];
-  caloriesBurnEstimate: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | 'All Levels';
-}
+export type GoalType = 'fat_loss' | 'muscle_gain' | 'maintenance' | 'athletic_performance' | 'strength';
 
-export interface Trainer {
-  id: string;
-  name: string;
-  role: string;
-  specialty: string;
-  category: 'Master' | 'Strength' | 'Conditioning' | 'Nutrition' | 'Rehab';
-  experienceYears: number;
-  bio: string;
-  image: string;
-  certifications: string[];
-  achievements: string[];
-  quote: string;
-  rating: number;
-  reviewCount: number;
-  clientsTrained: number;
-  socials: {
-    instagram?: string;
-    youtube?: string;
-    twitter?: string;
-  };
-}
+export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
 
-export interface MembershipPlan {
-  id: string;
-  name: string;
-  badge?: string;
-  tagline: string;
-  monthlyPrice: number;
-  annualPricePerMonth: number;
-  popular?: boolean;
-  features: { name: string; included: boolean }[];
-  highlightPerks: string[];
-  idealFor: string;
-}
+export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'very_active' | 'athlete';
 
-export interface FacilityZone {
-  id: string;
-  name: string;
-  subtitle: string;
-  sqft: string;
-  description: string;
-  image: string;
-  equipmentHighlights: string[];
-  amenities: string[];
-  hours: string;
-}
+export type EquipmentType = 'full_gym' | 'dumbbells_only' | 'home_minimal' | 'bodyweight_only' | 'resistance_bands';
 
-export interface Testimonial {
-  id: string;
+export type DietType = 'omnivore' | 'vegetarian' | 'vegan' | 'pescatarian' | 'keto' | 'paleo';
+
+export type BudgetTier = 'budget' | 'moderate' | 'flexible';
+
+export interface UserProfile {
   name: string;
   age: number;
-  profession: string;
-  category: 'Fat Loss' | 'Hypertrophy' | 'Strength' | 'Rehab';
-  achievement: string;
-  quote: string;
-  duration: string;
-  trainer: string;
-  image: string;
-  stats: { label: string; value: string }[];
-  rating: number;
+  gender: 'male' | 'female' | 'other';
+  heightCm: number;
+  weightKg: number;
+  goal: GoalType;
+  experienceLevel: ExperienceLevel;
+  activityLevel: ActivityLevel;
+  availableEquipment: EquipmentType;
+  trainingDaysPerWeek: number;
+  preferredWorkoutDurationMin: number;
+  dietType: DietType;
+  allergies: string[];
+  budget: BudgetTier;
+  
+  // Calculated & Customizable Targets
+  tdee: number;
+  calorieTarget: number;
+  proteinTargetGrams: number;
+  carbsTargetGrams: number;
+  fatTargetGrams: number;
+  fiberTargetGrams: number;
+  customMacros: boolean;
+  
+  // AI Integration
+  geminiApiKey?: string;
 }
 
-export interface FAQItem {
-  question: string;
-  answer: string;
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+export interface FoodItem {
+  id: string;
+  name: string;
+  meal: MealType;
+  portion: string;
+  grams: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  isCustom?: boolean;
+  timestamp: string;
   category?: string;
+  budgetFriendly?: boolean;
+}
+
+export interface PresetFood {
+  name: string;
+  category: 'Protein' | 'Carb' | 'Fat' | 'Produce' | 'Dairy / Alternative';
+  defaultPortion: string;
+  grams: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  budgetFriendly: boolean;
+  suitableDiets: DietType[];
+  allergens: string[];
+}
+
+export interface WorkoutExercise {
+  id: string;
+  exerciseId: string;
+  name: string;
+  targetMuscle: string;
+  sets: number;
+  reps: string;
+  weightKg?: number;
+  restSeconds: number;
+  instructions: string;
+  completedSets: boolean[];
+}
+
+export interface DayWorkout {
+  id: string;
+  dayIndex: number; // 0 = Mon, 6 = Sun
+  dayName: string;
+  name: string;
+  isRestDay: boolean;
+  targetFocus: string;
+  durationMinutes: number;
+  exercises: WorkoutExercise[];
+  completed: boolean;
+  completedDate?: string;
+}
+
+export interface ExerciseDefinition {
+  id: string;
+  name: string;
+  category: 'Chest' | 'Back' | 'Legs' | 'Shoulders' | 'Arms' | 'Core' | 'Full Body' | 'Cardio';
+  primaryMuscle: string;
+  secondaryMuscles: string[];
+  requiredEquipment: EquipmentType[];
+  difficulty: ExperienceLevel;
+  instructions: string[];
+  formTips: string[];
+  avoidMistakes: string[];
+}
+
+export interface ProgressEntry {
+  id: string;
+  date: string;
+  weightKg: number;
+  energyLevel: number; // 1-10
+  sleepHours: number;
+  recoveryRating: number; // 1-10
+  notes?: string;
+  measurements?: {
+    waistCm?: number;
+    chestCm?: number;
+    armsCm?: number;
+    thighsCm?: number;
+  };
+  photoDataUrl?: string; // Stored locally
+}
+
+export interface ChatMessage {
+  id: string;
+  sender: 'user' | 'ai';
+  text: string;
+  timestamp: string;
+  contextSummary?: string;
+  actionSuggestions?: { label: string; action: string }[];
 }
