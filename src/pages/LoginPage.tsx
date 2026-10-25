@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck, 
-  Sparkles, AlertCircle, CheckCircle2, X, Utensils, 
-  Dumbbell, TrendingUp, Zap 
+  Eye, 
+  EyeOff, 
+  Lock, 
+  Mail, 
+  ArrowRight, 
+  Bot, 
+  Check, 
+  AlertCircle, 
+  X,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import loginBg from '../assets/login-bg.jpg';
+import AuthWellnessBanner from '../components/AuthWellnessBanner';
 
 export default function LoginPage() {
   const { login, resetPassword, isAuthenticated } = useAuth();
@@ -29,8 +36,11 @@ export default function LoginPage() {
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const [forgotSuccess, setForgotSuccess] = useState(false);
 
-  // Google OAuth modal
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+  // Social OAuth modal / informational prompt
+  const [socialModalInfo, setSocialModalInfo] = useState<{ open: boolean; provider: 'Google' | 'Apple' | null }>({
+    open: false,
+    provider: null
+  });
 
   // If already logged in, redirect to dashboard
   React.useEffect(() => {
@@ -43,9 +53,14 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    setIsSubmitting(true);
 
-    const res = await login(email, password, rememberMe);
+    if (!email.trim() || !password) {
+      setErrorMessage('Please enter both your email address and password.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const res = await login(email.trim(), password, rememberMe);
     setIsSubmitting(false);
 
     if (res.success) {
@@ -53,7 +68,7 @@ export default function LoginPage() {
       const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
       navigate(from, { replace: true });
     } else {
-      setErrorMessage(res.error || 'Invalid credentials. Please verify your email and password.');
+      setErrorMessage(res.error || 'Invalid email or password. Please verify your credentials.');
       showToast(res.error || 'Authentication failed', 'error');
     }
   };
@@ -68,7 +83,7 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (res.success) {
-      showToast('Logged in as Alex Vance (Demo Account)', 'success', 'Demo Session');
+      showToast('Welcome, Alex! Logged into your NutriCoach dashboard.', 'success', 'Demo Session');
       navigate('/', { replace: true });
     } else {
       setErrorMessage(res.error || 'Failed to initialize demo session');
@@ -77,8 +92,13 @@ export default function LoginPage() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!forgotEmail.trim() || !newPassword) {
+      showToast('Please enter both email and new password', 'error');
+      return;
+    }
+
     setForgotSubmitting(true);
-    const res = await resetPassword(forgotEmail, newPassword);
+    const res = await resetPassword(forgotEmail.trim(), newPassword);
     setForgotSubmitting(false);
 
     if (res.success) {
@@ -87,7 +107,7 @@ export default function LoginPage() {
       setTimeout(() => {
         setIsForgotModalOpen(false);
         setForgotSuccess(false);
-        setEmail(forgotEmail);
+        setEmail(forgotEmail.trim());
         setPassword(newPassword);
       }, 1500);
     } else {
@@ -95,394 +115,305 @@ export default function LoginPage() {
     }
   };
 
+  const handleSocialClick = (provider: 'Google' | 'Apple') => {
+    setSocialModalInfo({ open: true, provider });
+  };
+
+  const handleSocialDemoConfirm = async () => {
+    setSocialModalInfo({ open: false, provider: null });
+    await handleQuickDemoLogin();
+  };
+
   return (
-    <div className="min-h-screen w-full bg-[#090a0f] text-zinc-100 flex flex-col lg:flex-row relative selection:bg-[#ccff00] selection:text-black font-sans">
+    <div className="min-h-screen w-full bg-[#f6f8f5] text-[#192418] flex flex-col lg:flex-row relative selection:bg-[#5ba83c]/20 font-sans">
       
       {/* ========================================================================= */}
-      {/* DESKTOP LEFT COLUMN: Cinematic Athlete Imagery + Brand Messaging          */}
+      {/* LEFT SECTION: Branded Wellness Presentation (matches reference image)     */}
       {/* ========================================================================= */}
-      <div className="relative w-full lg:w-[58%] min-h-[460px] lg:min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-14 overflow-hidden border-b lg:border-b-0 lg:border-r border-zinc-800/80">
-        
-        {/* Background Athlete Photo */}
-        <div 
-          className="absolute inset-0 bg-cover bg-[center_top] bg-no-repeat transition-transform duration-1000 scale-[1.02]"
-          style={{ backgroundImage: `url(${loginBg})` }}
-        />
-
-        {/* Ambient Dark Gradients (dark on left, smooth fade to right border) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60 lg:bg-gradient-to-r lg:from-black/85 lg:via-black/40 lg:to-[#090a0f] pointer-events-none" />
-        <div className="hidden lg:block absolute inset-y-0 right-0 w-36 bg-gradient-to-r from-transparent to-[#090a0f] pointer-events-none" />
-
-        {/* Top-Left: Logo & Subtitle */}
-        <div className="relative z-10 flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#ccff00] flex items-center justify-center text-black font-black shadow-[0_0_20px_rgba(204,255,0,0.4)]">
-            {/* Custom 4-point fitness star glyph */}
-            <svg className="w-6 h-6 fill-black" viewBox="0 0 24 24">
-              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
-            </svg>
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-heading font-black text-xl sm:text-2xl tracking-wider text-white">
-                NUTRI<span className="text-[#ccff00]">COACH</span>
-              </span>
-              <span className="text-[10px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/40">
-                AI
-              </span>
-            </div>
-            <span className="text-[9px] font-bold text-zinc-400 tracking-widest uppercase mt-1 block">
-              PERSONAL FITNESS & NUTRITION COACH
-            </span>
-          </div>
-        </div>
-
-        {/* Center / Lower-Left: Bold Motto & Feature Pillars */}
-        <div className="relative z-10 max-w-xl space-y-7 my-auto pt-12 pb-6">
-          {/* Main Hero Typography */}
-          <div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-[1.05] italic uppercase">
-              <span className="text-white block">BETTER FOOD.</span>
-              <span className="text-[#ccff00] block">STRONGER YOU.</span>
-            </h1>
-
-            <p className="text-sm sm:text-base text-zinc-300 italic font-normal mt-3 leading-relaxed">
-              Track your nutrition. Follow your workouts.<br className="hidden sm:inline" />
-              Build a healthier, stronger you — with AI.
-            </p>
-          </div>
-
-          {/* 4 Feature Items (Matches the mockup layout) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-            <div className="flex flex-col items-start gap-1.5">
-              <Utensils className="w-5 h-5 text-[#ccff00]" />
-              <span className="text-xs font-semibold text-zinc-200 leading-snug">
-                Track<br />Nutrition
-              </span>
-            </div>
-
-            <div className="flex flex-col items-start gap-1.5">
-              <Dumbbell className="w-5 h-5 text-[#ccff00]" />
-              <span className="text-xs font-semibold text-zinc-200 leading-snug">
-                Plan<br />Workouts
-              </span>
-            </div>
-
-            <div className="flex flex-col items-start gap-1.5">
-              <TrendingUp className="w-5 h-5 text-[#ccff00]" />
-              <span className="text-xs font-semibold text-zinc-200 leading-snug">
-                Monitor<br />Progress
-              </span>
-            </div>
-
-            <div className="flex flex-col items-start gap-1.5">
-              <Sparkles className="w-5 h-5 text-[#ccff00]" />
-              <span className="text-xs font-semibold text-zinc-200 leading-snug">
-                Get AI<br />Coaching
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Left Footer Tag */}
-        <div className="relative z-10 flex items-center gap-3 text-xs font-mono tracking-widest text-zinc-500 uppercase">
-          <span>SMALL STEPS</span>
-          <span className="text-zinc-700">/</span>
-          <span>BIG CHANGES</span>
-          <div className="h-px bg-zinc-800 flex-1 max-w-[140px]" />
-        </div>
-      </div>
+      <AuthWellnessBanner />
 
       {/* ========================================================================= */}
-      {/* RIGHT COLUMN: Authentication Form + Diagonal Accent Streaks              */}
+      {/* RIGHT SECTION: The Elevated Clean White Login Card                         */}
       {/* ========================================================================= */}
-      <div className="relative w-full lg:w-[42%] min-h-screen bg-[#090a0f] flex flex-col justify-between p-6 sm:p-10 lg:p-12 overflow-y-auto">
-        
-        {/* Subtle Diagonal Neon Streaks (Matches the mockup graphics in corners) */}
-        <svg 
-          className="absolute top-0 right-0 w-64 h-64 pointer-events-none opacity-30 text-[#ccff00]" 
-          viewBox="0 0 200 200" 
-          fill="none"
-        >
-          <line x1="160" y1="0" x2="200" y2="40" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="130" y1="0" x2="200" y2="70" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="100" y1="0" x2="200" y2="100" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="170" y1="0" x2="200" y2="30" stroke="currentColor" strokeWidth="2" strokeOpacity="0.7" />
-        </svg>
-
-        <svg 
-          className="absolute bottom-0 left-0 w-64 h-64 pointer-events-none opacity-20 text-[#ccff00]" 
-          viewBox="0 0 200 200" 
-          fill="none"
-        >
-          <line x1="0" y1="160" x2="40" y2="200" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="0" y1="130" x2="70" y2="200" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="0" y1="100" x2="100" y2="200" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-
-        {/* Top-Right: Quick Sign Up Link */}
-        <div className="relative z-10 flex justify-end items-center text-xs text-zinc-400">
-          <span>Don't have an account? </span>
-          <Link 
-            to="/signup" 
-            className="text-[#ccff00] font-bold ml-1.5 hover:underline inline-flex items-center gap-1 transition-all"
-          >
-            Sign Up <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* Center: Card Content */}
-        <div className="relative z-10 w-full max-w-sm mx-auto my-auto py-8 space-y-6 animate-fade-in">
+      <div className="w-full lg:w-[46%] xl:w-[44%] flex items-center justify-center p-4 sm:p-8 lg:p-12 xl:p-14 bg-[#f6f8f5]">
+        <div className="w-full max-w-[460px] bg-white border border-[#e8ede6] rounded-[32px] p-6 sm:p-9 shadow-[0_12px_40px_-8px_rgba(25,36,24,0.06)] animate-fade-in space-y-6">
           
-          {/* NutriCoach Logo Header inside the right panel */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#ccff00] flex items-center justify-center text-black font-black shadow-[0_0_15px_rgba(204,255,0,0.35)]">
-              <svg className="w-5 h-5 fill-black" viewBox="0 0 24 24">
-                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
-              </svg>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-heading font-black text-xl tracking-wider text-white">
-                  NUTRI<span className="text-[#ccff00]">COACH</span>
-                </span>
-                <span className="text-[9px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/40">
-                  AI
-                </span>
+          {/* Top Card Branding */}
+          <div className="flex flex-col items-center text-center">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-xl bg-[#5ba83c] flex items-center justify-center text-white shadow-xs">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M21 3c-6.627 0-12 5.373-12 12 0 1.258.196 2.47.558 3.606L3 21l2.394-6.558C4.196 13.31 4 12.098 4 11 4 4.373 9.373-1 16-1c2.146 0 4.148.566 5.88 1.558L21 3z" />
+                </svg>
               </div>
-              <span className="text-[8px] font-bold text-zinc-400 tracking-widest uppercase mt-0.5 block">
-                PERSONAL FITNESS & NUTRITION COACH
+              <span className="font-heading font-extrabold text-lg text-[#192418] tracking-tight">
+                NutriCoach <span className="text-[#5ba83c]">AI</span>
               </span>
             </div>
-          </div>
 
-          {/* Heading */}
-          <div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">
-              Welcome Back
+            <h2 className="text-2xl sm:text-[26px] font-black text-[#192418] tracking-tight">
+              Welcome back!
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-              Your goals. Our AI. A healthier you.
+            <p className="text-xs sm:text-[13px] text-[#5e6f5e] font-medium mt-1">
+              Log in to continue your health journey.
             </p>
           </div>
 
-          {/* 1-Click Demo Login Pill */}
-          <div className="bg-[#11131a] border border-zinc-800/80 hover:border-[#ccff00]/40 rounded-xl p-3 flex items-center justify-between gap-2 transition-all">
-            <div className="flex items-center gap-2">
-              <Zap className="w-3.5 h-3.5 text-[#ccff00]" />
-              <span className="text-[11px] font-mono text-zinc-300">
-                Demo Account: <strong>Alex Vance</strong>
-              </span>
-            </div>
+          {/* Social OAuth Buttons */}
+          <div className="space-y-2.5">
+            {/* Google Button */}
             <button
               type="button"
-              onClick={handleQuickDemoLogin}
-              disabled={isSubmitting}
-              className="text-[11px] font-mono text-[#ccff00] hover:underline font-bold px-2 py-0.5 rounded hover:bg-[#ccff00]/10 transition-colors"
+              onClick={() => handleSocialClick('Google')}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99]"
             >
-              Instant Login →
+              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                />
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            {/* Apple Button */}
+            <button
+              type="button"
+              onClick={() => handleSocialClick('Apple')}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99]"
+            >
+              <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.77 1.04-1.84.93-2.92-.93.04-2.07.62-2.73 1.39-.58.67-1.09 1.76-.96 2.81 1.04.08 2.14-.51 2.76-1.28z" />
+              </svg>
+              <span>Continue with Apple</span>
             </button>
           </div>
 
-          {/* Error Message */}
+          {/* Divider */}
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#e8ede6] w-full" />
+            <span className="bg-white px-3 text-[11px] font-semibold text-[#8e9f8e] uppercase tracking-wider absolute">
+              or
+            </span>
+          </div>
+
+          {/* Error Message Alert */}
           {errorMessage && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 flex items-start gap-2.5 text-xs text-red-300 animate-fade-in">
-              <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-              <span>{errorMessage}</span>
+            <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2 animate-fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span className="font-medium leading-relaxed">{errorMessage}</span>
             </div>
           )}
 
-          {/* Form */}
+          {/* Main Credentials Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email Field with embedded label */}
-            <div className="bg-[#11141c] border border-zinc-800 focus-within:border-[#ccff00]/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 transition-colors shadow-sm">
-              <Mail className="w-4 h-4 text-zinc-500 shrink-0" />
-              <div className="flex-1">
-                <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 leading-tight">
-                  Email address
-                </label>
+            {/* Email Field */}
+            <div>
+              <label className="block text-xs font-bold text-[#192418] mb-1.5">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-[#8e9f8e] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errorMessage) setErrorMessage('');
+                  }}
+                  placeholder="Enter your email"
+                  autoComplete="email"
+                  className="w-full bg-white border border-[#e8ede6] rounded-2xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-[#192418] placeholder-[#8e9f8e] focus:outline-none focus:ring-2 focus:ring-[#5ba83c]/30 focus:border-[#5ba83c] transition-all"
                 />
               </div>
             </div>
 
-            {/* Password Field with embedded label & show/hide toggle */}
-            <div className="bg-[#11141c] border border-zinc-800 focus-within:border-[#ccff00]/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 transition-colors shadow-sm">
-              <Lock className="w-4 h-4 text-zinc-500 shrink-0" />
-              <div className="flex-1">
-                <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 leading-tight">
-                  Password
-                </label>
+            {/* Password Field */}
+            <div>
+              <label className="block text-xs font-bold text-[#192418] mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#8e9f8e] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errorMessage) setErrorMessage('');
+                  }}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  className="w-full bg-white border border-[#e8ede6] rounded-2xl pl-10 pr-11 py-2.5 sm:py-3 text-xs sm:text-sm text-[#192418] placeholder-[#8e9f8e] focus:outline-none focus:ring-2 focus:ring-[#5ba83c]/30 focus:border-[#5ba83c] transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="p-1.5 text-[#8e9f8e] hover:text-[#192418] absolute right-3 top-1/2 -translate-y-1/2 rounded-lg transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-zinc-500 hover:text-zinc-300 p-1 transition-colors"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between text-xs pt-1">
+            <div className="flex items-center justify-between text-xs pt-0.5">
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded bg-[#11141c] border-zinc-700 text-[#ccff00] accent-[#ccff00] focus:ring-0"
+                  className="w-4 h-4 rounded text-[#5ba83c] border-[#cbd7c8] focus:ring-[#5ba83c] accent-[#5ba83c] cursor-pointer"
                 />
-                <span className="text-zinc-300 font-medium text-xs">Remember me</span>
+                <span className="font-semibold text-[#5e6f5e]">Remember me</span>
               </label>
 
               <button
                 type="button"
-                onClick={() => setIsForgotModalOpen(true)}
-                className="text-[#ccff00] hover:underline font-medium text-xs"
+                onClick={() => {
+                  setForgotEmail(email);
+                  setIsForgotModalOpen(true);
+                }}
+                className="text-xs font-bold text-[#5ba83c] hover:text-[#46822c] hover:underline"
               >
                 Forgot password?
               </button>
             </div>
 
-            {/* Log In Button */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 px-4 bg-[#ccff00] hover:bg-[#b8e600] disabled:opacity-50 text-black font-extrabold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(204,255,0,0.3)] flex items-center justify-center gap-2 mt-4 cursor-pointer"
+              className="w-full py-3 sm:py-3.5 rounded-2xl bg-[#7cb342] hover:bg-[#6ea935] disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  <span>Logging In...</span>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Signing In...</span>
                 </>
               ) : (
-                <>
-                  <ArrowRight className="w-4 h-4" />
-                  <span>Log In</span>
-                </>
+                <span>Log In</span>
               )}
             </button>
           </form>
 
-          {/* OR Divider */}
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-800" />
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-mono">
-              <span className="bg-[#090a0f] px-3 text-zinc-500">OR</span>
-            </div>
+          {/* Registration Link */}
+          <div className="text-center text-xs text-[#5e6f5e] font-medium pt-1">
+            <span>Don't have an account? </span>
+            <Link
+              to="/signup"
+              className="font-bold text-[#5ba83c] hover:text-[#46822c] hover:underline"
+            >
+              Sign up
+            </Link>
           </div>
 
-          {/* Google Sign In Button */}
-          <button
-            type="button"
-            onClick={() => setIsGoogleModalOpen(true)}
-            className="w-full py-3 px-4 bg-[#11141c] hover:bg-[#161a24] border border-zinc-800 rounded-xl text-xs font-semibold text-zinc-200 flex items-center justify-center gap-3 transition-colors cursor-pointer"
-          >
-            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              />
-            </svg>
-            <span>Continue with Google</span>
-          </button>
-
-          {/* Bottom Link to Sign Up */}
-          <div className="text-center pt-2">
-            <p className="text-xs text-zinc-400">
-              New to NUTRICOACH AI?{' '}
-              <Link 
-                to="/signup" 
-                className="text-[#ccff00] font-bold hover:underline inline-flex items-center gap-1 transition-colors"
-              >
-                Create an account <ArrowRight className="w-3 h-3" />
-              </Link>
-            </p>
+          {/* Quick Demo Login Option */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={handleQuickDemoLogin}
+              className="w-full py-2 px-3 rounded-xl bg-[#f6f8f5] hover:bg-[#edf2ea] border border-[#e8ede6] text-[#5e6f5e] hover:text-[#192418] text-[11px] font-bold transition-all flex items-center justify-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#5ba83c]" />
+              <span>1-Click Demo Login (Alex Vance)</span>
+            </button>
           </div>
+
+          {/* Bottom Encouragement Card matching mockup */}
+          <div className="bg-[#f2f7ef] border border-[#d8e8d5] rounded-2xl p-4 flex items-center justify-between gap-3 mt-4">
+            <div className="flex items-center gap-3">
+              {/* Robot Avatar Mascot */}
+              <div className="w-10 h-10 rounded-2xl bg-white border border-[#d8e8d5] flex items-center justify-center text-[#5ba83c] shrink-0 shadow-xs">
+                <Bot className="w-5 h-5 text-[#5ba83c]" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-[#192418] block leading-tight">
+                  New to NutriCoach AI?
+                </span>
+                <p className="text-[11px] text-[#5e6f5e] font-medium mt-0.5 leading-snug">
+                  Create your account and start your healthy journey today.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/signup"
+              className="w-8 h-8 rounded-full bg-white hover:bg-[#eaf4e6] border border-[#d8e8d5] text-[#192418] flex items-center justify-center shrink-0 shadow-xs transition-colors"
+              title="Create Account"
+            >
+              <ArrowRight className="w-4 h-4 text-[#192418]" />
+            </Link>
+          </div>
+
         </div>
-
-        {/* Empty bottom spacer to balance layout */}
-        <div className="hidden lg:block h-6" />
       </div>
 
       {/* ========================================================================= */}
-      {/* FORGOT PASSWORD MODAL                                                     */}
+      {/* FORGOT PASSWORD MODAL (Connected to real recovery flow)                   */}
       {/* ========================================================================= */}
       {isForgotModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md bg-[#10131a] border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-[#e8ede6] relative space-y-4">
             <button
+              type="button"
               onClick={() => setIsForgotModalOpen(false)}
-              className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800 transition-colors"
+              className="absolute top-5 right-5 p-1.5 rounded-xl text-[#8e9f8e] hover:text-[#192418] hover:bg-[#f6f8f5]"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase text-[#ccff00] tracking-widest block mb-1">
-                ACCOUNT RECOVERY
+              <span className="text-[10px] font-bold uppercase text-[#3b7e23] tracking-wider block mb-1">
+                SECURITY VERIFICATION
               </span>
-              <h3 className="text-xl font-bold text-white">
-                Reset Account Password
+              <h3 className="text-xl font-extrabold text-[#192418]">
+                Reset Your Password
               </h3>
-              <p className="text-xs text-zinc-400 mt-1">
-                Enter your registered email and specify a new secure password.
+              <p className="text-xs text-[#5e6f5e] mt-1 font-medium leading-relaxed">
+                Enter your account email address and choose a new secure password. Your account will update immediately using client-side cryptographic hashing.
               </p>
             </div>
 
             {forgotSuccess ? (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-center space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
-                <h4 className="text-sm font-bold text-white">Password Updated!</h4>
-                <p className="text-xs text-zinc-300">Applying new credentials and redirecting to login...</p>
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold text-center space-y-1">
+                <p>✓ Password Reset Successful!</p>
+                <p className="font-normal text-[11px]">Returning to login form...</p>
               </div>
             ) : (
-              <form onSubmit={handleResetPassword} className="space-y-4">
+              <form onSubmit={handleResetPassword} className="space-y-3.5 pt-2">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
-                    Registered Email
+                  <label className="block text-xs font-bold text-[#192418] mb-1">
+                    Account Email
                   </label>
                   <input
                     type="email"
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    placeholder="demo@nutricoach.ai"
-                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#ccff00]"
+                    placeholder="name@example.com"
+                    className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl px-3.5 py-2.5 text-xs text-[#192418] focus:border-[#5ba83c] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1">
-                    New Password (at least 6 characters)
+                  <label className="block text-xs font-bold text-[#192418] mb-1">
+                    New Secure Password
                   </label>
                   <input
                     type="password"
@@ -490,8 +421,8 @@ export default function LoginPage() {
                     minLength={6}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new secure password"
-                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#ccff00]"
+                    placeholder="Minimum 6 characters"
+                    className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl px-3.5 py-2.5 text-xs text-[#192418] focus:border-[#5ba83c] focus:outline-none"
                   />
                 </div>
 
@@ -499,14 +430,14 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={forgotSubmitting}
-                    className="flex-1 py-3 bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold uppercase text-xs rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)]"
+                    className="flex-1 py-3 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold text-xs transition-colors shadow-xs"
                   >
-                    {forgotSubmitting ? 'Updating...' : 'Save New Password'}
+                    {forgotSubmitting ? 'Updating...' : 'Update Password'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsForgotModalOpen(false)}
-                    className="px-4 py-3 bg-zinc-900 text-zinc-400 hover:text-white rounded-xl text-xs font-semibold border border-zinc-800"
+                    className="px-4 py-3 rounded-xl bg-[#f6f8f5] text-[#5e6f5e] hover:text-[#192418] font-bold text-xs border border-[#e8ede6]"
                   >
                     Cancel
                   </button>
@@ -518,52 +449,51 @@ export default function LoginPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* GOOGLE OAUTH CONFIGURATION NOTICE MODAL                                   */}
+      {/* SOCIAL OAUTH NOTICE MODAL                                                 */}
       {/* ========================================================================= */}
-      {isGoogleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md bg-[#10131a] border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+      {socialModalInfo.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#e8ede6] relative space-y-4 text-center">
             <button
-              onClick={() => setIsGoogleModalOpen(false)}
-              className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800"
+              type="button"
+              onClick={() => setSocialModalInfo({ open: false, provider: null })}
+              className="absolute top-4 right-4 p-1.5 rounded-xl text-[#8e9f8e] hover:text-[#192418]"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
-                G
-              </div>
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase text-blue-400 tracking-widest block">
-                  INTEGRATION NOTICE
-                </span>
-                <h3 className="text-lg font-bold text-white">
-                  Google OAuth Configuration
-                </h3>
-              </div>
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-[#eef7eb] flex items-center justify-center text-[#5ba83c]">
+              <Sparkles className="w-6 h-6 text-[#5ba83c]" />
             </div>
 
-            <p className="text-xs text-zinc-300 leading-relaxed">
-              Google Single Sign-On requires a valid <code className="bg-zinc-900 text-[#ccff00] px-1 py-0.5 rounded font-mono text-[11px]">VITE_GOOGLE_CLIENT_ID</code> registered in Google Cloud Console.
+            <h3 className="text-lg font-extrabold text-[#192418]">
+              {socialModalInfo.provider} Sign-In
+            </h3>
+
+            <p className="text-xs text-[#5e6f5e] leading-relaxed">
+              In this client-side environment, third-party {socialModalInfo.provider} OAuth uses simulated single sign-on. You can continue as a verified user with 1 click.
             </p>
 
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              To log in right now, please use the <strong>built-in secure email authentication</strong> or click the 1-click <strong>Instant Login</strong> button above.
-            </p>
-
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col gap-2">
               <button
                 type="button"
-                onClick={() => setIsGoogleModalOpen(false)}
-                className="w-full py-2.5 bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold uppercase text-xs rounded-xl transition-all"
+                onClick={handleSocialDemoConfirm}
+                className="w-full py-2.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold text-xs shadow-xs"
               >
-                Got it, use standard login
+                Continue with {socialModalInfo.provider} Demo
+              </button>
+              <button
+                type="button"
+                onClick={() => setSocialModalInfo({ open: false, provider: null })}
+                className="w-full py-2 text-xs text-[#7a8c79] hover:text-[#192418]"
+              >
+                Use Email & Password Instead
               </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
