@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Utensils, Dumbbell, BookOpen, 
-  Sparkles, LineChart, Settings, Flame, Menu, X, User 
+  Sparkles, LineChart, Settings, Flame, Menu, X, 
+  User, LogOut 
 } from 'lucide-react';
 import { getProfile, getFoodLog } from '../utils/storage';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function AppNavbar() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { showToast } = useToast();
 
   const profile = getProfile();
   const todayFoods = getFoodLog();
   const consumedCalories = todayFoods.reduce((acc, f) => acc + f.calories, 0);
   const remainingCalories = Math.round(profile.calorieTarget - consumedCalories);
-  const caloriePercent = Math.min(100, Math.round((consumedCalories / profile.calorieTarget) * 100)) || 0;
+
+  const displayName = user?.name || profile.name;
+
+  const handleLogout = () => {
+    logout();
+    showToast('You have been signed out safely.', 'info', 'Signed Out');
+    navigate('/login', { replace: true });
+  };
 
   const primaryNavItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -89,8 +102,8 @@ export default function AppNavbar() {
               })}
             </nav>
 
-            {/* Right Widget: Calorie Chip & Profile */}
-            <div className="flex items-center gap-3">
+            {/* Right Widget: Calorie Chip & Profile & Sign Out */}
+            <div className="flex items-center gap-2.5">
               {/* Daily Calorie Summary Mini Chip */}
               <Link
                 to="/food"
@@ -123,13 +136,24 @@ export default function AppNavbar() {
                 title="Profile & Settings"
               >
                 <div className="w-6 h-6 rounded-lg bg-black/30 flex items-center justify-center text-xs font-bold">
-                  {profile.name.charAt(0)}
+                  {displayName.charAt(0)}
                 </div>
                 <span className="text-xs font-semibold hidden md:inline max-w-[90px] truncate">
-                  {profile.name.split(' ')[0]}
+                  {displayName.split(' ')[0]}
                 </span>
                 <Settings className="w-3.5 h-3.5 opacity-60" />
               </NavLink>
+
+              {/* Sign Out Button (Desktop) */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-zinc-400 hover:text-red-400 hover:bg-[#181b24] rounded-xl border border-white/[0.08] text-xs font-semibold transition-colors"
+                title="Sign out of your account"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden xl:inline text-[11px]">Sign Out</span>
+              </button>
 
               {/* Mobile Drawer Toggle (Tablet/Mobile) */}
               <button
@@ -145,8 +169,8 @@ export default function AppNavbar() {
 
         {/* Mobile Dropdown Drawer */}
         {mobileDrawerOpen && (
-          <div className="lg:hidden bg-[#0d0f15]/98 border-b border-white/[0.08] px-4 py-4 shadow-2xl animate-fade-in">
-            <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="lg:hidden bg-[#0d0f15]/98 border-b border-white/[0.08] px-4 py-4 shadow-2xl animate-fade-in space-y-3">
+            <div className="grid grid-cols-2 gap-2">
               {primaryNavItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
@@ -171,6 +195,21 @@ export default function AppNavbar() {
             <div className="pt-3 border-t border-white/[0.08] flex justify-between items-center text-xs text-zinc-400 px-1">
               <span>Goal: <strong className="text-white uppercase">{profile.goal.replace('_', ' ')}</strong></span>
               <span className="text-[#ccff00] font-mono font-bold">{profile.calorieTarget} kcal/day</span>
+            </div>
+
+            {/* Mobile Sign Out Button */}
+            <div className="pt-2 border-t border-white/[0.08]">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  handleLogout();
+                }}
+                className="w-full py-2.5 px-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold flex items-center justify-center gap-2 transition-colors border border-red-500/20"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out ({displayName})</span>
+              </button>
             </div>
           </div>
         )}

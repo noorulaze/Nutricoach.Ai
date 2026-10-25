@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { 
   getProfile, getFoodLog, getWorkoutPlan, 
-  getProgressEntries 
+  getProgressEntries, getUserScopedKey, STORAGE_KEYS 
 } from '../utils/storage';
 import { generateCoachReply } from '../utils/aiCoachEngine';
 import { ChatMessage } from '../types';
@@ -15,6 +15,7 @@ export default function AICoachPage() {
   const todayFoods = getFoodLog();
   const workoutPlan = getWorkoutPlan();
   const progressEntries = getProgressEntries();
+  const chatStorageKey = getUserScopedKey(STORAGE_KEYS.CHAT_HISTORY);
 
   const isGeminiKeyConfigured = Boolean(profile.geminiApiKey && profile.geminiApiKey.trim().length > 10);
 
@@ -35,7 +36,7 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
 
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     try {
-      const saved = localStorage.getItem('nutricoach_chat_history_v1');
+      const saved = localStorage.getItem(chatStorageKey);
       if (saved) return JSON.parse(saved);
     } catch {}
     return [initialGreeting];
@@ -52,9 +53,9 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
   useEffect(() => {
     scrollToBottom();
     try {
-      localStorage.setItem('nutricoach_chat_history_v1', JSON.stringify(messages));
+      localStorage.setItem(chatStorageKey, JSON.stringify(messages));
     } catch {}
-  }, [messages, isTyping]);
+  }, [messages, isTyping, chatStorageKey]);
 
   const quickPrompts = [
     'Analyze my nutrition gaps today',
@@ -110,7 +111,7 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
 
   const handleClearHistory = () => {
     setMessages([initialGreeting]);
-    localStorage.removeItem('nutricoach_chat_history_v1');
+    localStorage.removeItem(chatStorageKey);
   };
 
   return (

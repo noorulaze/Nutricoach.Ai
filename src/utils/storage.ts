@@ -3,14 +3,20 @@ import {
   PresetFood, DietType, BudgetTier 
 } from '../types';
 import { FOOD_DATABASE, DEFAULT_WEEKLY_WORKOUT } from '../data/nutritionAndExerciseData';
+import { getActiveUserId } from './cryptoAuth';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   PROFILE: 'nutricoach_profile_v1',
   FOODS_PREFIX: 'nutricoach_foods_',
   WORKOUTS: 'nutricoach_workouts_v1',
   PROGRESS: 'nutricoach_progress_v1',
   CHAT_HISTORY: 'nutricoach_chat_history_v1',
   CUSTOM_FOODS: 'nutricoach_custom_foods_v1'
+};
+
+export const getUserScopedKey = (baseKey: string): string => {
+  const uid = getActiveUserId();
+  return `${baseKey}_${uid}`;
 };
 
 // --- DEFAULT PROFILE & TARGET CALCULATORS ---
@@ -123,10 +129,16 @@ export const getTodayKey = (): string => {
 // --- PROFILE STORAGE ---
 export const getProfile = (): UserProfile => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.PROFILE);
+    const key = getUserScopedKey(STORAGE_KEYS.PROFILE);
+    let raw = localStorage.getItem(key);
+    // If not found and demo user, migrate legacy data
+    if (!raw && getActiveUserId() === 'usr_demo_alex') {
+      raw = localStorage.getItem(STORAGE_KEYS.PROFILE);
+      if (raw) localStorage.setItem(key, raw);
+    }
     if (!raw) {
       const def = getDefaultProfile();
-      localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(def));
+      localStorage.setItem(key, JSON.stringify(def));
       return def;
     }
     return JSON.parse(raw);
@@ -137,7 +149,8 @@ export const getProfile = (): UserProfile => {
 
 export const saveProfile = (profile: UserProfile): void => {
   try {
-    localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
+    const key = getUserScopedKey(STORAGE_KEYS.PROFILE);
+    localStorage.setItem(key, JSON.stringify(profile));
   } catch (err) {
     console.error('Failed to save profile', err);
   }
@@ -188,12 +201,17 @@ export const getInitialDailyFoods = (): FoodItem[] => [
 
 export const getFoodLog = (date: string = getTodayKey()): FoodItem[] => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.FOODS_PREFIX + date);
+    const key = getUserScopedKey(STORAGE_KEYS.FOODS_PREFIX + date);
+    let raw = localStorage.getItem(key);
+    if (!raw && getActiveUserId() === 'usr_demo_alex') {
+      raw = localStorage.getItem(STORAGE_KEYS.FOODS_PREFIX + date);
+      if (raw) localStorage.setItem(key, raw);
+    }
     if (!raw) {
       // Seed today's initial realistic meals
       if (date === getTodayKey()) {
         const initial = getInitialDailyFoods();
-        localStorage.setItem(STORAGE_KEYS.FOODS_PREFIX + date, JSON.stringify(initial));
+        localStorage.setItem(key, JSON.stringify(initial));
         return initial;
       }
       return [];
@@ -206,7 +224,8 @@ export const getFoodLog = (date: string = getTodayKey()): FoodItem[] => {
 
 export const saveFoodLog = (date: string, foods: FoodItem[]): void => {
   try {
-    localStorage.setItem(STORAGE_KEYS.FOODS_PREFIX + date, JSON.stringify(foods));
+    const key = getUserScopedKey(STORAGE_KEYS.FOODS_PREFIX + date);
+    localStorage.setItem(key, JSON.stringify(foods));
   } catch (err) {
     console.error('Failed to save food log', err);
   }
@@ -239,9 +258,14 @@ export const updateFoodEntry = (date: string, updatedItem: FoodItem): void => {
 // --- WORKOUTS STORAGE ---
 export const getWorkoutPlan = (): DayWorkout[] => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.WORKOUTS);
+    const key = getUserScopedKey(STORAGE_KEYS.WORKOUTS);
+    let raw = localStorage.getItem(key);
+    if (!raw && getActiveUserId() === 'usr_demo_alex') {
+      raw = localStorage.getItem(STORAGE_KEYS.WORKOUTS);
+      if (raw) localStorage.setItem(key, raw);
+    }
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.WORKOUTS, JSON.stringify(DEFAULT_WEEKLY_WORKOUT));
+      localStorage.setItem(key, JSON.stringify(DEFAULT_WEEKLY_WORKOUT));
       return DEFAULT_WEEKLY_WORKOUT;
     }
     return JSON.parse(raw);
@@ -252,7 +276,8 @@ export const getWorkoutPlan = (): DayWorkout[] => {
 
 export const saveWorkoutPlan = (plan: DayWorkout[]): void => {
   try {
-    localStorage.setItem(STORAGE_KEYS.WORKOUTS, JSON.stringify(plan));
+    const key = getUserScopedKey(STORAGE_KEYS.WORKOUTS);
+    localStorage.setItem(key, JSON.stringify(plan));
   } catch (err) {
     console.error('Failed to save workout plan', err);
   }
@@ -338,10 +363,15 @@ export const getInitialProgress = (): ProgressEntry[] => [
 
 export const getProgressEntries = (): ProgressEntry[] => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.PROGRESS);
+    const key = getUserScopedKey(STORAGE_KEYS.PROGRESS);
+    let raw = localStorage.getItem(key);
+    if (!raw && getActiveUserId() === 'usr_demo_alex') {
+      raw = localStorage.getItem(STORAGE_KEYS.PROGRESS);
+      if (raw) localStorage.setItem(key, raw);
+    }
     if (!raw) {
       const initial = getInitialProgress();
-      localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(initial));
+      localStorage.setItem(key, JSON.stringify(initial));
       return initial;
     }
     return JSON.parse(raw);
@@ -352,7 +382,8 @@ export const getProgressEntries = (): ProgressEntry[] => {
 
 export const saveProgressEntries = (entries: ProgressEntry[]): void => {
   try {
-    localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(entries));
+    const key = getUserScopedKey(STORAGE_KEYS.PROGRESS);
+    localStorage.setItem(key, JSON.stringify(entries));
   } catch (err) {
     console.error('Failed to save progress', err);
   }

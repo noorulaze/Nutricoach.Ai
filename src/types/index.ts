@@ -137,3 +137,22 @@ export interface ChatMessage {
   contextSummary?: string;
   actionSuggestions?: { label: string; action: string }[];
 }
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  createdAt: string;
+  onboarded: boolean;
+}
+
+export interface StoredUserAccount {
+  id: string;
+  name: string;
+  email: string;
+  passwordHash: string;
+  salt: string;
+  createdAt: string;
+  onboarded: boolean;
+}
