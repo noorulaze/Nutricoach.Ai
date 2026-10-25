@@ -2,14 +2,28 @@
 
 @layer base {
   :root {
-    --color-neon: #ccff00;
-    --color-neon-hover: #b8e600;
-    --color-neon-glow: rgba(204, 255, 0, 0.25);
-    --bg-page: #090a0f;
-    --bg-surface: #11131a;
-    --bg-surface-elevated: #161922;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-highlight: rgba(204, 255, 0, 0.35);
+    /* Wellness Palette: Soft Greens, Light Whites, Warm Pastels */
+    --color-primary: #5ba83c;
+    --color-primary-hover: #4e9631;
+    --color-primary-light: #eef7eb;
+    --color-primary-dark: #274917;
+    
+    --bg-page: #f6f8f5;
+    --bg-card: #ffffff;
+    --bg-card-subtle: #f9fbf8;
+    
+    --border-subtle: #e8ede6;
+    --border-hover: #d2ddd0;
+    
+    --text-primary: #192418;
+    --text-secondary: #5e6f5e;
+    --text-muted: #8e9f8e;
+    
+    /* Pastels for Nutrition and Biometrics */
+    --pastel-coral: #fb7185;
+    --pastel-amber: #f59e0b;
+    --pastel-blue: #38bdf8;
+    --pastel-mint: #34d399;
   }
 
   * {
@@ -18,8 +32,8 @@
   }
 
   body {
-    background-color: #090a0f;
-    color: #e2e8f0;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     margin: 0;
@@ -39,66 +53,72 @@
     text-align: left;
   }
 
-  /* Custom sleek scrollbar */
+  /* Custom Clean Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #090a0f;
+    background: #f1f4ef;
   }
   ::-webkit-scrollbar-thumb {
-    background: #232734;
-    border-radius: 4px;
+    background: #cbd7c8;
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #ccff00;
+    background: #5ba83c;
   }
 }
 
 /* Typography styles */
 .font-heading {
-  font-family: 'Barlow Condensed', 'Oswald', sans-serif;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  letter-spacing: -0.02em;
 }
 
-/* Glass & Card styles */
+/* Modern Wellness Cards */
+.wellness-card {
+  background-color: #ffffff;
+  border: 1px solid #e8ede6;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 14px -2px rgba(25, 36, 24, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wellness-card:hover {
+  border-color: #d6e2d3;
+  box-shadow: 0 6px 20px -3px rgba(25, 36, 24, 0.06);
+}
+
+.wellness-card-elevated {
+  background-color: #ffffff;
+  border: 1px solid #dfe6dd;
+  border-radius: 1.75rem;
+  box-shadow: 0 8px 30px -4px rgba(25, 36, 24, 0.06);
+}
+
+/* Backward-compatible alias for existing .app-card classes */
 .app-card {
-  background: linear-gradient(180deg, rgba(22, 25, 34, 0.85) 0%, rgba(14, 16, 22, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(12px);
+  background-color: #ffffff;
+  border: 1px solid #e8ede6;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 14px -2px rgba(25, 36, 24, 0.04);
+  color: #192418;
 }
 
 .app-card-elevated {
-  background: linear-gradient(180deg, rgba(26, 30, 42, 0.9) 0%, rgba(17, 20, 28, 0.98) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(16px);
-}
-
-.app-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.neon-glow-sm {
-  box-shadow: 0 0 15px rgba(204, 255, 0, 0.2);
-}
-
-.neon-glow-md {
-  box-shadow: 0 0 25px rgba(204, 255, 0, 0.3);
-}
-
-.neon-border {
-  border-color: rgba(204, 255, 0, 0.4);
+  background-color: #ffffff;
+  border: 1px solid #dfe6dd;
+  border-radius: 1.75rem;
+  box-shadow: 0 8px 30px -4px rgba(25, 36, 24, 0.06);
+  color: #192418;
 }
 
 /* Animation utilities */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -107,14 +127,5 @@
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Hide scrollbars cleanly */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

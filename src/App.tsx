@@ -4,8 +4,10 @@ import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
-import AppNavbar from './components/AppNavbar';
+import AppSidebar from './components/AppSidebar';
+import AppHeader from './components/AppHeader';
 import AppFooter from './components/AppFooter';
+import MobileBottomNav from './components/MobileBottomNav';
 import WorkoutTimer from './components/WorkoutTimer';
 
 // NutriCoach AI Authentication & Onboarding Pages
@@ -29,19 +31,12 @@ function AppLayout() {
     location.pathname === '/signup' || 
     location.pathname === '/onboarding';
 
-  return (
-    <div className="min-h-screen bg-[#090a0f] text-zinc-100 flex flex-col font-sans selection:bg-[#ccff00] selection:text-black antialiased relative">
-      {/* Show App Navbar only on main application pages */}
-      {!isAuthOrOnboardingRoute && <AppNavbar />}
-
-      {/* App Routed Views */}
-      <main className="flex-1 w-full">
+  if (isAuthOrOnboardingRoute) {
+    return (
+      <main className="min-h-screen bg-[#f6f8f5] text-[#192418] flex flex-col font-sans antialiased">
         <Routes>
-          {/* Public Authentication Views */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-
-          {/* First-time Onboarding Flow (Protected, but permits un-onboarded state) */}
           <Route 
             path="/onboarding" 
             element={
@@ -50,75 +45,98 @@ function AppLayout() {
               </ProtectedRoute>
             } 
           />
-
-          {/* Protected Main Application Views (Unauthenticated visitors are redirected to /login) */}
-          <Route 
-            path="/" 
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/food" 
-            element={
-              <ProtectedRoute>
-                <FoodTrackerPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/workouts" 
-            element={
-              <ProtectedRoute>
-                <WorkoutPlannerPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/exercises" 
-            element={
-              <ProtectedRoute>
-                <ExerciseLibraryPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/coach" 
-            element={
-              <ProtectedRoute>
-                <AICoachPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/progress" 
-            element={
-              <ProtectedRoute>
-                <ProgressPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            } 
-          />
-
-          {/* Catch-all route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>
+    );
+  }
 
-      {/* Floating Personal Training Timer on app pages */}
-      {!isAuthOrOnboardingRoute && <WorkoutTimer />}
+  return (
+    <div className="min-h-screen bg-[#f6f8f5] text-[#192418] flex font-sans antialiased selection:bg-[#5ba83c]/20 selection:text-[#192418]">
+      {/* Desktop Left Sidebar */}
+      <div className="hidden lg:block shrink-0">
+        <AppSidebar />
+      </div>
 
-      {/* Footer on app pages */}
-      {!isAuthOrOnboardingRoute && <AppFooter />}
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header Bar */}
+        <AppHeader />
+
+        {/* App Routed Content */}
+        <main className="flex-1 w-full pb-16 lg:pb-6">
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/food" 
+              element={
+                <ProtectedRoute>
+                  <FoodTrackerPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/workouts" 
+              element={
+                <ProtectedRoute>
+                  <WorkoutPlannerPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/exercises" 
+              element={
+                <ProtectedRoute>
+                  <ExerciseLibraryPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/coach" 
+              element={
+                <ProtectedRoute>
+                  <AICoachPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/progress" 
+              element={
+                <ProtectedRoute>
+                  <ProgressPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* Catch-all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+
+        {/* Floating Personal Training Timer on app pages */}
+        <WorkoutTimer />
+
+        {/* Footer */}
+        <AppFooter />
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 }

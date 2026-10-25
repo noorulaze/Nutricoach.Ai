@@ -12,7 +12,7 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
 
   if (sorted.length < 2) {
     return (
-      <div className="h-44 flex items-center justify-center text-xs text-zinc-500 font-mono">
+      <div className="h-44 flex items-center justify-center text-xs text-[#7a8c79] font-medium">
         Log at least 2 check-ins to generate your personal weight trend curve.
       </div>
     );
@@ -48,8 +48,8 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-36 overflow-visible">
         <defs>
           <linearGradient id="weightAreaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ccff00" stopOpacity="0.22" />
-            <stop offset="100%" stopColor="#ccff00" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#5ba83c" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#5ba83c" stopOpacity="0.0" />
           </linearGradient>
         </defs>
 
@@ -59,7 +59,7 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
           y1={paddingY}
           x2={width - paddingX}
           y2={paddingY}
-          stroke="rgba(255,255,255,0.06)"
+          stroke="#f0f4ee"
           strokeDasharray="4 4"
         />
         <line
@@ -67,7 +67,7 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
           y1={height / 2}
           x2={width - paddingX}
           y2={height / 2}
-          stroke="rgba(255,255,255,0.06)"
+          stroke="#f0f4ee"
           strokeDasharray="4 4"
         />
         <line
@@ -75,7 +75,7 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
           y1={height - paddingY}
           x2={width - paddingX}
           y2={height - paddingY}
-          stroke="rgba(255,255,255,0.08)"
+          stroke="#e8ede6"
         />
 
         {/* Shaded Area under Curve */}
@@ -85,8 +85,8 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
         <path
           d={pathD}
           fill="none"
-          stroke="#ccff00"
-          strokeWidth="2.5"
+          stroke="#5ba83c"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -98,30 +98,23 @@ export default function WeightTrendChart({ entries, targetWeight }: WeightTrendC
               cx={pt.x}
               cy={pt.y}
               r="4.5"
-              fill="#090a0f"
-              stroke="#ccff00"
-              strokeWidth="2"
+              className="fill-white stroke-[#5ba83c] stroke-2 group-hover:r-6 transition-all"
             />
             {/* Value Label */}
             <text
               x={pt.x}
-              y={pt.y - 8}
+              y={pt.y - 10}
               textAnchor="middle"
-              fill="#ffffff"
-              fontSize="10"
-              fontFamily="monospace"
-              fontWeight="bold"
+              className="text-[10px] font-bold fill-[#192418]"
             >
               {pt.weightKg}kg
             </text>
-            {/* Date label */}
+            {/* Date Label */}
             <text
               x={pt.x}
               y={height - 5}
               textAnchor="middle"
-              fill="#71717a"
-              fontSize="9"
-              fontFamily="monospace"
+              className="text-[9px] font-medium fill-[#7a8c79]"
             >
               {pt.date.split('-').slice(1).join('/')}
             </text>

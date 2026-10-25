@@ -66,41 +66,41 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Header */}
-      <div className="pb-6 border-b border-[var(--border-subtle)]">
+      <div className="pb-4 border-b border-[#e8ede6]">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#ccff00] bg-[#ccff00]/10 px-2 py-0.5 rounded-full border border-[#ccff00]/20">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
             PERSONAL CONFIGURATION
           </span>
-          <span className="text-xs text-zinc-500 font-mono">BMR & Macronutrient Architecture</span>
+          <span className="text-xs text-[#7a8c79] font-medium">BMR & Macronutrient Architecture</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#192418] tracking-tight">
           Personal Profile & Fitness Parameters
         </h1>
-        <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
+        <p className="text-xs sm:text-sm text-[#5e6f5e] mt-0.5 font-medium">
           Configure your physiological parameters, training split, equipment access, dietary preferences, and optional AI model key.
         </p>
       </div>
 
       <form onSubmit={handleSaveProfile} className="space-y-6">
         {/* SECTION 1: BIOMETRIC BASELINE */}
-        <div className="app-card p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
-            <div className="w-8 h-8 rounded-xl bg-[#ccff00]/10 border border-[#ccff00]/20 flex items-center justify-center text-[#ccff00]">
+        <div className="bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#f0f4ee]">
+            <div className="w-8 h-8 rounded-xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c]">
               <User className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-base font-extrabold text-[#192418]">
                 Biometric Baseline
               </h2>
-              <span className="text-xs text-zinc-400 font-mono">Physical parameters for energy expenditure modeling</span>
+              <span className="text-xs text-[#7a8c79] font-medium">Physical parameters for energy expenditure modeling</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Your Name
               </label>
               <input
@@ -108,12 +108,12 @@ export default function ProfilePage() {
                 required
                 value={profile.name}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Age
               </label>
               <input
@@ -123,12 +123,12 @@ export default function ProfilePage() {
                 required
                 value={profile.age}
                 onChange={(e) => setProfile({ ...profile, age: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Height (CM)
               </label>
               <input
@@ -138,12 +138,12 @@ export default function ProfilePage() {
                 required
                 value={profile.heightCm}
                 onChange={(e) => setProfile({ ...profile, heightCm: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Current Weight (KG)
               </label>
               <input
@@ -154,20 +154,20 @@ export default function ProfilePage() {
                 required
                 value={profile.weightKg}
                 onChange={(e) => setProfile({ ...profile, weightKg: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Gender (for BMR)
               </label>
               <select
                 value={profile.gender}
                 onChange={(e) => setProfile({ ...profile, gender: e.target.value as 'male' | 'female' | 'other' })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -176,13 +176,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Daily Activity Level
               </label>
               <select
                 value={profile.activityLevel}
                 onChange={(e) => setProfile({ ...profile, activityLevel: e.target.value as ActivityLevel })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value="sedentary">Sedentary (Desk work, minimal exercise)</option>
                 <option value="light">Light Active (1-3 workout days/wk)</option>
@@ -193,13 +193,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Primary Goal
               </label>
               <select
                 value={profile.goal}
                 onChange={(e) => setProfile({ ...profile, goal: e.target.value as GoalType })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value="fat_loss">Fat Loss (-450 kcal deficit)</option>
                 <option value="muscle_gain">Lean Muscle Hypertrophy (+300 kcal surplus)</option>
@@ -212,28 +212,28 @@ export default function ProfilePage() {
         </div>
 
         {/* SECTION 2: TRAINING PARAMETERS & EQUIPMENT */}
-        <div className="app-card p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
-            <div className="w-8 h-8 rounded-xl bg-orange-400/10 border border-orange-400/20 flex items-center justify-center text-orange-400">
+        <div className="bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#f0f4ee]">
+            <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500">
               <Dumbbell className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-base font-extrabold text-[#192418]">
                 Training Parameters & Equipment
               </h2>
-              <span className="text-xs text-zinc-400 font-mono">Routine tailoring based on gear access</span>
+              <span className="text-xs text-[#7a8c79] font-medium">Routine tailoring based on gear access</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Available Equipment
               </label>
               <select
                 value={profile.availableEquipment}
                 onChange={(e) => setProfile({ ...profile, availableEquipment: e.target.value as EquipmentType })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value="full_gym">Full Gym (Barbells, Racks, Cables)</option>
                 <option value="dumbbells_only">Dumbbells Only (Home Free Weights)</option>
@@ -244,13 +244,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Training Days / Week
               </label>
               <select
                 value={profile.trainingDaysPerWeek}
                 onChange={(e) => setProfile({ ...profile, trainingDaysPerWeek: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value={2}>2 Days / Week</option>
                 <option value={3}>3 Days / Week (Full Body Split)</option>
@@ -261,13 +261,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Target Session Length
               </label>
               <select
                 value={profile.preferredWorkoutDurationMin}
                 onChange={(e) => setProfile({ ...profile, preferredWorkoutDurationMin: Number(e.target.value) })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value={30}>30 Minutes (High Density)</option>
                 <option value={45}>45 Minutes (Optimal Balance)</option>
@@ -279,28 +279,28 @@ export default function ProfilePage() {
         </div>
 
         {/* SECTION 3: DIETARY PREFERENCES & BUDGET */}
-        <div className="app-card p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
-            <div className="w-8 h-8 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400">
+        <div className="bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#f0f4ee]">
+            <div className="w-8 h-8 rounded-xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c]">
               <Utensils className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-base font-extrabold text-[#192418]">
                 Dietary Framework & Grocery Budget
               </h2>
-              <span className="text-xs text-zinc-400 font-mono">Nutritional style and budget constraints</span>
+              <span className="text-xs text-[#7a8c79] font-medium">Nutritional style and budget constraints</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Dietary Framework
               </label>
               <select
                 value={profile.dietType}
                 onChange={(e) => setProfile({ ...profile, dietType: e.target.value as DietType })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value="omnivore">Omnivore (Standard Complete)</option>
                 <option value="vegetarian">Vegetarian (Dairy & Eggs included)</option>
@@ -312,13 +312,13 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+              <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
                 Food Budget Tier
               </label>
               <select
                 value={profile.budget}
                 onChange={(e) => setProfile({ ...profile, budget: e.target.value as BudgetTier })}
-                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-2.5 text-xs text-white focus:border-[#ccff00] cursor-pointer"
+                className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-xl p-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] cursor-pointer"
               >
                 <option value="budget">Budget-Conscious (Eggs, oats, canned tuna, lentils, rice)</option>
                 <option value="moderate">Moderate (Chicken breast, Greek yogurt, seasonal produce)</option>
@@ -329,7 +329,7 @@ export default function ProfilePage() {
 
           {/* Allergens Checklist */}
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase mb-2">
+            <label className="block text-xs font-bold text-[#192418] uppercase mb-2">
               Allergies & Intolerances (Filtered out from recommendations)
             </label>
             <div className="flex flex-wrap gap-2">
@@ -340,10 +340,10 @@ export default function ProfilePage() {
                     key={allergy}
                     type="button"
                     onClick={() => handleAllergyToggle(allergy)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       isSelected
-                        ? 'bg-red-500/20 text-red-400 border border-red-500/40'
-                        : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white'
+                        ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                        : 'bg-[#f6f8f5] text-[#5e6f5e] border border-[#e8ede6] hover:text-[#192418]'
                     }`}
                   >
                     {isSelected ? '✕ ' : '+ '}
@@ -356,102 +356,102 @@ export default function ProfilePage() {
         </div>
 
         {/* SECTION 4: NUTRITIONAL TARGETS & RECALCULATE */}
-        <div className="app-card-elevated p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
+        <div className="bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#f0f4ee]">
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase text-[#ccff00] tracking-widest block">
+              <span className="text-[10px] font-bold uppercase text-[#3b7e23] tracking-wider block">
                 SCIENTIFIC FORMULAS (MIFFLIN-ST JEOR)
               </span>
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-lg font-extrabold text-[#192418]">
                 Daily Macro & Energy Architecture
               </h2>
             </div>
             <button
               type="button"
               onClick={handleRecalculateTargets}
-              className="bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] flex items-center gap-1.5 self-start sm:self-auto"
+              className="bg-[#eef7eb] hover:bg-[#e2f2dd] text-[#3b7e23] font-bold text-xs px-4 py-2 rounded-2xl transition-all border border-[#d6ebd0] flex items-center gap-1.5 self-start sm:self-auto"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Recalculate From Stats</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs font-mono">
-            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block font-semibold">DAILY CALORIES</span>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+            <div className="bg-[#f9fbf8] p-3.5 rounded-2xl border border-[#e8ede6]">
+              <span className="text-[#7a8c79] text-[10px] block font-bold">DAILY CALORIES</span>
               <input
                 type="number"
                 value={profile.calorieTarget}
                 onChange={(e) => setProfile({ ...profile, calorieTarget: Number(e.target.value) })}
-                className="w-full bg-transparent text-white font-bold text-lg focus:outline-none"
+                className="w-full bg-transparent text-[#192418] font-black text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">kcal/day</span>
+              <span className="text-[#8e9f8e] text-[10px]">kcal/day</span>
             </div>
 
-            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block font-semibold">PROTEIN</span>
+            <div className="bg-rose-50/40 p-3.5 rounded-2xl border border-rose-100">
+              <span className="text-rose-600 text-[10px] block font-bold">PROTEIN</span>
               <input
                 type="number"
                 value={profile.proteinTargetGrams}
                 onChange={(e) => setProfile({ ...profile, proteinTargetGrams: Number(e.target.value) })}
-                className="w-full bg-transparent text-[#ccff00] font-bold text-lg focus:outline-none"
+                className="w-full bg-transparent text-rose-600 font-black text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams (~2.0g/kg)</span>
+              <span className="text-[#8e9f8e] text-[10px]">grams (~2.0g/kg)</span>
             </div>
 
-            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block font-semibold">CARBOHYDRATES</span>
+            <div className="bg-amber-50/40 p-3.5 rounded-2xl border border-amber-100">
+              <span className="text-amber-600 text-[10px] block font-bold">CARBOHYDRATES</span>
               <input
                 type="number"
                 value={profile.carbsTargetGrams}
                 onChange={(e) => setProfile({ ...profile, carbsTargetGrams: Number(e.target.value) })}
-                className="w-full bg-transparent text-cyan-400 font-bold text-lg focus:outline-none"
+                className="w-full bg-transparent text-amber-600 font-black text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams</span>
+              <span className="text-[#8e9f8e] text-[10px]">grams</span>
             </div>
 
-            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block font-semibold">FATS</span>
+            <div className="bg-sky-50/40 p-3.5 rounded-2xl border border-sky-100">
+              <span className="text-sky-600 text-[10px] block font-bold">FATS</span>
               <input
                 type="number"
                 value={profile.fatTargetGrams}
                 onChange={(e) => setProfile({ ...profile, fatTargetGrams: Number(e.target.value) })}
-                className="w-full bg-transparent text-amber-400 font-bold text-lg focus:outline-none"
+                className="w-full bg-transparent text-sky-600 font-black text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams</span>
+              <span className="text-[#8e9f8e] text-[10px]">grams</span>
             </div>
 
-            <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-zinc-800 col-span-2 sm:col-span-1">
-              <span className="text-zinc-500 text-[10px] block font-semibold">DIETARY FIBER</span>
+            <div className="bg-emerald-50/40 p-3.5 rounded-2xl border border-emerald-100 col-span-2 sm:col-span-1">
+              <span className="text-emerald-600 text-[10px] block font-bold">DIETARY FIBER</span>
               <input
                 type="number"
                 value={profile.fiberTargetGrams}
                 onChange={(e) => setProfile({ ...profile, fiberTargetGrams: Number(e.target.value) })}
-                className="w-full bg-transparent text-emerald-400 font-bold text-lg focus:outline-none"
+                className="w-full bg-transparent text-emerald-600 font-black text-lg focus:outline-none"
               />
-              <span className="text-zinc-400 text-[10px]">grams</span>
+              <span className="text-[#8e9f8e] text-[10px]">grams</span>
             </div>
           </div>
         </div>
 
         {/* SECTION 5: OPTIONAL GOOGLE GEMINI API KEY */}
-        <div className="app-card p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-[var(--border-subtle)]">
-            <div className="w-8 h-8 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center text-purple-400">
+        <div className="bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 space-y-4 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#f0f4ee]">
+            <div className="w-8 h-8 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600">
               <Key className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-base font-extrabold text-[#192418]">
                 AI Engine Configuration (Optional)
               </h2>
-              <span className="text-xs text-zinc-400">
+              <span className="text-xs text-[#5e6f5e] font-medium">
                 NutriCoach operates out of the box with built-in sports intelligence. You may optionally connect your Gemini key.
               </span>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-[#192418] uppercase mb-1.5">
               Google Gemini API Key
             </label>
             <div className="flex items-center gap-2">
@@ -460,18 +460,18 @@ export default function ProfilePage() {
                 value={profile.geminiApiKey || ''}
                 onChange={(e) => setProfile({ ...profile, geminiApiKey: e.target.value })}
                 placeholder="AIzaSy..."
-                className="flex-1 bg-zinc-900 border border-zinc-700/80 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:border-[#ccff00] focus:outline-none"
+                className="flex-1 bg-[#f6f8f5] border border-[#e8ede6] rounded-xl px-4 py-2.5 text-xs text-[#192418] font-bold focus:border-[#5ba83c] focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setApiKeyVisible(!apiKeyVisible)}
-                className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 px-3.5 py-2.5 rounded-xl text-xs font-mono transition-colors"
+                className="bg-[#f6f8f5] hover:bg-[#edf2ea] border border-[#e8ede6] text-[#5e6f5e] px-3.5 py-2.5 rounded-xl text-xs font-bold transition-colors"
               >
                 {apiKeyVisible ? 'Hide' : 'Show'}
               </button>
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-zinc-400 mt-2 font-mono">
-              <ShieldCheck className="w-4 h-4 text-[#ccff00] shrink-0" />
+            <div className="flex items-center gap-2 text-[11px] text-[#7a8c79] mt-2 font-medium">
+              <ShieldCheck className="w-4 h-4 text-[#5ba83c] shrink-0" />
               <span>
                 Your API key is stored securely in your private browser localStorage and is never transmitted to any third-party server.
               </span>
@@ -480,10 +480,10 @@ export default function ProfilePage() {
         </div>
 
         {/* ACTIONS */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[var(--border-subtle)]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#e8ede6]">
           <button
             type="submit"
-            className="w-full sm:w-auto bg-[#ccff00] hover:bg-[#b8e600] text-black font-bold uppercase text-xs tracking-wider py-3.5 px-8 rounded-xl transition-all shadow-[0_0_20px_rgba(204,255,0,0.3)] flex items-center justify-center gap-2"
+            className="w-full sm:w-auto bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold uppercase text-xs tracking-wider py-3.5 px-8 rounded-2xl transition-all shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
           >
             <Save className="w-4 h-4" />
             <span>Save All Profile Settings</span>
@@ -492,7 +492,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={handleResetToDefault}
-            className="text-xs text-zinc-500 hover:text-zinc-300 underline font-mono"
+            className="text-xs text-[#7a8c79] hover:text-[#192418] underline font-medium"
           >
             Reset to Initial Baseline
           </button>
