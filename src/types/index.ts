@@ -56,7 +56,12 @@ export interface FoodItem {
   timestamp: string;
   category?: string;
   budgetFriendly?: boolean;
+  malayalamName?: string;
+  cuisine?: string;
+  verificationStatus?: 'verified' | 'estimated' | 'user_provided';
 }
+
+export * from '../data/foodDatabase/types';
 
 export interface PresetFood {
   name: string;

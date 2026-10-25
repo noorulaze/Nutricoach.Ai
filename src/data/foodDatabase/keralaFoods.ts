@@ -1,0 +1,2558 @@
+import { ComprehensiveFood } from './types';
+
+export const KERALA_FOODS: ComprehensiveFood[] = [
+  // ==========================================
+  // BREAKFAST & STAPLES
+  // ==========================================
+  {
+    id: 'ker_puttu_white',
+    name: 'Puttu (Steamed Rice & Coconut Cake)',
+    malayalamName: 'പുട്ട്',
+    manglishName: 'Puttu / Ari Puttu',
+    alternateNames: ['puttu', 'ari puttu', 'steamed rice cake', 'chiratta puttu', 'rice puttu', 'പുട്ട്', 'അരി പുട്ട്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Coarse rice flour layered with grated coconut and steam cooked in a cylindrical puttu maker. High complex carbs, low fat.',
+    per100g: {
+      calories: 185,
+      protein: 3.4,
+      carbs: 36.8,
+      fat: 2.8,
+      fiber: 2.1,
+      sugar: 0.8,
+      sodiumMg: 45
+    },
+    servings: [
+      { label: '1 medium piece / roll (100g)', grams: 100, isDefault: true },
+      { label: '2 medium pieces (200g)', grams: 200 },
+      { label: '1 Chiratta puttu (120g)', grams: 120 },
+      { label: '1/2 roll (50g)', grams: 50 },
+      { label: 'Custom (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 medium piece / roll (100g)', grams: 100, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN Indian Food Composition Tables (IFCT 2017)',
+    cookingMethod: 'Steamed'
+  },
+  {
+    id: 'ker_puttu_wheat',
+    name: 'Wheat Puttu (Godhambu Puttu)',
+    malayalamName: 'ഗോതമ്പ് പുട്ട്',
+    manglishName: 'Godhambu Puttu',
+    alternateNames: ['wheat puttu', 'godhambu puttu', 'gothambu puttu', 'whole wheat puttu', 'ഗോതമ്പ് പുട്ട്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Coarsely ground whole wheat flour steamed with fresh grated coconut. Richer in dietary fiber and slower digesting than white rice puttu.',
+    per100g: {
+      calories: 172,
+      protein: 4.8,
+      carbs: 32.5,
+      fat: 2.9,
+      fiber: 4.5,
+      sugar: 0.6,
+      sodiumMg: 40
+    },
+    servings: [
+      { label: '1 medium piece (100g)', grams: 100, isDefault: true },
+      { label: '2 medium pieces (200g)', grams: 200 },
+      { label: '1 Chiratta puttu (120g)', grams: 120 }
+    ],
+    defaultServing: { label: '1 medium piece (100g)', grams: 100, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed'
+  },
+  {
+    id: 'ker_puttu_ragi',
+    name: 'Ragi Puttu (Finger Millet Puttu)',
+    malayalamName: 'റാഗി പുട്ട്',
+    manglishName: 'Ragi Puttu / Panjpul Puttu',
+    alternateNames: ['ragi puttu', 'finger millet puttu', 'millet puttu', 'panjpul puttu', 'റാഗി പുട്ട്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Finger millet flour layered with coconut and steamed. Exceptional calcium and dietary fiber content with low glycemic response.',
+    per100g: {
+      calories: 164,
+      protein: 4.2,
+      carbs: 31.0,
+      fat: 2.6,
+      fiber: 5.8,
+      sugar: 0.4,
+      sodiumMg: 35
+    },
+    servings: [
+      { label: '1 piece (100g)', grams: 100, isDefault: true },
+      { label: '2 pieces (200g)', grams: 200 }
+    ],
+    defaultServing: { label: '1 piece (100g)', grams: 100, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed'
+  },
+  {
+    id: 'ker_kadala_curry',
+    name: 'Kerala Kadala Curry (Black Chickpeas Curry)',
+    malayalamName: 'കടലക്കറി',
+    manglishName: 'Kadala Curry / Varutharacha Kadala',
+    alternateNames: ['kadala curry', 'kerala kadala curry', 'black chickpea curry', 'varutharacha kadala', 'chana curry kerala', 'കടലക്കറി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'curries_gravies',
+    dietaryType: 'vegan',
+    description: 'Black chickpeas simmered in aromatic gravy of roasted grated coconut, shallots, coriander, and curry leaves. Rich in vegan protein and prebiotic fiber.',
+    per100g: {
+      calories: 148,
+      protein: 6.8,
+      carbs: 18.2,
+      fat: 5.6,
+      fiber: 5.2,
+      sugar: 1.2,
+      sodiumMg: 280
+    },
+    servings: [
+      { label: '1 small katori / bowl (150g)', grams: 150, isDefault: true },
+      { label: '1 medium bowl (200g)', grams: 200 },
+      { label: '1 deep serving ladle (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 small katori / bowl (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017 & Standard Recipe Formulation',
+    cookingMethod: 'Pressure Cooked & Simmered'
+  },
+  {
+    id: 'ker_appam',
+    name: 'Appam / Vellayappam (Fermented Rice Pancake)',
+    malayalamName: 'അപ്പം / വെള്ളയപ്പം',
+    manglishName: 'Appam / Palappam / Vellayappam',
+    alternateNames: ['appam', 'palappam', 'vellayappam', 'hopper', 'kerala appam', 'അപ്പം', 'പാലപ്പം', 'വെള്ളയപ്പം'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Bowl-shaped pancake with soft fluffy center and paper-thin crisp edges made from fermented rice batter and coconut milk.',
+    per100g: {
+      calories: 152,
+      protein: 2.2,
+      carbs: 28.4,
+      fat: 3.2,
+      fiber: 1.2,
+      sugar: 1.5,
+      sodiumMg: 50
+    },
+    servings: [
+      { label: '1 piece (60g)', grams: 60 },
+      { label: '2 pieces (120g)', grams: 120, isDefault: true },
+      { label: '3 pieces (180g)', grams: 180 },
+      { label: '4 pieces (240g)', grams: 240 }
+    ],
+    defaultServing: { label: '2 pieces (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Griddled in Appachatti'
+  },
+  {
+    id: 'ker_kallappam',
+    name: 'Kallappam (Thick Coconut Rice Griddle Cake)',
+    malayalamName: 'കള്ളപ്പം',
+    manglishName: 'Kallappam / Vellappam',
+    alternateNames: ['kallappam', 'vellappam', 'coconut pancake', 'toddy appam', 'കള്ളപ്പം'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Thick, spongy griddle cake flavored with cumin, shallots, garlic, and freshly grated coconut fermented traditionally.',
+    per100g: {
+      calories: 168,
+      protein: 2.8,
+      carbs: 30.5,
+      fat: 4.1,
+      fiber: 1.6,
+      sugar: 1.8,
+      sodiumMg: 55
+    },
+    servings: [
+      { label: '1 piece (75g)', grams: 75 },
+      { label: '2 pieces (150g)', grams: 150, isDefault: true }
+    ],
+    defaultServing: { label: '2 pieces (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Pan cooked'
+  },
+  {
+    id: 'ker_idiyappam',
+    name: 'Idiyappam (Noolputtu / Rice String Hoppers)',
+    malayalamName: 'ഇടിയപ്പം / നൂൽപ്പുട്ട്',
+    manglishName: 'Idiyappam / Noolappam / Noolputtu',
+    alternateNames: ['idiyappam', 'noolputtu', 'string hoppers', 'noolappam', 'rice noodles kerala', 'ഇടിയപ്പം', 'നൂൽപ്പുട്ട്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Delicate steamed rice noodles pressed into nests and topped with a pinch of fresh coconut. Extremely easy to digest and very low fat.',
+    per100g: {
+      calories: 135,
+      protein: 2.2,
+      carbs: 29.5,
+      fat: 0.8,
+      fiber: 1.0,
+      sugar: 0.3,
+      sodiumMg: 30
+    },
+    servings: [
+      { label: '1 nest (40g)', grams: 40 },
+      { label: '2 nests (80g)', grams: 80 },
+      { label: '3 nests (120g)', grams: 120, isDefault: true },
+      { label: '4 nests (160g)', grams: 160 }
+    ],
+    defaultServing: { label: '3 nests (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed'
+  },
+  {
+    id: 'ker_pathiri',
+    name: 'Malabar Pathiri (Nice Pathiri / Rice Flatbread)',
+    malayalamName: 'നൈസ് പത്തിരി',
+    manglishName: 'Nice Pathiri / Ari Pathiri',
+    alternateNames: ['pathiri', 'nice pathiri', 'ari pathiri', 'malabar pathiri', 'rice roti', 'പത്തിരി', 'നൈസ് പത്തിരി'],
+    cuisine: 'kerala',
+    region: 'Malabar',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Ultra-thin, soft unleavened flatbread made from fine roasted rice flour kneaded in boiling water and dry roasted without oil on a clay griddle.',
+    per100g: {
+      calories: 148,
+      protein: 2.6,
+      carbs: 32.4,
+      fat: 0.6,
+      fiber: 1.1,
+      sugar: 0.2,
+      sodiumMg: 40
+    },
+    servings: [
+      { label: '1 pathiri (30g)', grams: 30 },
+      { label: '2 pathiris (60g)', grams: 60 },
+      { label: '3 pathiris (90g)', grams: 90, isDefault: true },
+      { label: '4 pathiris (120g)', grams: 120 }
+    ],
+    defaultServing: { label: '3 pathiris (90g)', grams: 90, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Dry toasted'
+  },
+  {
+    id: 'ker_ney_pathiri',
+    name: 'Ney Pathiri (Fried Malabar Rice Flatbread)',
+    malayalamName: 'നെയ്പ്പത്തിരി / പൊരിച്ച പത്തിരി',
+    manglishName: 'Neypathiri / Poricha Pathiri',
+    alternateNames: ['ney pathiri', 'neypathal', 'poricha pathiri', 'fried pathiri', 'നെയ്പ്പത്തിരി', 'നെയ്പത്തൽ'],
+    cuisine: 'kerala',
+    region: 'Malabar',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Crispy golden fried rice bread flavored with shallots, fennel seeds, and grated coconut. Energy-dense festive Malabar specialty.',
+    per100g: {
+      calories: 310,
+      protein: 3.5,
+      carbs: 42.0,
+      fat: 14.2,
+      fiber: 2.2,
+      sugar: 0.5,
+      sodiumMg: 110
+    },
+    servings: [
+      { label: '1 piece (45g)', grams: 45 },
+      { label: '2 pieces (90g)', grams: 90, isDefault: true },
+      { label: '3 pieces (135g)', grams: 135 }
+    ],
+    defaultServing: { label: '2 pieces (90g)', grams: 90, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_thattu_dosa',
+    name: 'Kerala Thattu Dosa (Soft Spongy Dosa)',
+    malayalamName: 'തട്ടു ദോശ',
+    manglishName: 'Thattu Dosa / Set Dosa',
+    alternateNames: ['thattu dosa', 'kerala dosa', 'set dosa', 'street dosa', 'തട്ടു ദോശ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Thick, fluffy, soft fermented rice and black gram pancake cooked on a cast iron tawa with minimal oil, popular in Kerala thattukadas.',
+    per100g: {
+      calories: 165,
+      protein: 4.5,
+      carbs: 29.5,
+      fat: 3.2,
+      fiber: 1.8,
+      sugar: 0.5,
+      sodiumMg: 120
+    },
+    servings: [
+      { label: '1 dosa (65g)', grams: 65 },
+      { label: '2 thattu dosas (130g)', grams: 130, isDefault: true },
+      { label: '3 thattu dosas (195g)', grams: 195 }
+    ],
+    defaultServing: { label: '2 thattu dosas (130g)', grams: 130, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Tawa griddled'
+  },
+  {
+    id: 'ker_idli',
+    name: 'Kerala Steamed Idli',
+    malayalamName: 'ഇഡ്ഡലി',
+    manglishName: 'Idli',
+    alternateNames: ['idli', 'steamed idli', 'kerala idli', 'ഇഡ്ഡലി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Steamed savory fermented rice and de-husked black gram cake. Naturally probiotic, zero added oil, and highly bioavailable amino acids.',
+    per100g: {
+      calories: 132,
+      protein: 5.1,
+      carbs: 26.5,
+      fat: 0.6,
+      fiber: 1.9,
+      sugar: 0.4,
+      sodiumMg: 95
+    },
+    servings: [
+      { label: '1 idli (45g)', grams: 45 },
+      { label: '2 idlis (90g)', grams: 90 },
+      { label: '3 idlis (135g)', grams: 135, isDefault: true },
+      { label: '4 idlis (180g)', grams: 180 }
+    ],
+    defaultServing: { label: '3 idlis (135g)', grams: 135, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed'
+  },
+  {
+    id: 'ker_upma',
+    name: 'Kerala Rava Uppumavu (Semolina Upma)',
+    malayalamName: 'റവ ഉപ്പുമാവ്',
+    manglishName: 'Rava Upma / Uppumavu',
+    alternateNames: ['upma', 'uppumavu', 'rava upma', 'semolina upma', 'ഉപ്പുമാവ്', 'റവ ഉപ്പുമാവ്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Roasted semolina tempered with mustard seeds, urad dal, ginger, green chilies, curry leaves, and finished with fresh grated coconut.',
+    per100g: {
+      calories: 178,
+      protein: 3.8,
+      carbs: 28.5,
+      fat: 5.4,
+      fiber: 2.2,
+      sugar: 0.8,
+      sodiumMg: 190
+    },
+    servings: [
+      { label: '1 cup / bowl (150g)', grams: 150, isDefault: true },
+      { label: '1.5 cups (225g)', grams: 225 }
+    ],
+    defaultServing: { label: '1 cup / bowl (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Sauteed & Simmered'
+  },
+  {
+    id: 'ker_aval_nanachathu',
+    name: 'Aval Nanachathu (Sweet Flattened Rice with Coconut)',
+    malayalamName: 'അവൽ നനച്ചത്',
+    manglishName: 'Aval Nanachathu / Poha Snack',
+    alternateNames: ['aval nanachathu', 'aval kuzhachathu', 'sweet poha', 'beaten rice coconut', 'അവൽ നനച്ചത്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'breakfast',
+    dietaryType: 'vegan',
+    description: 'Red or white flattened rice soaked with fresh juicy coconut gratings, jaggery syrup, crushed cardamom, and a pinch of cumin.',
+    per100g: {
+      calories: 235,
+      protein: 3.2,
+      carbs: 46.5,
+      fat: 4.8,
+      fiber: 3.4,
+      sugar: 18.0,
+      sodiumMg: 35
+    },
+    servings: [
+      { label: '1 medium cup (120g)', grams: 120, isDefault: true },
+      { label: '1/2 cup (60g)', grams: 60 }
+    ],
+    defaultServing: { label: '1 medium cup (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'No cook / Soaked'
+  },
+  {
+    id: 'ker_kanji',
+    name: 'Kerala Kanji (Boiled Matta Rice Gruel / Porridge)',
+    malayalamName: 'കഞ്ഞി',
+    manglishName: 'Kanji / Kerala Rice Gruel',
+    alternateNames: ['kanji', 'rice gruel', 'rice congee', 'matta kanji', 'chittari kanji', 'കഞ്ഞി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegan',
+    description: 'Wholesome Kerala red matta rice slow-boiled in generous water until creamy and soothing. Gentle on the stomach and rehydrating.',
+    per100g: {
+      calories: 68,
+      protein: 1.4,
+      carbs: 14.8,
+      fat: 0.2,
+      fiber: 0.9,
+      sugar: 0.1,
+      sodiumMg: 20
+    },
+    servings: [
+      { label: '1 deep bowl (300g)', grams: 300, isDefault: true },
+      { label: '1 large bowl (400g)', grams: 400 },
+      { label: '1 small bowl (200g)', grams: 200 }
+    ],
+    defaultServing: { label: '1 deep bowl (300g)', grams: 300, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled'
+  },
+  {
+    id: 'ker_kanji_payar_combo',
+    name: 'Kanji with Cherupayar & Thenga Chammanthi Combo',
+    malayalamName: 'കഞ്ഞിയും പയറും ചമ്മന്തിയും',
+    manglishName: 'Kanji Payar Chammanthi',
+    alternateNames: ['kanji payar', 'kanji chammanthi payar combo', 'kerala kanji meal', 'കഞ്ഞിയും പയറും ചമ്മന്തിയും'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegan',
+    description: 'Traditional comforting dinner plate: 300g boiling matta kanji paired with 80g seasoned green gram stir-fry and 25g coconut-shallot chammanthi.',
+    per100g: {
+      calories: 96,
+      protein: 3.2,
+      carbs: 16.5,
+      fat: 2.1,
+      fiber: 2.2,
+      sugar: 0.6,
+      sodiumMg: 110
+    },
+    servings: [
+      { label: '1 complete meal portion (405g)', grams: 405, isDefault: true }
+    ],
+    defaultServing: { label: '1 complete meal portion (405g)', grams: 405, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'Standard Kerala Culinary Formulation',
+    cookingMethod: 'Boiled & Tempered'
+  },
+  {
+    id: 'ker_kappa_vevichathu',
+    name: 'Steamed Tapioca / Cassava (Chenda Kappa / Vevichathu)',
+    malayalamName: 'വേവിച്ച കപ്പ',
+    manglishName: 'Chenda Kappa / Vevichatha Kappa',
+    alternateNames: ['kappa', 'steamed tapioca', 'chenda kappa', 'boiled tapioca', 'boiled cassava', 'വേവിച്ച കപ്പ', 'കപ്പ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegan',
+    description: 'Fresh cassava roots cut into chunks and boiled with turmeric and salt until tender. Starchy, filling complex carbohydrate.',
+    per100g: {
+      calories: 142,
+      protein: 1.1,
+      carbs: 34.0,
+      fat: 0.2,
+      fiber: 2.4,
+      sugar: 1.4,
+      sodiumMg: 80
+    },
+    servings: [
+      { label: '1 cup chunks (150g)', grams: 150 },
+      { label: '1 standard plate (220g)', grams: 220, isDefault: true },
+      { label: '1 large plate (300g)', grams: 300 }
+    ],
+    defaultServing: { label: '1 standard plate (220g)', grams: 220, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled'
+  },
+  {
+    id: 'ker_kappa_puzhukku',
+    name: 'Kerala Kappa Puzhukku (Mashed Tapioca with Coconut Tempering)',
+    malayalamName: 'കപ്പ പുഴുക്ക്',
+    manglishName: 'Kappa Puzhukku / Kappa Thalichathu',
+    alternateNames: ['kappa puzhukku', 'tapioca puzhukku', 'mashed tapioca coconut', 'കപ്പ പുഴുക്ക്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegan',
+    description: 'Boiled mashed tapioca coarsely crushed with a paste of coconut, garlic, green chilies, cumin, and tempered with mustard and curry leaves in coconut oil.',
+    per100g: {
+      calories: 168,
+      protein: 1.6,
+      carbs: 33.2,
+      fat: 3.5,
+      fiber: 2.8,
+      sugar: 1.2,
+      sodiumMg: 140
+    },
+    servings: [
+      { label: '1 medium bowl (200g)', grams: 200, isDefault: true },
+      { label: '1 large plate (300g)', grams: 300 }
+    ],
+    defaultServing: { label: '1 medium bowl (200g)', grams: 200, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Mashed & Tempered'
+  },
+  {
+    id: 'ker_matta_rice',
+    name: 'Kerala Matta Rice (Cooked Red Parboiled Rice)',
+    malayalamName: 'കേരള മട്ടയരി ചോറ്',
+    manglishName: 'Matta Choru / Palakkadan Matta',
+    alternateNames: ['matta rice', 'kerala matta', 'kerala red rice', 'boiled red rice', 'palakkadan matta', 'ചോറ്', 'മട്ടച്ചോറ്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegan',
+    description: 'Nutrient-rich indigenous Kerala parboiled red rice containing intact pericarp and bran layers. High in magnesium, zinc, and sustained-release energy.',
+    per100g: {
+      calories: 124,
+      protein: 2.8,
+      carbs: 26.8,
+      fat: 0.5,
+      fiber: 2.2,
+      sugar: 0.2,
+      sodiumMg: 8
+    },
+    servings: [
+      { label: '1 small cup (100g cooked)', grams: 100 },
+      { label: '1 medium bowl (180g cooked)', grams: 180, isDefault: true },
+      { label: '1 full meal plate (250g cooked)', grams: 250 },
+      { label: '1 large plate (350g cooked)', grams: 350 }
+    ],
+    defaultServing: { label: '1 medium bowl (180g cooked)', grams: 180, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Drained Boiled Rice'
+  },
+
+  // ==========================================
+  // CURRIES, SEAFOOD & MEATS
+  // ==========================================
+  {
+    id: 'ker_meen_mulakittathu',
+    name: 'Kerala Fish Curry (Kudampuli Meen Mulakittathu / Red Chili Fish Curry)',
+    malayalamName: 'മീൻ മുളകിട്ടത് (കുടംപുളി ഇട്ട മീൻകറി)',
+    manglishName: 'Meen Mulakittathu / Kottayam Fish Curry',
+    alternateNames: ['meen mulakittathu', 'kerala fish curry without coconut', 'kottayam meen curry', 'kudampuli meen curry', 'red fish curry kerala', 'മീൻ മുളകിട്ടത്', 'മീൻ കറി'],
+    cuisine: 'kerala',
+    region: 'Travancore / Kottayam',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Tangy, fiery red homestyle fish curry made in an earthenware meen chatti with Malabar tamarind (kudampuli), Kashmiri chili, fenugreek, garlic, and zero coconut milk. Exceptionally high lean protein and omega-3.',
+    per100g: {
+      calories: 118,
+      protein: 15.6,
+      carbs: 2.8,
+      fat: 4.8,
+      fiber: 0.8,
+      sugar: 0.4,
+      sodiumMg: 310
+    },
+    servings: [
+      { label: '1 piece with gravy (120g)', grams: 120, isDefault: true },
+      { label: '2 pieces with gravy (200g)', grams: 200 },
+      { label: 'Gravy only (80g)', grams: 80 }
+    ],
+    defaultServing: { label: '1 piece with gravy (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Fish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017 & Culinary Standard',
+    cookingMethod: 'Claypot Simmered'
+  },
+  {
+    id: 'ker_fish_molee',
+    name: 'Kerala Fish Molee / Moilee (Fish in Coconut Milk Stew)',
+    malayalamName: 'മീൻ മോളി',
+    manglishName: 'Meen Moilee / Fish Molee',
+    alternateNames: ['fish molee', 'meen moilee', 'meen molee', 'fish coconut stew', 'മീൻ മോളി'],
+    cuisine: 'kerala',
+    region: 'Central Kerala',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Mild, fragrant seafood stew with seared seer fish or kingfish simmered gently in coconut milk with green chilies, sliced ginger, and tomato wedges.',
+    per100g: {
+      calories: 155,
+      protein: 13.8,
+      carbs: 3.5,
+      fat: 9.8,
+      fiber: 0.6,
+      sugar: 1.2,
+      sodiumMg: 260
+    },
+    servings: [
+      { label: '1 slice with gravy (150g)', grams: 150, isDefault: true },
+      { label: '2 slices with gravy (250g)', grams: 250 }
+    ],
+    defaultServing: { label: '1 slice with gravy (150g)', grams: 150, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Fish', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered in coconut milk'
+  },
+  {
+    id: 'ker_mathi_curry',
+    name: 'Kerala Sardine Curry (Mathi / Chaala Curry with Ground Coconut)',
+    malayalamName: 'മത്തി കറി (തേങ്ങ അരച്ച മത്തിക്കറി)',
+    manglishName: 'Mathi Curry / Chaala Curry',
+    alternateNames: ['mathi curry', 'chaala curry', 'sardine curry kerala', 'thenga arachha mathi curry', 'മത്തി കറി', 'ചാളക്കറി'],
+    cuisine: 'kerala',
+    region: 'Kerala Coastal',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Fresh coastal sardines cooked with ground fresh coconut, raw mango or kudampuli, turmeric, and shallots. Dense in EPA/DHA omega-3 fatty acids, calcium, and vitamin D.',
+    per100g: {
+      calories: 142,
+      protein: 14.5,
+      carbs: 2.2,
+      fat: 8.5,
+      fiber: 0.8,
+      sugar: 0.3,
+      sodiumMg: 290
+    },
+    servings: [
+      { label: '2 small sardines with gravy (120g)', grams: 120 },
+      { label: '3-4 sardines with gravy (180g)', grams: 180, isDefault: true }
+    ],
+    defaultServing: { label: '3-4 sardines with gravy (180g)', grams: 180, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Fish', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered'
+  },
+  {
+    id: 'ker_mathi_fry',
+    name: 'Kerala Sardine Fry (Mathi / Chaala Porichathu)',
+    malayalamName: 'മത്തി പൊരിച്ചത്',
+    manglishName: 'Mathi Porichathu / Mathi Fry',
+    alternateNames: ['mathi fry', 'mathi porichathu', 'sardine fry kerala', 'chaala fry', 'മത്തി പൊരിച്ചത്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Whole sardines marinated in chili powder, turmeric, pepper, lemon juice, and shallow-fried crisp in coconut oil with fresh curry leaves.',
+    per100g: {
+      calories: 215,
+      protein: 21.0,
+      carbs: 2.0,
+      fat: 13.8,
+      fiber: 0.4,
+      sugar: 0.1,
+      sodiumMg: 380
+    },
+    servings: [
+      { label: '2 fried sardines (70g)', grams: 70 },
+      { label: '3 fried sardines (105g)', grams: 105, isDefault: true },
+      { label: '4 fried sardines (140g)', grams: 140 }
+    ],
+    defaultServing: { label: '3 fried sardines (105g)', grams: 105, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Fish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Shallow Fried in Coconut Oil'
+  },
+  {
+    id: 'ker_ayala_curry',
+    name: 'Kerala Mackerel Curry (Ayala Mulakittathu)',
+    malayalamName: 'അയല കറി',
+    manglishName: 'Ayala Curry / Ayala Mulakittathu',
+    alternateNames: ['ayala curry', 'mackerel curry kerala', 'ayala mulakittathu', 'അയല കറി'],
+    cuisine: 'kerala',
+    region: 'Kerala Coastal',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Indian mackerel simmered with Malabar tamarind (kudampuli), red chili paste, ginger, garlic, and fresh curry leaves. Potent omega-3 profile.',
+    per100g: {
+      calories: 136,
+      protein: 15.2,
+      carbs: 2.4,
+      fat: 7.2,
+      fiber: 0.6,
+      sugar: 0.3,
+      sodiumMg: 295
+    },
+    servings: [
+      { label: '1 medium mackerel piece with gravy (130g)', grams: 130, isDefault: true },
+      { label: '2 mackerel pieces with gravy (220g)', grams: 220 }
+    ],
+    defaultServing: { label: '1 medium mackerel piece with gravy (130g)', grams: 130, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Fish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Claypot Simmered'
+  },
+  {
+    id: 'ker_ayala_fry',
+    name: 'Kerala Mackerel Fry (Ayala Porichathu)',
+    malayalamName: 'അയല പൊരിച്ചത്',
+    manglishName: 'Ayala Porichathu / Ayala Fry',
+    alternateNames: ['ayala fry', 'ayala porichathu', 'mackerel fry kerala', 'അയല പൊരിച്ചത്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Whole mackerel sliced with diagonal slits, coated in chili-peppercorn marinade, and shallow-fried in hot coconut oil until crisp.',
+    per100g: {
+      calories: 228,
+      protein: 20.8,
+      carbs: 1.8,
+      fat: 15.5,
+      fiber: 0.3,
+      sugar: 0.1,
+      sodiumMg: 390
+    },
+    servings: [
+      { label: '1 piece (110g)', grams: 110, isDefault: true },
+      { label: '2 pieces (220g)', grams: 220 }
+    ],
+    defaultServing: { label: '1 piece (110g)', grams: 110, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Fish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Shallow Fried in Coconut Oil'
+  },
+  {
+    id: 'ker_chemmeen_roast',
+    name: 'Kerala Prawn Roast (Chemmeen Roast)',
+    malayalamName: 'ചെമ്മീൻ റോസ്റ്റ്',
+    manglishName: 'Chemmeen Roast / Prawn Roast',
+    alternateNames: ['chemmeen roast', 'prawn roast', 'kerala prawn roast', 'shrimp roast', 'ചെമ്മീൻ റോസ്റ്റ്'],
+    cuisine: 'kerala',
+    region: 'Kerala Coastal',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Fresh prawns pan-roasted with lots of shallots (cheriya ulli), garlic, ginger, crushed black pepper, fennel, and coconut bites (thenga kothu).',
+    per100g: {
+      calories: 158,
+      protein: 19.4,
+      carbs: 4.8,
+      fat: 6.8,
+      fiber: 1.2,
+      sugar: 1.0,
+      sodiumMg: 340
+    },
+    servings: [
+      { label: '1 serving (120g)', grams: 120, isDefault: true },
+      { label: '1 generous serving (180g)', grams: 180 }
+    ],
+    defaultServing: { label: '1 serving (120g)', grams: 120, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Shellfish', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Pan Roasted'
+  },
+  {
+    id: 'ker_chemmeen_manga_curry',
+    name: 'Kerala Prawn Mango Curry (Chemmeen Manga Curry)',
+    malayalamName: 'ചെമ്മീൻ മാങ്ങാ കറി',
+    manglishName: 'Chemmeen Manga Curry',
+    alternateNames: ['chemmeen manga curry', 'prawn raw mango curry', 'shrimp mango curry kerala', 'ചെമ്മീൻ മാങ്ങാ കറി'],
+    cuisine: 'kerala',
+    region: 'Alappuzha',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Tender prawns cooked with sour raw green mango slices and mild coconut milk gravy. Signature Alappuzha coastal classic.',
+    per100g: {
+      calories: 138,
+      protein: 13.5,
+      carbs: 5.2,
+      fat: 7.2,
+      fiber: 1.1,
+      sugar: 1.8,
+      sodiumMg: 290
+    },
+    servings: [
+      { label: '1 medium bowl (150g)', grams: 150, isDefault: true },
+      { label: '1 large bowl (220g)', grams: 220 }
+    ],
+    defaultServing: { label: '1 medium bowl (150g)', grams: 150, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Shellfish', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered in coconut milk'
+  },
+  {
+    id: 'ker_koonthal_roast',
+    name: 'Kerala Squid Roast (Koonthal / Kanava Roast)',
+    malayalamName: 'കൂന്തൽ റോസ്റ്റ്',
+    manglishName: 'Koonthal Roast / Kanava Roast',
+    alternateNames: ['koonthal roast', 'kanava roast', 'squid roast', 'calamari roast kerala', 'കൂന്തൽ റോസ്റ്റ്', 'കണവ റോസ്റ്റ്'],
+    cuisine: 'kerala',
+    region: 'Kerala Coastal',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Squid rings sautéed with sliced shallots, black pepper, fennel seeds, and green chilies. High in lean protein, low in fat.',
+    per100g: {
+      calories: 128,
+      protein: 17.5,
+      carbs: 4.2,
+      fat: 4.5,
+      fiber: 0.9,
+      sugar: 0.8,
+      sodiumMg: 310
+    },
+    servings: [
+      { label: '1 serving (120g)', grams: 120, isDefault: true },
+      { label: '1 large plate (180g)', grams: 180 }
+    ],
+    defaultServing: { label: '1 serving (120g)', grams: 120, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Shellfish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Pan Roasted'
+  },
+  {
+    id: 'ker_kallummakkaya_fry',
+    name: 'Malabar Mussel Fry (Kallummakkaya Nirachathu / Fry)',
+    malayalamName: 'കല്ലുമ്മക്കായ ഫ്രൈ',
+    manglishName: 'Kallummakkaya Fry / Kadukka Porichathu',
+    alternateNames: ['kallummakkaya fry', 'kadukka fry', 'mussel fry', 'malabar mussel fry', 'കല്ലുമ്മക്കായ ഫ്രൈ'],
+    cuisine: 'kerala',
+    region: 'Malabar / Kozhikode',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Fresh sea mussels sauteed and roasted with fiery red chili, cracked pepper, garlic, and coconut oil. Very high iron and zinc content.',
+    per100g: {
+      calories: 165,
+      protein: 18.2,
+      carbs: 5.6,
+      fat: 7.6,
+      fiber: 0.8,
+      sugar: 0.6,
+      sodiumMg: 380
+    },
+    servings: [
+      { label: '1 plate (100g)', grams: 100, isDefault: true },
+      { label: '1 double plate (160g)', grams: 160 }
+    ],
+    defaultServing: { label: '1 plate (100g)', grams: 100, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Shellfish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Shallow Pan Fried'
+  },
+  {
+    id: 'ker_kakka_irachi',
+    name: 'Kerala Clam Meat Roast (Kakka Irachi Ularthiyathu)',
+    malayalamName: 'കക്കാ ഇറച്ചി ഉലർത്തിയത്',
+    manglishName: 'Kakka Irachi Roast / Clam Fry',
+    alternateNames: ['kakka irachi', 'kakka fry', 'clam meat fry', 'kerala clam roast', 'കക്കാ ഇറച്ചി'],
+    cuisine: 'kerala',
+    region: 'Vembanad Lake / Alappuzha',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Backwater clams slow-roasted with crushed shallots, black pepper, turmeric, and crisp coconut slices. Packed with lean protein and micronutrients.',
+    per100g: {
+      calories: 144,
+      protein: 18.8,
+      carbs: 3.5,
+      fat: 5.8,
+      fiber: 0.6,
+      sugar: 0.2,
+      sodiumMg: 350
+    },
+    servings: [
+      { label: '1 serving (110g)', grams: 110, isDefault: true },
+      { label: '1 large bowl (160g)', grams: 160 }
+    ],
+    defaultServing: { label: '1 serving (110g)', grams: 110, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Shellfish', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Slow pan roasted'
+  },
+  {
+    id: 'ker_karimeen_pollichathu',
+    name: 'Karimeen Pollichathu (Pearl Spot Fish in Banana Leaf)',
+    malayalamName: 'കരിമീൻ പൊള്ളിച്ചത്',
+    manglishName: 'Karimeen Pollichathu',
+    alternateNames: ['karimeen pollichathu', 'pearl spot banana leaf', 'pollichathu', 'കരിമീൻ പൊള്ളിച്ചത്'],
+    cuisine: 'kerala',
+    region: 'Kumarakom / Alappuzha',
+    category: 'seafood',
+    dietaryType: 'pescatarian',
+    description: 'Indigenous fresh pearl spot fish smothered in spiced shallot-tomato-ginger masala, wrapped neatly in wilted banana leaf and pan-grilled.',
+    per100g: {
+      calories: 168,
+      protein: 17.6,
+      carbs: 4.8,
+      fat: 8.9,
+      fiber: 1.1,
+      sugar: 1.2,
+      sodiumMg: 320
+    },
+    servings: [
+      { label: '1 whole fish (approx 160g edible portion)', grams: 160, isDefault: true }
+    ],
+    defaultServing: { label: '1 whole fish (approx 160g edible portion)', grams: 160, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Fish'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Banana Leaf Wrapped & Pan Roasted'
+  },
+  {
+    id: 'ker_nadan_chicken_curry',
+    name: 'Kerala Nadan Chicken Curry (Homestyle Country Chicken Curry)',
+    malayalamName: 'നാടൻ കോഴിക്കറി',
+    manglishName: 'Nadan Kozhi Curry / Chicken Curry',
+    alternateNames: ['nadan chicken curry', 'kozhi curry', 'kerala chicken curry', 'varutharacha chicken curry', 'നാടൻ കോഴിക്കറി', 'കോഴിക്കറി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Tender bone-in chicken slow-cooked with fresh ginger, garlic, coriander, garam masala, and coconut milk or roasted coconut paste.',
+    per100g: {
+      calories: 175,
+      protein: 17.2,
+      carbs: 3.5,
+      fat: 10.2,
+      fiber: 0.9,
+      sugar: 0.8,
+      sodiumMg: 320
+    },
+    servings: [
+      { label: '1 bowl with 2 chicken pieces (160g)', grams: 160, isDefault: true },
+      { label: '1 large bowl with 3 chicken pieces (240g)', grams: 240 },
+      { label: 'Gravy only (75g)', grams: 75 }
+    ],
+    defaultServing: { label: '1 bowl with 2 chicken pieces (160g)', grams: 160, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered'
+  },
+  {
+    id: 'ker_chicken_stew',
+    name: 'Kerala Chicken Stew (Nadan Chicken Ishtu)',
+    malayalamName: 'ചിക്കൻ സ്റ്റൂ',
+    manglishName: 'Chicken Stew / Kozhi Ishtu',
+    alternateNames: ['chicken stew', 'kozhi stew', 'kerala chicken ishtu', 'coconut milk chicken stew', 'ചിക്കൻ സ്റ്റൂ'],
+    cuisine: 'kerala',
+    region: 'Central Kerala',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Mild, fragrant stew of chicken, potatoes, carrots, and onions simmered gently in coconut milk seasoned with whole cinnamon, cloves, and cardamom. Classic companion for appam.',
+    per100g: {
+      calories: 162,
+      protein: 14.8,
+      carbs: 5.4,
+      fat: 9.2,
+      fiber: 1.0,
+      sugar: 1.4,
+      sodiumMg: 280
+    },
+    servings: [
+      { label: '1 medium bowl (180g)', grams: 180, isDefault: true },
+      { label: '1 large bowl (250g)', grams: 250 }
+    ],
+    defaultServing: { label: '1 medium bowl (180g)', grams: 180, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered in coconut milk'
+  },
+  {
+    id: 'ker_beef_roast',
+    name: 'Kerala Beef Roast / Ularthiyathu',
+    malayalamName: 'നാടൻ ബീഫ് റോസ്റ്റ് / ഉലർത്തിയത്',
+    manglishName: 'Beef Roast / Beef Ularthiyathu',
+    alternateNames: ['beef roast', 'beef ularthiyathu', 'kerala beef fry', 'kerala beef roast', 'നാടൻ ബീഫ് റോസ്റ്റ്', 'ബീഫ് ഉലർത്തിയത്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Pressure cooked beef cubes pan-roasted slowly until deep dark brown with cracked black pepper, crushed shallots, curry leaves, and browned coconut strips (thenga kothu).',
+    per100g: {
+      calories: 232,
+      protein: 23.5,
+      carbs: 3.8,
+      fat: 13.6,
+      fiber: 1.1,
+      sugar: 0.5,
+      sodiumMg: 360
+    },
+    servings: [
+      { label: '1 standard serving (120g)', grams: 120, isDefault: true },
+      { label: '1 large serving (180g)', grams: 180 },
+      { label: '1 small portion (80g)', grams: 80 }
+    ],
+    defaultServing: { label: '1 standard serving (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017 & Culinary Standard',
+    cookingMethod: 'Pressure Cooked & Slow Pan Roasted'
+  },
+  {
+    id: 'ker_kerala_beef_fry',
+    name: 'Kerala Beef Fry (BDF / Beef Dry Fry)',
+    malayalamName: 'കേരള ബീഫ് ഡ്രൈ ഫ്രൈ',
+    manglishName: 'BDF / Beef Dry Fry',
+    alternateNames: ['bdf', 'beef dry fry', 'kerala bdf', 'crispy beef fry', 'ബീഫ് ഡ്രൈ ഫ്രൈ'],
+    cuisine: 'kerala',
+    region: 'Kerala Thattukada',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Marinated beef strips deep or shallow-fried until crisp on edges, tossed with fried green chilies, onions, and curry leaves. Higher fat content than home-style roast.',
+    per100g: {
+      calories: 275,
+      protein: 24.2,
+      carbs: 4.5,
+      fat: 17.8,
+      fiber: 0.8,
+      sugar: 0.4,
+      sodiumMg: 420
+    },
+    servings: [
+      { label: '1 plate (120g)', grams: 120, isDefault: true },
+      { label: '1 large thattu plate (180g)', grams: 180 }
+    ],
+    defaultServing: { label: '1 plate (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017 & Restaurant Analysis',
+    cookingMethod: 'Deep Fried / Flash Fried'
+  },
+  {
+    id: 'ker_egg_roast',
+    name: 'Kerala Egg Roast (Nadan Mutta Roast)',
+    malayalamName: 'മുട്ട റോസ്റ്റ്',
+    manglishName: 'Mutta Roast / Egg Roast',
+    alternateNames: ['egg roast', 'mutta roast', 'kerala egg roast', 'nadan mutta roast', 'മുട്ട റോസ്റ്റ്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Hard-boiled eggs scored and coated in a thick, spicy caramelized onion, ginger, tomato, and fennel gravy. Standard high-protein companion for appam and porotta.',
+    per100g: {
+      calories: 154,
+      protein: 10.2,
+      carbs: 6.2,
+      fat: 9.8,
+      fiber: 1.5,
+      sugar: 2.2,
+      sodiumMg: 280
+    },
+    servings: [
+      { label: '1 egg with gravy (90g)', grams: 90 },
+      { label: '2 eggs with thick gravy (180g)', grams: 180, isDefault: true }
+    ],
+    defaultServing: { label: '2 eggs with thick gravy (180g)', grams: 180, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Eggs'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Sautéed'
+  },
+  {
+    id: 'ker_egg_curry_coconut',
+    name: 'Kerala Egg Curry with Coconut Milk (Nadan Mutta Curry)',
+    malayalamName: 'മുട്ടക്കറി (തേങ്ങാപ്പാൽ ചേർത്തത്)',
+    manglishName: 'Mutta Curry / Nadan Egg Curry',
+    alternateNames: ['egg curry', 'mutta curry', 'kerala egg curry', 'coconut milk egg curry', 'മുട്ടക്കറി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Boiled eggs simmered in a mildly spiced yellow coconut milk gravy with potatoes, onions, and curry leaves.',
+    per100g: {
+      calories: 146,
+      protein: 8.8,
+      carbs: 4.8,
+      fat: 10.4,
+      fiber: 0.8,
+      sugar: 1.4,
+      sodiumMg: 240
+    },
+    servings: [
+      { label: '1 egg with gravy (120g)', grams: 120 },
+      { label: '2 eggs with gravy (200g)', grams: 200, isDefault: true }
+    ],
+    defaultServing: { label: '2 eggs with gravy (200g)', grams: 200, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Eggs', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered in coconut milk'
+  },
+  {
+    id: 'ker_duck_roast',
+    name: 'Kuttanadan Duck Roast (Tharavu Roast)',
+    malayalamName: 'കുട്ടനാടൻ താറാവ് റോസ്റ്റ്',
+    manglishName: 'Tharavu Roast / Kuttanadan Duck Roast',
+    alternateNames: ['duck roast', 'tharavu roast', 'kuttanadan duck', 'kerala duck curry', 'താറാവ് റോസ്റ്റ്'],
+    cuisine: 'kerala',
+    region: 'Kuttanad / Alappuzha',
+    category: 'meat_poultry',
+    dietaryType: 'non_vegetarian',
+    description: 'Country duck slow-cooked in its rich natural juices with cracked black pepper, whole spices, fried shallots, and rich coconut vinegar gravy.',
+    per100g: {
+      calories: 245,
+      protein: 18.5,
+      carbs: 3.2,
+      fat: 17.6,
+      fiber: 0.8,
+      sugar: 0.4,
+      sodiumMg: 340
+    },
+    servings: [
+      { label: '1 medium serving with bone (180g)', grams: 180, isDefault: true },
+      { label: '1 large festive serving (250g)', grams: 250 }
+    ],
+    defaultServing: { label: '1 medium serving with bone (180g)', grams: 180, isDefault: true },
+    budgetFriendly: false,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Slow Braised & Roasted'
+  },
+
+  // ==========================================
+  // VEGETARIAN SIDES & SADYA DISHES
+  // ==========================================
+  {
+    id: 'ker_vegetable_stew',
+    name: 'Kerala Vegetable Stew (Ishtu)',
+    malayalamName: 'വെജിറ്റബിൾ സ്റ്റൂ',
+    manglishName: 'Vegetable Stew / Ishtu',
+    alternateNames: ['vegetable stew', 'veg ishtu', 'kerala veg stew', 'coconut milk veg stew', 'വെജിറ്റബിൾ സ്റ്റൂ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Carrots, green beans, green peas, and potatoes gently simmered in creamy coconut milk seasoned with whole spices and ginger.',
+    per100g: {
+      calories: 115,
+      protein: 2.1,
+      carbs: 11.2,
+      fat: 7.1,
+      fiber: 2.5,
+      sugar: 2.4,
+      sodiumMg: 220
+    },
+    servings: [
+      { label: '1 medium bowl (160g)', grams: 160, isDefault: true },
+      { label: '1 large bowl (240g)', grams: 240 }
+    ],
+    defaultServing: { label: '1 medium bowl (160g)', grams: 160, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered in coconut milk'
+  },
+  {
+    id: 'ker_avial',
+    name: 'Kerala Avial (Mixed Vegetables in Coconut & Curd)',
+    malayalamName: 'അവിയൽ',
+    manglishName: 'Avial / Aviyal',
+    alternateNames: ['avial', 'aviyal', 'kerala avial', 'sadya avial', 'അവിയൽ'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegetarian',
+    description: 'Nutritious medley of drumstick, elephant foot yam, raw banana, snake gourd, carrots, and beans tossed in coarse coconut-cumin paste and curd, finished with raw coconut oil.',
+    per100g: {
+      calories: 122,
+      protein: 2.6,
+      carbs: 10.8,
+      fat: 7.5,
+      fiber: 3.8,
+      sugar: 2.2,
+      sodiumMg: 190
+    },
+    servings: [
+      { label: '1 small katori (100g)', grams: 100 },
+      { label: '1 medium cup (150g)', grams: 150, isDefault: true },
+      { label: '1 large portion (200g)', grams: 200 }
+    ],
+    defaultServing: { label: '1 medium cup (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed & Tossed'
+  },
+  {
+    id: 'ker_cabbage_thoran',
+    name: 'Cabbage Thoran (Shredded Cabbage Stir-Fry with Coconut)',
+    malayalamName: 'കാബേജ് തോരൻ',
+    manglishName: 'Cabbage Thoran / Poriyal',
+    alternateNames: ['cabbage thoran', 'kerala cabbage thoran', 'cabbage stir fry coconut', 'കാബേജ് തോരൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Finely shredded cabbage quick-steamed and tempered with mustard seeds, shallots, green chilies, curry leaves, and freshly grated coconut.',
+    per100g: {
+      calories: 84,
+      protein: 2.1,
+      carbs: 6.8,
+      fat: 5.2,
+      fiber: 2.9,
+      sugar: 2.5,
+      sodiumMg: 160
+    },
+    servings: [
+      { label: '1 small katori (80g)', grams: 80 },
+      { label: '1 cup / serving (120g)', grams: 120, isDefault: true },
+      { label: '1 large cup (160g)', grams: 160 }
+    ],
+    defaultServing: { label: '1 cup / serving (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Stir Fried with Coconut'
+  },
+  {
+    id: 'ker_cheera_thoran',
+    name: 'Cheera Thoran (Red Amaranth Leaves Stir-Fry with Coconut)',
+    malayalamName: 'ചീര തോരൻ',
+    manglishName: 'Cheera Thoran / Red Spinach Stir Fry',
+    alternateNames: ['cheera thoran', 'red amaranth thoran', 'kerala spinach thoran', 'ചീര തോരൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Fresh red or green amaranth leaves chopped and stir-fried with crushed shallots, garlic, green chilies, and coconut. Exceptional source of plant iron, calcium, and vitamin A.',
+    per100g: {
+      calories: 78,
+      protein: 3.2,
+      carbs: 5.4,
+      fat: 4.8,
+      fiber: 3.2,
+      sugar: 0.8,
+      sodiumMg: 140
+    },
+    servings: [
+      { label: '1 cup (100g)', grams: 100, isDefault: true },
+      { label: '1 large portion (150g)', grams: 150 }
+    ],
+    defaultServing: { label: '1 cup (100g)', grams: 100, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Stir Fried'
+  },
+  {
+    id: 'ker_beans_thoran',
+    name: 'Beans Thoran (French Green Beans with Coconut)',
+    malayalamName: 'ബീൻസ് തോരൻ',
+    manglishName: 'Beans Thoran',
+    alternateNames: ['beans thoran', 'green beans thoran', 'kerala beans fry', 'ബീൻസ് തോരൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Crisp green beans finely chopped and sautéed with mustard, shallots, curry leaves, and coconut. High in gut-healthy soluble fiber.',
+    per100g: {
+      calories: 82,
+      protein: 2.3,
+      carbs: 7.2,
+      fat: 4.9,
+      fiber: 3.4,
+      sugar: 1.8,
+      sodiumMg: 150
+    },
+    servings: [
+      { label: '1 cup (110g)', grams: 110, isDefault: true }
+    ],
+    defaultServing: { label: '1 cup (110g)', grams: 110, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Stir Fried'
+  },
+  {
+    id: 'ker_olan',
+    name: 'Kerala Olan (Ash Gourd & Cowpeas in Mild Coconut Milk)',
+    malayalamName: 'ഓലൻ',
+    manglishName: 'Olan / Ash Gourd Olan',
+    alternateNames: ['olan', 'kerala olan', 'ash gourd olan', 'kumbalanga olan', 'ഓലൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Gentle, cooling sadya dish made from white pumpkin (ash gourd) and red cowpeas (vanpayar) cooked simply with green chilies, coconut milk, and raw coconut oil drizzle.',
+    per100g: {
+      calories: 89,
+      protein: 2.5,
+      carbs: 9.6,
+      fat: 4.6,
+      fiber: 2.8,
+      sugar: 1.2,
+      sodiumMg: 130
+    },
+    servings: [
+      { label: '1 cup (140g)', grams: 140, isDefault: true }
+    ],
+    defaultServing: { label: '1 cup (140g)', grams: 140, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered in coconut milk'
+  },
+  {
+    id: 'ker_erissery',
+    name: 'Erissery (Pumpkin & Red Cowpeas with Toasted Coconut)',
+    malayalamName: 'മത്തങ്ങ വൻപയർ എരിശ്ശേരി',
+    manglishName: 'Erissery / Mathanga Vanpayar Erissery',
+    alternateNames: ['erissery', 'mathanga erissery', 'pumpkin cowpea erissery', 'എരിശ്ശേരി', 'മത്തങ്ങ എരിശ്ശേരി'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Sweet yellow pumpkin and red cowpeas cooked soft, mashed lightly, and enriched with deeply roasted golden brown coconut, cumin, and curry leaves.',
+    per100g: {
+      calories: 126,
+      protein: 3.8,
+      carbs: 15.6,
+      fat: 5.5,
+      fiber: 3.6,
+      sugar: 2.5,
+      sodiumMg: 170
+    },
+    servings: [
+      { label: '1 serving cup (140g)', grams: 140, isDefault: true }
+    ],
+    defaultServing: { label: '1 serving cup (140g)', grams: 140, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Tempered'
+  },
+  {
+    id: 'ker_kalan',
+    name: 'Kerala Kalan (Yam & Plantain in Sour Yogurt & Coconut Gravy)',
+    malayalamName: 'കാളൻ',
+    manglishName: 'Kalan / Kurukku Kalan',
+    alternateNames: ['kalan', 'kurukku kalan', 'chena kalan', 'yogurt curry kerala', 'കാളൻ', 'കുറുക്കു കാളൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegetarian',
+    description: 'Thick, tart sadya specialty of elephant yam and raw plantain slow-simmered in sour yogurt, coconut paste, black pepper, and fenugreek until reduced.',
+    per100g: {
+      calories: 135,
+      protein: 3.4,
+      carbs: 14.8,
+      fat: 6.8,
+      fiber: 2.4,
+      sugar: 2.8,
+      sodiumMg: 210
+    },
+    servings: [
+      { label: '1 serving (100g)', grams: 100, isDefault: true }
+    ],
+    defaultServing: { label: '1 serving (100g)', grams: 100, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Slow reduced'
+  },
+  {
+    id: 'ker_beetroot_pachadi',
+    name: 'Beetroot Pachadi (Grated Beetroot in Mustard & Yogurt)',
+    malayalamName: 'ബീറ്റ്റൂട്ട് പച്ചടി',
+    manglishName: 'Beetroot Pachadi',
+    alternateNames: ['beetroot pachadi', 'beetroot raita kerala', 'sadya beetroot pachadi', 'ബീറ്റ്റൂട്ട് പച്ചടി'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegetarian',
+    description: 'Bright magenta dish of cooked grated beetroot mixed with cooling yogurt and seasoned with crushed mustard seeds, coconut, and green chilies.',
+    per100g: {
+      calories: 86,
+      protein: 2.8,
+      carbs: 8.5,
+      fat: 4.4,
+      fiber: 2.1,
+      sugar: 4.8,
+      sodiumMg: 180
+    },
+    servings: [
+      { label: '1 katori (80g)', grams: 80, isDefault: true }
+    ],
+    defaultServing: { label: '1 katori (80g)', grams: 80, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered & Blended with Curd'
+  },
+  {
+    id: 'ker_pineapple_pachadi',
+    name: 'Pineapple Pachadi (Sweet & Sour Pineapple Curry)',
+    malayalamName: 'പൈനാപ്പിൾ പച്ചടി',
+    manglishName: 'Pineapple Pachadi / Madhura Curry',
+    alternateNames: ['pineapple pachadi', 'madhura pachadi', 'sweet pachadi', 'പൈനാപ്പിൾ പച്ചടി'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegetarian',
+    description: 'Sweet and tangy sadya dish prepared with chopped ripe pineapple cooked in turmeric and mild jaggery, mixed with sour yogurt and ground mustard-coconut paste.',
+    per100g: {
+      calories: 114,
+      protein: 1.8,
+      carbs: 18.2,
+      fat: 3.8,
+      fiber: 1.6,
+      sugar: 13.5,
+      sodiumMg: 140
+    },
+    servings: [
+      { label: '1 katori (80g)', grams: 80, isDefault: true }
+    ],
+    defaultServing: { label: '1 katori (80g)', grams: 80, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Cooked & Curd Blended'
+  },
+  {
+    id: 'ker_sambar',
+    name: 'Kerala Sambar (Mixed Vegetable & Lentil Stew)',
+    malayalamName: 'കേരള സാമ്പാർ',
+    manglishName: 'Kerala Sambar',
+    alternateNames: ['kerala sambar', 'sambar', 'sadya sambar', 'varutharacha sambar', 'സാമ്പാർ', 'കേരള സാമ്പാർ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'curries_gravies',
+    dietaryType: 'vegan',
+    description: 'Toor dal simmered with drumstick, shallots, pumpkin, okra, and tomatoes in tangy tamarind broth with roasted Kerala spices and coriander.',
+    per100g: {
+      calories: 68,
+      protein: 3.2,
+      carbs: 9.8,
+      fat: 1.8,
+      fiber: 2.6,
+      sugar: 1.8,
+      sodiumMg: 240
+    },
+    servings: [
+      { label: '1 small katori (120g)', grams: 120 },
+      { label: '1 cup / bowl (180g)', grams: 180, isDefault: true },
+      { label: '1 large bowl (250g)', grams: 250 }
+    ],
+    defaultServing: { label: '1 cup / bowl (180g)', grams: 180, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Tempered'
+  },
+  {
+    id: 'ker_rasam',
+    name: 'Kerala Rasam (Pepper Tamarind Digestive Soup)',
+    malayalamName: 'കേരള രസം',
+    manglishName: 'Rasam / Kerala Rasam',
+    alternateNames: ['rasam', 'kerala rasam', 'tomato rasam', 'pepper rasam', 'രസം', 'കേരള രസം'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'curries_gravies',
+    dietaryType: 'vegan',
+    description: 'Light, spicy digestive broth infused with crushed black pepper, garlic, tomatoes, tamarind, and tempered mustard. Low in calories, stimulates gastric enzyme release.',
+    per100g: {
+      calories: 32,
+      protein: 1.1,
+      carbs: 4.8,
+      fat: 0.9,
+      fiber: 0.8,
+      sugar: 0.9,
+      sodiumMg: 260
+    },
+    servings: [
+      { label: '1 cup / bowl (150g)', grams: 150, isDefault: true },
+      { label: '1 small glass (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 cup / bowl (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Simmered'
+  },
+  {
+    id: 'ker_pulissery',
+    name: 'Kerala Pulissery / Moru Curry (Spiced Buttermilk Curry)',
+    malayalamName: 'പുളിശ്ശേരി / മോരുകറി',
+    manglishName: 'Pulissery / Moru Curry',
+    alternateNames: ['pulissery', 'moru curry', 'kerala moru curry', 'buttermilk curry', 'mambazha pulissery', 'മോരുകറി', 'പുളിശ്ശേരി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'curries_gravies',
+    dietaryType: 'vegetarian',
+    description: 'Soothing curry of sour buttermilk cooked with coconut, green chilies, cumin, and turmeric, tempered with mustard seeds, fenugreek, and shallots.',
+    per100g: {
+      calories: 72,
+      protein: 2.2,
+      carbs: 4.8,
+      fat: 4.9,
+      fiber: 0.9,
+      sugar: 2.1,
+      sodiumMg: 210
+    },
+    servings: [
+      { label: '1 medium cup (150g)', grams: 150, isDefault: true },
+      { label: '1 ladle (80g)', grams: 80 }
+    ],
+    defaultServing: { label: '1 medium cup (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Warm tempered'
+  },
+  {
+    id: 'ker_cherupayar_curry',
+    name: 'Cherupayar Curry (Whole Green Moong Curry)',
+    malayalamName: 'ചെറുപയർ കറി',
+    manglishName: 'Cherupayar Curry / Green Gram Curry',
+    alternateNames: ['cherupayar curry', 'green gram curry', 'moong curry kerala', 'ചെറുപയർ കറി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'curries_gravies',
+    dietaryType: 'vegan',
+    description: 'Whole green gram pressure-cooked tender and simmered in a mildly spiced coconut-shallot paste. High plant protein and complex fiber.',
+    per100g: {
+      calories: 138,
+      protein: 7.2,
+      carbs: 18.5,
+      fat: 4.1,
+      fiber: 5.6,
+      sugar: 0.8,
+      sodiumMg: 220
+    },
+    servings: [
+      { label: '1 cup / bowl (160g)', grams: 160, isDefault: true },
+      { label: '1 large bowl (220g)', grams: 220 }
+    ],
+    defaultServing: { label: '1 cup / bowl (160g)', grams: 160, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Pressure Cooked & Simmered'
+  },
+  {
+    id: 'ker_cherupayar_thoran',
+    name: 'Cherupayar Thoran / Sundal (Green Gram Stir-Fry with Coconut)',
+    malayalamName: 'ചെറുപയർ തോരൻ',
+    manglishName: 'Cherupayar Thoran',
+    alternateNames: ['cherupayar thoran', 'green gram stir fry', 'boiled moong coconut', 'ചെറുപയർ തോരൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'vegetarian_sides',
+    dietaryType: 'vegan',
+    description: 'Boiled whole green moong dal tossed with mustard seeds, curry leaves, red chilies, and fresh coconut. Outstanding fitness snack for clean protein.',
+    per100g: {
+      calories: 145,
+      protein: 8.4,
+      carbs: 19.8,
+      fat: 3.8,
+      fiber: 6.2,
+      sugar: 0.6,
+      sodiumMg: 150
+    },
+    servings: [
+      { label: '1 cup (120g)', grams: 120, isDefault: true },
+      { label: '1 small snack bowl (80g)', grams: 80 }
+    ],
+    defaultServing: { label: '1 cup (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Tempered'
+  },
+  {
+    id: 'ker_parippu_curry',
+    name: 'Kerala Parippu Curry with Ghee (Yellow Moong Dal)',
+    malayalamName: 'നെയ്യൊഴിച്ച പരിപ്പുകറി',
+    manglishName: 'Parippu Curry / Ney Parippu',
+    alternateNames: ['parippu curry', 'kerala dal curry', 'ney parippu', 'sadya parippu', 'പരിപ്പുകറി', 'നെയ്പ്പരിപ്പ്'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'curries_gravies',
+    dietaryType: 'vegetarian',
+    description: 'Roasted yellow moong dal cooked with crushed coconut-cumin paste and served with a spoonful of pure cow ghee over hot matta rice. Opening course of Sadya.',
+    per100g: {
+      calories: 142,
+      protein: 6.5,
+      carbs: 16.8,
+      fat: 5.6,
+      fiber: 3.2,
+      sugar: 0.5,
+      sodiumMg: 210
+    },
+    servings: [
+      { label: '1 cup / ladle (120g)', grams: 120, isDefault: true },
+      { label: '1 large bowl (180g)', grams: 180 }
+    ],
+    defaultServing: { label: '1 cup / ladle (120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Ghee finished'
+  },
+
+  // ==========================================
+  // SNACKS & STREET FOODS & BIRYANIS
+  // ==========================================
+  {
+    id: 'ker_pazham_pori',
+    name: 'Pazham Pori (Ethakka Appam / Ripe Banana Fritters)',
+    malayalamName: 'പഴംപൊരി / ഏത്തക്കാപ്പം',
+    manglishName: 'Pazham Pori / Ethakka Appam',
+    alternateNames: ['pazham pori', 'ethakka appam', 'banana fritters kerala', 'nenthram pazham fry', 'പഴംപൊരി', 'ഏത്തക്കാപ്പം'],
+    cuisine: 'kerala',
+    region: 'Kerala Teashops',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Thinly sliced ripe Nendran bananas dipped in spiced all-purpose flour batter and golden deep-fried. Iconic Kerala chai-time companion.',
+    per100g: {
+      calories: 262,
+      protein: 2.8,
+      carbs: 45.2,
+      fat: 8.2,
+      fiber: 2.6,
+      sugar: 22.0,
+      sodiumMg: 85
+    },
+    servings: [
+      { label: '1 piece (75g)', grams: 75, isDefault: true },
+      { label: '2 pieces (150g)', grams: 150 }
+    ],
+    defaultServing: { label: '1 piece (75g)', grams: 75, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_unnakkaya',
+    name: 'Unnakkaya (Malabar Stuffed Plantain Fritters)',
+    malayalamName: 'ഉന്നക്കായ',
+    manglishName: 'Unnakkaya / Unnakai',
+    alternateNames: ['unnakkaya', 'unnakai', 'stuffed plantain roll', 'malabar banana snack', 'ഉന്നക്കായ'],
+    cuisine: 'kerala',
+    region: 'Malabar',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegetarian',
+    description: 'Steamed mashed ripe plantain rolled into spindle shapes, filled with roasted coconut, cashews, raisins, cardamom, and fried golden.',
+    per100g: {
+      calories: 284,
+      protein: 3.2,
+      carbs: 48.0,
+      fat: 9.4,
+      fiber: 3.1,
+      sugar: 24.5,
+      sodiumMg: 70
+    },
+    servings: [
+      { label: '1 piece (60g)', grams: 60, isDefault: true },
+      { label: '2 pieces (120g)', grams: 120 }
+    ],
+    defaultServing: { label: '1 piece (60g)', grams: 60, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Tree Nuts', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_sukhiyan',
+    name: 'Sukhiyan (Sugiyan / Sweet Green Gram Fritters)',
+    malayalamName: 'സുഖിയൻ',
+    manglishName: 'Sukhiyan / Sugiyan',
+    alternateNames: ['sukhiyan', 'sugiyan', 'sweet green gram fritters', 'സുഖിയൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala Teashops',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Boiled green gram tossed with jaggery and coconut, shaped into balls, coated in flour batter and fried until crisp.',
+    per100g: {
+      calories: 254,
+      protein: 5.6,
+      carbs: 46.8,
+      fat: 5.8,
+      fiber: 4.2,
+      sugar: 21.0,
+      sodiumMg: 75
+    },
+    servings: [
+      { label: '1 piece (55g)', grams: 55, isDefault: true },
+      { label: '2 pieces (110g)', grams: 110 }
+    ],
+    defaultServing: { label: '1 piece (55g)', grams: 55, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_parippu_vada',
+    name: 'Kerala Parippu Vada (Masala Dal Vada / Crunchy Tea Snack)',
+    malayalamName: 'പരിപ്പുവട',
+    manglishName: 'Parippu Vada / Dal Vada',
+    alternateNames: ['parippu vada', 'kerala parippuvada', 'dal vada', 'masala vada', 'പരിപ്പുവട'],
+    cuisine: 'kerala',
+    region: 'Kerala Teashops',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Crunchy, coarse chana dal patties infused with ginger, green chilies, shallots, and fresh curry leaves, deep-fried extra crisp.',
+    per100g: {
+      calories: 312,
+      protein: 10.4,
+      carbs: 38.6,
+      fat: 13.2,
+      fiber: 6.8,
+      sugar: 1.2,
+      sodiumMg: 280
+    },
+    servings: [
+      { label: '1 vada (45g)', grams: 45, isDefault: true },
+      { label: '2 vadas (90g)', grams: 90 }
+    ],
+    defaultServing: { label: '1 vada (45g)', grams: 45, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_uzhunnu_vada',
+    name: 'Kerala Uzhunnu Vada (Medu Vada / Black Gram Fritter)',
+    malayalamName: 'ഉഴുന്നുവട',
+    manglishName: 'Uzhunnu Vada / Medu Vada',
+    alternateNames: ['uzhunnu vada', 'medu vada', 'urad dal vada', 'ഉഴുന്നുവട'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Crisp on the outside, fluffy cloud on the inside doughnut-shaped fritter made from whipped urad dal batter with crushed pepper, cumin, and ginger.',
+    per100g: {
+      calories: 278,
+      protein: 9.8,
+      carbs: 31.4,
+      fat: 12.8,
+      fiber: 4.5,
+      sugar: 0.8,
+      sodiumMg: 240
+    },
+    servings: [
+      { label: '1 vada (50g)', grams: 50, isDefault: true },
+      { label: '2 vadas (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 vada (50g)', grams: 50, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_banana_chips',
+    name: 'Kerala Banana Chips (Nenthra Upperi in Pure Coconut Oil)',
+    malayalamName: 'നേന്ത്രക്കായ ചിപ്സ് / ഉപ്പേരി',
+    manglishName: 'Banana Chips / Upperi',
+    alternateNames: ['banana chips', 'kerala banana chips', 'nenthra upperi', 'yellow chips', 'നേന്ത്രക്കായ ചിപ്സ്', 'ഉപ്പേരി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Thin round slices of raw Nendran plantains fried in fresh bubbling coconut oil and sprinkled with salt water. High caloric density.',
+    per100g: {
+      calories: 518,
+      protein: 2.3,
+      carbs: 58.4,
+      fat: 30.8,
+      fiber: 5.6,
+      sugar: 3.2,
+      sodiumMg: 310
+    },
+    servings: [
+      { label: '1 handful (30g)', grams: 30 },
+      { label: '1 small snack pouch (50g)', grams: 50, isDefault: true },
+      { label: '1 standard bowl (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 small snack pouch (50g)', grams: 50, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried in Coconut Oil'
+  },
+  {
+    id: 'ker_tapioca_chips',
+    name: 'Kerala Tapioca Chips (Kappa Chips)',
+    malayalamName: 'കപ്പ ചിപ്സ്',
+    manglishName: 'Kappa Chips / Tapioca Chips',
+    alternateNames: ['kappa chips', 'tapioca chips', 'cassava chips kerala', 'കപ്പ ചിപ്സ്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Crisp matchstick or sliced cassava chips deep-fried in coconut oil and tossed in salt and red chili powder.',
+    per100g: {
+      calories: 492,
+      protein: 1.8,
+      carbs: 64.2,
+      fat: 26.5,
+      fiber: 4.8,
+      sugar: 1.4,
+      sodiumMg: 350
+    },
+    servings: [
+      { label: '1 small pouch (40g)', grams: 40, isDefault: true },
+      { label: '1 medium cup (80g)', grams: 80 }
+    ],
+    defaultServing: { label: '1 small pouch (40g)', grams: 40, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_kozhukkatta',
+    name: 'Kozhukkatta (Steamed Rice Dumpling with Jaggery & Coconut)',
+    malayalamName: 'കൊഴുക്കട്ട',
+    manglishName: 'Kozhukkatta / Modak Kerala',
+    alternateNames: ['kozhukkatta', 'steamed rice dumpling', 'jaggery kozhukatta', 'കൊഴുക്കട്ട'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Round steamed rice flour spheres with a warm, sweet heart of grated fresh coconut, melted dark palm jaggery, and cardamom.',
+    per100g: {
+      calories: 218,
+      protein: 2.8,
+      carbs: 43.5,
+      fat: 4.1,
+      fiber: 2.6,
+      sugar: 21.0,
+      sodiumMg: 45
+    },
+    servings: [
+      { label: '1 piece (45g)', grams: 45 },
+      { label: '2 pieces (90g)', grams: 90, isDefault: true },
+      { label: '3 pieces (135g)', grams: 135 }
+    ],
+    defaultServing: { label: '2 pieces (90g)', grams: 90, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed'
+  },
+  {
+    id: 'ker_elayada',
+    name: 'Elayada (Steamed Banana Leaf Rice Pocket with Jaggery)',
+    malayalamName: 'ഇലയട',
+    manglishName: 'Elayada / Ela Ada',
+    alternateNames: ['elayada', 'ela ada', 'steamed rice cake banana leaf', 'ഇലയട'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Rice dough flattened on a fresh banana leaf, filled with jaggery, coconut, and jackfruit preserve or banana, folded and steamed.',
+    per100g: {
+      calories: 212,
+      protein: 2.6,
+      carbs: 42.8,
+      fat: 3.8,
+      fiber: 2.4,
+      sugar: 19.5,
+      sodiumMg: 40
+    },
+    servings: [
+      { label: '1 piece (80g)', grams: 80, isDefault: true },
+      { label: '2 pieces (160g)', grams: 160 }
+    ],
+    defaultServing: { label: '1 piece (80g)', grams: 80, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Steamed in Banana Leaf'
+  },
+  {
+    id: 'ker_unniyappam',
+    name: 'Unniyappam (Sweet Rice & Banana Fritters in Ghee)',
+    malayalamName: 'ഉണ്ണിയപ്പം',
+    manglishName: 'Unniyappam / Neyyappam',
+    alternateNames: ['unniyappam', 'neyyappam', 'kerala sweet dumpling', 'ഉണ്ണിയപ്പം', 'നെയ്യപ്പം'],
+    cuisine: 'kerala',
+    region: 'Kerala Temples & Homes',
+    category: 'desserts',
+    dietaryType: 'vegetarian',
+    description: 'Crisp dark brown, spongy interior sweet fritters made of soaked rice, mashed small bananas (palayamkodan), jaggery, sesame seeds, and roasted coconut bits.',
+    per100g: {
+      calories: 345,
+      protein: 3.4,
+      carbs: 58.2,
+      fat: 11.5,
+      fiber: 2.8,
+      sugar: 32.0,
+      sodiumMg: 60
+    },
+    servings: [
+      { label: '2 pieces (50g)', grams: 50 },
+      { label: '4 pieces (100g)', grams: 100, isDefault: true }
+    ],
+    defaultServing: { label: '4 pieces (100g)', grams: 100, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Sesame', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Appakarai Fried in Ghee/Oil'
+  },
+  {
+    id: 'ker_achappam',
+    name: 'Achappam (Kerala Rose Cookies)',
+    malayalamName: 'അച്ചപ്പം',
+    manglishName: 'Achappam / Rose Cookies',
+    alternateNames: ['achappam', 'rose cookie', 'kerala crunchy cookie', 'അച്ചപ്പം'],
+    cuisine: 'kerala',
+    region: 'Central Kerala',
+    category: 'snacks_streetfood',
+    dietaryType: 'vegan',
+    description: 'Extremely crunchy, decorative floral cookies prepared by dipping an iron mould into sweetened rice flour and coconut milk batter and frying.',
+    per100g: {
+      calories: 478,
+      protein: 4.1,
+      carbs: 62.4,
+      fat: 23.5,
+      fiber: 2.2,
+      sugar: 18.0,
+      sodiumMg: 110
+    },
+    servings: [
+      { label: '2 pieces (40g)', grams: 40, isDefault: true },
+      { label: '4 pieces (80g)', grams: 80 }
+    ],
+    defaultServing: { label: '2 pieces (40g)', grams: 40, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Sesame', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Deep Fried'
+  },
+  {
+    id: 'ker_malabar_biryani',
+    name: 'Malabar Chicken Biryani (Khaima / Jeerakasala Dum Biryani)',
+    malayalamName: 'മലബാർ ചിക്കൻ ബിരിയാണി',
+    manglishName: 'Malabar Chicken Biryani / Kozhikode Biryani',
+    alternateNames: ['malabar biryani', 'kozhikode biryani', 'kerala chicken biryani', 'dum biryani kerala', 'khaima rice biryani', 'മലബാർ ബിരിയാണി', 'ചിക്കൻ ബിരിയാണി'],
+    cuisine: 'kerala',
+    region: 'Malabar / Kozhikode',
+    category: 'staples_grains',
+    dietaryType: 'non_vegetarian',
+    description: 'Fragrant short-grain Khaima (Jeerakasala) rice layered with tender spiced chicken, fried onions (bista), cashews, raisins, and slow-cooked in sealed dum pot.',
+    per100g: {
+      calories: 195,
+      protein: 10.4,
+      carbs: 23.2,
+      fat: 6.8,
+      fiber: 1.5,
+      sugar: 1.2,
+      sodiumMg: 340
+    },
+    servings: [
+      { label: '1 standard restaurant plate (350g)', grams: 350, isDefault: true },
+      { label: '1 light portion (250g)', grams: 250 },
+      { label: '1 heavy feast plate (450g)', grams: 450 }
+    ],
+    defaultServing: { label: '1 standard restaurant plate (350g)', grams: 350, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Dairy', 'Tree Nuts'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017 & Culinary Standard',
+    cookingMethod: 'Dum Cooked'
+  },
+  {
+    id: 'ker_thalassery_biryani',
+    name: 'Thalassery Mutton Biryani (Slow Cooked Dum Biryani)',
+    malayalamName: 'തലശ്ശേരി മട്ടൻ ബിരിയാണി',
+    manglishName: 'Thalassery Mutton Biryani',
+    alternateNames: ['thalassery biryani', 'mutton biryani thalassery', 'kerala mutton biryani', 'തലശ്ശേരി ബിരിയാണി'],
+    cuisine: 'kerala',
+    region: 'Thalassery / Malabar',
+    category: 'staples_grains',
+    dietaryType: 'non_vegetarian',
+    description: 'Short grain Jeerakasala rice cooked in pure ghee paired with fall-apart tender goat mutton, green chili masala, and garnished with roasted dry fruits.',
+    per100g: {
+      calories: 218,
+      protein: 11.8,
+      carbs: 22.5,
+      fat: 9.2,
+      fiber: 1.4,
+      sugar: 1.0,
+      sodiumMg: 360
+    },
+    servings: [
+      { label: '1 standard plate (380g)', grams: 380, isDefault: true },
+      { label: '1 heavy plate (480g)', grams: 480 }
+    ],
+    defaultServing: { label: '1 standard plate (380g)', grams: 380, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Dairy', 'Tree Nuts'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017 & Culinary Standard',
+    cookingMethod: 'Dum Cooked'
+  },
+  {
+    id: 'ker_neychoru',
+    name: 'Kozhikode Neychoru (Kerala Ghee Rice)',
+    malayalamName: 'നെയ്ച്ചോറ്',
+    manglishName: 'Neychoru / Ghee Rice',
+    alternateNames: ['neychoru', 'ghee rice kerala', 'malabar ghee rice', 'khaima ghee rice', 'നെയ്ച്ചോറ്'],
+    cuisine: 'kerala',
+    region: 'Malabar',
+    category: 'staples_grains',
+    dietaryType: 'vegetarian',
+    description: 'Aromatic Khaima rice sautéed in pure cow ghee with whole cinnamon, cardamom, cloves, and bay leaves, cooked until fluffy and topped with golden fried onions and cashews.',
+    per100g: {
+      calories: 188,
+      protein: 3.2,
+      carbs: 29.8,
+      fat: 6.5,
+      fiber: 1.2,
+      sugar: 0.8,
+      sodiumMg: 180
+    },
+    servings: [
+      { label: '1 cup (150g)', grams: 150 },
+      { label: '1 plate (250g)', grams: 250, isDefault: true },
+      { label: '1 large bowl (350g)', grams: 350 }
+    ],
+    defaultServing: { label: '1 plate (250g)', grams: 250, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Tree Nuts'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Sauteed & Simmered'
+  },
+  {
+    id: 'ker_malabar_porotta',
+    name: 'Kerala Porotta (Malabar Layered Flatbread)',
+    malayalamName: 'മലബാർ പൊറോട്ട',
+    manglishName: 'Malabar Porotta / Kerala Parotta',
+    alternateNames: ['porotta', 'parotta', 'kerala porotta', 'malabar porotta', 'flaky parotta', 'പൊറോട്ട', 'പറോത്ത'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegetarian',
+    description: 'Flaky, layered ribbon flatbread made of refined wheat flour kneaded with oil, skillfully flipped and coiled into spirals before griddling and clapping to fluff layers.',
+    per100g: {
+      calories: 324,
+      protein: 6.8,
+      carbs: 48.5,
+      fat: 11.8,
+      fiber: 2.1,
+      sugar: 1.5,
+      sodiumMg: 240
+    },
+    servings: [
+      { label: '1 porotta (80g)', grams: 80 },
+      { label: '2 porottas (160g)', grams: 160, isDefault: true },
+      { label: '3 porottas (240g)', grams: 240 }
+    ],
+    defaultServing: { label: '2 porottas (160g)', grams: 160, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Tawa Pan Griddled'
+  },
+  {
+    id: 'ker_wheat_porotta',
+    name: 'Wheat Kerala Porotta (Layered Whole Wheat Flatbread)',
+    malayalamName: 'ഗോതമ്പ് പൊറോട്ട',
+    manglishName: 'Godhambu Porotta / Wheat Parotta',
+    alternateNames: ['wheat porotta', 'godhambu porotta', 'whole wheat parotta', 'ഗോതമ്പ് പൊറോട്ട'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegetarian',
+    description: 'Healthier layered flatbread made with whole wheat flour (atta), retaining higher natural fiber while offering delicious flaky texture.',
+    per100g: {
+      calories: 285,
+      protein: 7.9,
+      carbs: 45.2,
+      fat: 8.4,
+      fiber: 5.6,
+      sugar: 1.2,
+      sodiumMg: 210
+    },
+    servings: [
+      { label: '1 porotta (85g)', grams: 85 },
+      { label: '2 wheat porottas (170g)', grams: 170, isDefault: true }
+    ],
+    defaultServing: { label: '2 wheat porottas (170g)', grams: 170, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Tawa Pan Griddled'
+  },
+  {
+    id: 'ker_chapati',
+    name: 'Kerala Homestyle Chapati (Soft Whole Wheat Phulka)',
+    malayalamName: 'ചപ്പാത്തി',
+    manglishName: 'Chapati / Roti',
+    alternateNames: ['chapati', 'chappathi', 'kerala chapati', 'wheat roti', 'ചപ്പാത്തി'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegan',
+    description: 'Thin whole wheat flatbread made without oil, puffed on hot tawa. Great everyday staple for calorie-controlled and high-fiber nutrition.',
+    per100g: {
+      calories: 242,
+      protein: 8.8,
+      carbs: 47.5,
+      fat: 2.2,
+      fiber: 7.2,
+      sugar: 1.0,
+      sodiumMg: 120
+    },
+    servings: [
+      { label: '1 chapati (35g)', grams: 35 },
+      { label: '2 chapatis (70g)', grams: 70 },
+      { label: '3 chapatis (105g)', grams: 105, isDefault: true },
+      { label: '4 chapatis (140g)', grams: 140 }
+    ],
+    defaultServing: { label: '3 chapatis (105g)', grams: 105, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Dry Tawa Toasted'
+  },
+  {
+    id: 'ker_sadya_plate',
+    name: 'Kerala Traditional Sadya (Complete Vegetarian Feast on Banana Leaf)',
+    malayalamName: 'കേരള സദ്യ',
+    manglishName: 'Kerala Sadya / Onam Sadya',
+    alternateNames: ['kerala sadya', 'onam sadya', 'sadya feast', 'banana leaf sadya', 'കേരള സദ്യ', 'സദ്യ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'staples_grains',
+    dietaryType: 'vegetarian',
+    description: 'Complete multi-course ceremonial feast: 250g Matta rice with parippu & ghee, sambar, avial, thoran, olan, kalan, erissery, pachadi, rasam, pulissery, banana chips, sharkara varatti, and payasam.',
+    per100g: {
+      calories: 142,
+      protein: 3.5,
+      carbs: 23.4,
+      fat: 4.1,
+      fiber: 3.2,
+      sugar: 5.8,
+      sodiumMg: 210
+    },
+    servings: [
+      { label: '1 full traditional sadya leaf (approx 850g)', grams: 850, isDefault: true },
+      { label: '1 moderate portion (550g)', grams: 550 }
+    ],
+    defaultServing: { label: '1 full traditional sadya leaf (approx 850g)', grams: 850, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Dairy', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'Standard Kerala Sadya Nutritional Survey (NIN)',
+    cookingMethod: 'Feast Assortment'
+  },
+
+  // ==========================================
+  // DRINKS & DESSERTS
+  // ==========================================
+  {
+    id: 'ker_sulaimani',
+    name: 'Malabar Sulaimani Tea (Spiced Lemon Black Tea)',
+    malayalamName: 'സുലൈമാനി ചായ',
+    manglishName: 'Sulaimani / Black Tea with Mint',
+    alternateNames: ['sulaimani', 'sulaimani tea', 'malabar black tea', 'lemon tea kerala', 'സുലൈമാനി', 'സുലൈമാനി ചായ'],
+    cuisine: 'kerala',
+    region: 'Malabar',
+    category: 'beverages',
+    dietaryType: 'vegan',
+    description: 'Golden spiced black tea infused with crushed cardamom, fresh mint leaves, cinnamon, and a squeeze of fresh lemon juice. Clean digestive beverage.',
+    per100g: {
+      calories: 22,
+      protein: 0.2,
+      carbs: 5.2,
+      fat: 0.1,
+      fiber: 0.1,
+      sugar: 4.8,
+      sodiumMg: 5
+    },
+    servings: [
+      { label: '1 glass (150ml / 150g)', grams: 150, isDefault: true },
+      { label: '1 mug (250ml / 250g)', grams: 250 }
+    ],
+    defaultServing: { label: '1 glass (150ml / 150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'Standard Nutritional Formulation',
+    cookingMethod: 'Brewed'
+  },
+  {
+    id: 'ker_nadan_chaya',
+    name: 'Kerala Nadan Chaya (Strong Milky Cardamom Tea)',
+    malayalamName: 'നാടൻ ചായ',
+    manglishName: 'Nadan Chaya / Milk Tea',
+    alternateNames: ['chaya', 'kerala tea', 'nadan tea', 'milk tea kerala', 'ചായ', 'നാടൻ ചായ'],
+    cuisine: 'kerala',
+    region: 'Kerala Teashops',
+    category: 'beverages',
+    dietaryType: 'vegetarian',
+    description: 'Robust black tea powder simmered with milk and sugar, poured back and forth from height (meter tea) for a thick velvety froth.',
+    per100g: {
+      calories: 58,
+      protein: 1.8,
+      carbs: 8.2,
+      fat: 2.1,
+      fiber: 0.0,
+      sugar: 7.8,
+      sodiumMg: 35
+    },
+    servings: [
+      { label: '1 small teashop glass (120ml / 120g)', grams: 120, isDefault: true },
+      { label: '1 medium cup (180ml / 180g)', grams: 180 }
+    ],
+    defaultServing: { label: '1 small teashop glass (120ml / 120g)', grams: 120, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Poured'
+  },
+  {
+    id: 'ker_filter_coffee',
+    name: 'Kerala Filter Coffee (Drip Decoction Brew with Fresh Milk)',
+    malayalamName: 'കേരള ഫിൽറ്റർ കോഫി',
+    manglishName: 'Filter Coffee / Kaapi',
+    alternateNames: ['filter coffee', 'kerala coffee', 'kaapi', 'degree coffee', 'ഫിൽറ്റർ കോഫി'],
+    cuisine: 'kerala',
+    region: 'Kerala / South India',
+    category: 'beverages',
+    dietaryType: 'vegetarian',
+    description: 'Dark roasted Arabica & Robusta coffee beans with chicory brewed in traditional stainless steel drip filter, blended with hot milk and frothed in a dabarah.',
+    per100g: {
+      calories: 62,
+      protein: 2.0,
+      carbs: 7.9,
+      fat: 2.5,
+      fiber: 0.0,
+      sugar: 7.2,
+      sodiumMg: 40
+    },
+    servings: [
+      { label: '1 tumbler / dabarah set (140ml)', grams: 140, isDefault: true },
+      { label: '1 mug (220ml)', grams: 220 }
+    ],
+    defaultServing: { label: '1 tumbler / dabarah set (140ml)', grams: 140, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Drip Brewed'
+  },
+  {
+    id: 'ker_sambharam',
+    name: 'Kerala Sambharam (Spiced Herbal Buttermilk / Moru)',
+    malayalamName: 'സംഭാരം (പച്ച മോര്)',
+    manglishName: 'Sambharam / Pacha Moru',
+    alternateNames: ['sambharam', 'pacha moru', 'spiced buttermilk', 'kerala moru', 'സംഭാരം', 'മോര്'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'beverages',
+    dietaryType: 'vegetarian',
+    description: 'Chilled diluted homemade curd churned and infused with crushed ginger, shallots, green chilies, curry leaves, and a dash of lemon juice. Exceptional probiotic electrolyte cooler.',
+    per100g: {
+      calories: 24,
+      protein: 1.5,
+      carbs: 2.2,
+      fat: 1.0,
+      fiber: 0.1,
+      sugar: 2.0,
+      sodiumMg: 110
+    },
+    servings: [
+      { label: '1 glass (200ml / 200g)', grams: 200, isDefault: true },
+      { label: '1 large tumbler (300ml / 300g)', grams: 300 }
+    ],
+    defaultServing: { label: '1 glass (200ml / 200g)', grams: 200, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Churned & Chilled'
+  },
+  {
+    id: 'ker_elaneer',
+    name: 'Fresh Tender Coconut Water (Karikku / Elaneer)',
+    malayalamName: 'കരിക്ക് / ഇളനീർ വെള്ളം',
+    manglishName: 'Karikku / Elaneer',
+    alternateNames: ['elaneer', 'karikku', 'tender coconut water', 'coconut water kerala', 'കരിക്ക്', 'ഇളനീർ'],
+    cuisine: 'kerala',
+    region: 'Kerala',
+    category: 'beverages',
+    dietaryType: 'vegan',
+    description: '100% natural, isotonic liquid drawn straight from green tender coconuts. Abundant in potassium, magnesium, and natural enzymes with zero added sugars.',
+    per100g: {
+      calories: 19,
+      protein: 0.7,
+      carbs: 3.7,
+      fat: 0.2,
+      fiber: 1.1,
+      sugar: 2.6,
+      sodiumMg: 105
+    },
+    servings: [
+      { label: '1 whole coconut water (approx 250ml)', grams: 250, isDefault: true },
+      { label: '1 large coconut water (350ml)', grams: 350 }
+    ],
+    defaultServing: { label: '1 whole coconut water (approx 250ml)', grams: 250, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Raw Natural'
+  },
+  {
+    id: 'ker_kulukki_sarbath',
+    name: 'Kulukki Sarbath (Shaken Spiced Lemonade with Basil Seeds)',
+    malayalamName: 'കുലുക്കി സർബത്ത്',
+    manglishName: 'Kulukki Sarbath',
+    alternateNames: ['kulukki sarbath', 'shaken lemonade', 'sabja lemonade kerala', 'കുലുക്കി സർബത്ത്'],
+    cuisine: 'kerala',
+    region: 'Kochi Street Food',
+    category: 'beverages',
+    dietaryType: 'vegan',
+    description: 'Kochi-famous iced drink shaken vigorously in a glass shaker with lemon, sugar syrup, a slit green chili, soaked sweet basil seeds (sabja), and mint.',
+    per100g: {
+      calories: 48,
+      protein: 0.6,
+      carbs: 11.2,
+      fat: 0.2,
+      fiber: 0.8,
+      sugar: 9.8,
+      sodiumMg: 30
+    },
+    servings: [
+      { label: '1 glass (250ml)', grams: 250, isDefault: true }
+    ],
+    defaultServing: { label: '1 glass (250ml)', grams: 250, isDefault: true },
+    budgetFriendly: true,
+    allergens: [],
+    verificationStatus: 'verified',
+    dataSource: 'Standard Street Drink Formulation',
+    cookingMethod: 'Shaken with Ice'
+  },
+  {
+    id: 'ker_palada_payasam',
+    name: 'Palada Payasam (Slow Simmered Rice Flake Milk Pudding)',
+    malayalamName: 'പാലട പായസം',
+    manglishName: 'Palada Payasam / Palada Pradhaman',
+    alternateNames: ['palada payasam', 'palada pradhaman', 'kerala kheer', 'pink payasam', 'പാലട പായസം', 'പാലട പ്രഥമൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya / Ambalapuzha',
+    category: 'desserts',
+    dietaryType: 'vegetarian',
+    description: 'Signature celebratory pink dessert of delicate steamed rice ada flakes simmered for hours in full fat cow milk and sugar until rich and caramelized.',
+    per100g: {
+      calories: 185,
+      protein: 4.8,
+      carbs: 27.5,
+      fat: 6.8,
+      fiber: 0.2,
+      sugar: 22.0,
+      sodiumMg: 55
+    },
+    servings: [
+      { label: '1 small katori (100g)', grams: 100 },
+      { label: '1 standard cup (150g)', grams: 150, isDefault: true },
+      { label: '1 large bowl (220g)', grams: 220 }
+    ],
+    defaultServing: { label: '1 standard cup (150g)', grams: 150, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Dairy'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Slow Simmered'
+  },
+  {
+    id: 'ker_ada_pradhaman',
+    name: 'Ada Pradhaman (Rice Flakes in Coconut Milk & Dark Jaggery)',
+    malayalamName: 'അട പ്രഥമൻ',
+    manglishName: 'Ada Pradhaman',
+    alternateNames: ['ada pradhaman', 'jaggery payasam', 'kerala ada pradhaman', 'അട പ്രഥമൻ'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'desserts',
+    dietaryType: 'vegan',
+    description: 'The king of Kerala payasams: steamed rice ada flakes slow-cooked in aged dark palm jaggery syrup and first, second, and third extracts of coconut milk with cardamom and dry ginger.',
+    per100g: {
+      calories: 205,
+      protein: 2.2,
+      carbs: 34.8,
+      fat: 6.9,
+      fiber: 1.2,
+      sugar: 28.5,
+      sodiumMg: 45
+    },
+    servings: [
+      { label: '1 standard cup (150g)', grams: 150, isDefault: true },
+      { label: '1 small katori (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 standard cup (150g)', grams: 150, isDefault: true },
+    budgetFriendly: false,
+    allergens: ['Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Slow Simmered'
+  },
+  {
+    id: 'ker_parippu_payasam',
+    name: 'Parippu Payasam (Split Moong Dal Payasam with Jaggery)',
+    malayalamName: 'പരിപ്പ് പായസം',
+    manglishName: 'Parippu Payasam / Cherupayar Parippu Payasam',
+    alternateNames: ['parippu payasam', 'moong dal payasam', 'cherupayar payasam', 'പരിപ്പ് പായസം'],
+    cuisine: 'kerala',
+    region: 'Kerala Sadya',
+    category: 'desserts',
+    dietaryType: 'vegetarian',
+    description: 'Roasted yellow moong dal cooked with melted jaggery and coconut milk, topped with fried coconut bites and cashews in golden ghee.',
+    per100g: {
+      calories: 198,
+      protein: 4.6,
+      carbs: 32.4,
+      fat: 6.2,
+      fiber: 2.0,
+      sugar: 25.0,
+      sodiumMg: 40
+    },
+    servings: [
+      { label: '1 standard cup (150g)', grams: 150, isDefault: true }
+    ],
+    defaultServing: { label: '1 standard cup (150g)', grams: 150, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Dairy', 'Tree Nuts', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Boiled & Simmered'
+  },
+  {
+    id: 'ker_kozhikodan_halwa',
+    name: 'Kozhikodan Black Halwa (Malabar Dark Jaggery Halwa)',
+    malayalamName: 'കോഴിക്കോടൻ കറുത്ത ഹൽവ',
+    manglishName: 'Kozhikodan Halwa / Karuppu Halwa',
+    alternateNames: ['kozhikodan halwa', 'calicut halwa', 'black halwa', 'malabar halwa', 'കോഴിക്കോടൻ ഹൽവ'],
+    cuisine: 'kerala',
+    region: 'Kozhikode',
+    category: 'desserts',
+    dietaryType: 'vegan',
+    description: 'Glossy, chewy dark halwa stirred in large copper urulis with tapioca and wheat flour, palm jaggery, coconut oil, and crushed cardamom.',
+    per100g: {
+      calories: 410,
+      protein: 2.1,
+      carbs: 68.5,
+      fat: 14.8,
+      fiber: 1.5,
+      sugar: 54.0,
+      sodiumMg: 50
+    },
+    servings: [
+      { label: '1 slice / piece (50g)', grams: 50, isDefault: true },
+      { label: '2 slices (100g)', grams: 100 }
+    ],
+    defaultServing: { label: '1 slice / piece (50g)', grams: 50, isDefault: true },
+    budgetFriendly: true,
+    allergens: ['Gluten', 'Coconut'],
+    verificationStatus: 'verified',
+    dataSource: 'ICMR-NIN IFCT 2017',
+    cookingMethod: 'Slow Stirred in Copper Uruli'
+  }
+];

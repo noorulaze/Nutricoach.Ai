@@ -3,6 +3,8 @@ import {
   PresetFood, DietType, BudgetTier 
 } from '../types';
 import { FOOD_DATABASE, DEFAULT_WEEKLY_WORKOUT } from '../data/nutritionAndExerciseData';
+import { COMPREHENSIVE_FOOD_DATABASE, toPresetFood } from '../data/foodDatabase';
+import { UserCustomRecipe } from '../data/foodDatabase/types';
 import { getActiveUserId } from './cryptoAuth';
 
 export const STORAGE_KEYS = {
@@ -11,7 +13,9 @@ export const STORAGE_KEYS = {
   WORKOUTS: 'nutricoach_workouts_v1',
   PROGRESS: 'nutricoach_progress_v1',
   CHAT_HISTORY: 'nutricoach_chat_history_v1',
-  CUSTOM_FOODS: 'nutricoach_custom_foods_v1'
+  CUSTOM_FOODS: 'nutricoach_custom_foods_v1',
+  FAVORITE_FOODS: 'nutricoach_fav_foods_v1',
+  USER_RECIPES: 'nutricoach_user_recipes_v1'
 };
 
 export const getUserScopedKey = (baseKey: string): string => {
@@ -253,6 +257,110 @@ export const updateFoodEntry = (date: string, updatedItem: FoodItem): void => {
   const current = getFoodLog(date);
   const updated = current.map((f) => (f.id === updatedItem.id ? updatedItem : f));
   saveFoodLog(date, updated);
+};
+
+// --- FAVORITE FOODS STORAGE ---
+export const getFavoriteFoodIds = (): string[] => {
+  try {
+    const key = getUserScopedKey(STORAGE_KEYS.FAVORITE_FOODS);
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : ['ker_puttu_white', 'ker_kadala_curry', 'ker_meen_mulakittathu', 'fit_grilled_chicken_breast'];
+  } catch {
+    return [];
+  }
+};
+
+export const saveFavoriteFoodIds = (ids: string[]): void => {
+  try {
+    const key = getUserScopedKey(STORAGE_KEYS.FAVORITE_FOODS);
+    localStorage.setItem(key, JSON.stringify(ids));
+  } catch (err) {
+    console.error('Failed to save favorites', err);
+  }
+};
+
+export const toggleFavoriteFood = (foodId: string): boolean => {
+  const current = getFavoriteFoodIds();
+  const exists = current.includes(foodId);
+  const updated = exists ? current.filter((id) => id !== foodId) : [...current, foodId];
+  saveFavoriteFoodIds(updated);
+  return !exists;
+};
+
+export const isFoodFavorite = (foodId: string): boolean => {
+  return getFavoriteFoodIds().includes(foodId);
+};
+
+// --- CUSTOM USER RECIPES STORAGE ---
+export const getUserCustomRecipes = (): UserCustomRecipe[] => {
+  try {
+    const key = getUserScopedKey(STORAGE_KEYS.USER_RECIPES);
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const saveUserCustomRecipe = (recipe: UserCustomRecipe): void => {
+  try {
+    const key = getUserScopedKey(STORAGE_KEYS.USER_RECIPES);
+    const current = getUserCustomRecipes();
+    const existingIndex = current.findIndex((r) => r.id === recipe.id);
+    let updated: UserCustomRecipe[];
+    if (existingIndex >= 0) {
+      updated = current.map((r) => (r.id === recipe.id ? recipe : r));
+    } else {
+      updated = [recipe, ...current];
+    }
+    localStorage.setItem(key, JSON.stringify(updated));
+  } catch (err) {
+    console.error('Failed to save custom recipe', err);
+  }
+};
+
+export const deleteUserCustomRecipe = (recipeId: string): void => {
+  try {
+    const key = getUserScopedKey(STORAGE_KEYS.USER_RECIPES);
+    const current = getUserCustomRecipes();
+    const updated = current.filter((r) => r.id !== recipeId);
+    localStorage.setItem(key, JSON.stringify(updated));
+  } catch (err) {
+    console.error('Failed to delete custom recipe', err);
+  }
+};
+
+// --- RECENT LOGGED FOODS ---
+export const getRecentLoggedFoods = (limit: number = 8): { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; category?: string }[] => {
+  try {
+    const results: Map<string, { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; category?: string }> = new Map();
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dateKey = d.toISOString().split('T')[0];
+      const dayFoods = getFoodLog(dateKey);
+      for (const item of dayFoods) {
+        if (!results.has(item.name)) {
+          results.set(item.name, {
+            name: item.name,
+            portion: item.portion,
+            calories: item.calories,
+            protein: item.protein,
+            carbs: item.carbs,
+            fat: item.fat,
+            fiber: item.fiber,
+            category: item.category
+          });
+        }
+        if (results.size >= limit) break;
+      }
+      if (results.size >= limit) break;
+    }
+    return Array.from(results.values());
+  } catch {
+    return [];
+  }
 };
 
 // --- WORKOUTS STORAGE ---
@@ -553,7 +661,10 @@ export const analyzeNutritionGaps = (
   const diet = profile.dietType;
   const allergies = profile.allergies.map((a) => a.toLowerCase());
 
-  const candidates = FOOD_DATABASE.filter((food) => {
+  const comprehensivePresets: PresetFood[] = COMPREHENSIVE_FOOD_DATABASE.map((f) => toPresetFood(f));
+  const mergedPool: PresetFood[] = [...FOOD_DATABASE, ...comprehensivePresets];
+
+  const candidates = mergedPool.filter((food) => {
     // Diet check
     if (!food.suitableDiets.includes(diet)) return false;
     // Allergy check

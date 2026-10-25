@@ -27,10 +27,11 @@ export default function AICoachPage() {
 I currently have access to your personal parameters:
 • **Goal:** ${profile.goal.replace('_', ' ').toUpperCase()} (${profile.calorieTarget} kcal / ${profile.proteinTargetGrams}g Protein)
 • **Today's Logged Meals:** ${todayFoods.length} items logged so far
+• **Regional Cuisine:** Full support for Kerala cuisine (പുട്ട്, കടല, മീൻ, കപ്പ), Indian regional dishes, & global foods
 • **Equipment:** ${profile.availableEquipment.replace('_', ' ')}
 • **Diet / Budget:** ${profile.dietType} • ${profile.budget}
 
-Ask me to review your meals today, calculate remaining protein sources, or adapt your workout routine if your time or equipment is limited.`,
+Ask me to review your meals today, fit traditional Kerala dishes into your macros, suggest high-protein alternatives, or adapt your workout routine.`,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   };
 
@@ -58,10 +59,11 @@ Ask me to review your meals today, calculate remaining protein sources, or adapt
   }, [messages, isTyping, chatStorageKey]);
 
   const quickPrompts = [
+    'How do I fit Puttu and Kadala curry into my macros?',
+    'What Kerala foods will give me 30g protein?',
     'Analyze my nutrition gaps today',
-    'What should I eat for dinner within my macros?',
-    'I only have 30 minutes today, adapt my workout',
-    'Give me budget-friendly high-protein grocery staples'
+    'Suggest a low-calorie traditional Kerala dinner',
+    'I only have 30 minutes today, adapt my workout'
   ];
 
   const handleSendMessage = async (textToSend: string) => {
