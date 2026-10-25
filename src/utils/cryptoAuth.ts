@@ -280,5 +280,12 @@ export const markUserOnboarded = (userId: string): AuthUser | null => {
 };
 
 export const getActiveUserId = (): string => {
-  return localStorage.getItem(STORAGE_CURRENT_USER_ID_KEY) || 'usr_demo_alex';
+  const current = localStorage.getItem(STORAGE_CURRENT_USER_ID_KEY);
+  if (current) return current;
+  const session = getAuthSession();
+  if (session?.id) {
+    localStorage.setItem(STORAGE_CURRENT_USER_ID_KEY, session.id);
+    return session.id;
+  }
+  return '';
 };

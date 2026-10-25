@@ -16,15 +16,15 @@ export default function ProtectedRoute({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#090a0f] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-[#ccff00]/10 border border-[#ccff00]/30 flex items-center justify-center text-[#ccff00] text-xl font-bold animate-pulse">
-          ⚡
+      <div className="min-h-screen bg-[#f6f8f5] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c] text-xl font-bold animate-pulse shadow-xs">
+          🌱
         </div>
-        <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
-          <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-bounce" />
-          <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-bounce [animation-delay:0.2s]" />
-          <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-bounce [animation-delay:0.4s]" />
-          <span className="ml-1 text-zinc-300">Authenticating session...</span>
+        <div className="flex items-center gap-2 text-xs font-medium text-[#5e6f5e]">
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce" />
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce [animation-delay:0.2s]" />
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce [animation-delay:0.4s]" />
+          <span className="ml-1 text-[#192418] font-medium">Verifying session...</span>
         </div>
       </div>
     );

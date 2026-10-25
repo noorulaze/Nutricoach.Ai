@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppSidebar from './components/AppSidebar';
@@ -25,13 +25,32 @@ import ProgressPage from './pages/ProgressPage';
 import ProfilePage from './pages/ProfilePage';
 
 function AppLayout() {
+  const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
   const isAuthOrOnboardingRoute = 
     location.pathname === '/login' || 
     location.pathname === '/signup' || 
     location.pathname === '/onboarding';
 
-  if (isAuthOrOnboardingRoute) {
+  // While initializing authentication session from storage
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#f6f8f5] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c] text-xl font-bold animate-pulse shadow-xs">
+          🌱
+        </div>
+        <div className="flex items-center gap-2 text-xs font-medium text-[#5e6f5e]">
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce" />
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce [animation-delay:0.2s]" />
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce [animation-delay:0.4s]" />
+          <span className="ml-1 text-[#192418] font-medium">Verifying session...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // When logged out or on public auth routes, completely prevent protected UI mounting
+  if (!isAuthenticated || !user || isAuthOrOnboardingRoute) {
     return (
       <main className="min-h-screen bg-[#f6f8f5] text-[#192418] flex flex-col font-sans antialiased">
         <Routes>
@@ -45,6 +64,7 @@ function AppLayout() {
               </ProtectedRoute>
             } 
           />
+          {/* Any protected path accessed while logged out redirects directly to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>

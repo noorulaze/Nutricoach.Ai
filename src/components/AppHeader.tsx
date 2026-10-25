@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -7,18 +7,30 @@ import {
   Plus, 
   Menu, 
   X, 
-  Sparkles,
-  Flame
+  Flame,
+  User,
+  LogOut,
+  ChevronDown,
+  Settings,
+  ShieldCheck,
+  Activity,
+  MessageSquare
 } from 'lucide-react';
 import { getProfile, getFoodLog } from '../utils/storage';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import AppSidebar from './AppSidebar';
+import SignOutConfirmModal from './SignOutConfirmModal';
 
 export default function AppHeader() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [signOutModalOpen, setSignOutModalOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const profile = getProfile();
   const todayFoods = getFoodLog();
@@ -28,6 +40,7 @@ export default function AppHeader() {
 
   const displayName = user?.name || profile.name || 'Friend';
   const firstName = displayName.split(' ')[0];
+  const userEmail = user?.email || 'demo@nutricoach.ai';
 
   // Format today's date in style: "Today, Oct 25, 2026"
   const todayFormatted = `Today, ${new Date().toLocaleDateString('en-US', {
@@ -35,6 +48,21 @@ export default function AppHeader() {
     day: 'numeric',
     year: 'numeric'
   })}`;
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdownOpen]);
 
   // Keyboard shortcut cmd/ctrl + K to focus search
   useEffect(() => {
@@ -56,9 +84,17 @@ export default function AppHeader() {
     }
   };
 
+  const handleConfirmSignOut = () => {
+    setSignOutModalOpen(false);
+    setProfileDropdownOpen(false);
+    logout();
+    showToast('Signed out safely. All your food logs and workouts are preserved.', 'info', 'Signed Out');
+    navigate('/login', { replace: true });
+  };
+
   return (
     <>
-      <header className="w-full bg-[#f6f8f5] px-4 sm:px-6 lg:px-8 py-5 border-b border-[#e8ede6]/60">
+      <header className="w-full bg-[#f6f8f5] px-4 sm:px-6 lg:px-8 py-5 border-b border-[#e8ede6]/60 relative z-30">
         <div className="flex flex-col gap-4">
           {/* Top Row: Greeting on Left, Tools & Profile on Right */}
           <div className="flex items-center justify-between gap-4">
@@ -85,7 +121,7 @@ export default function AppHeader() {
               </div>
             </div>
 
-            {/* Right: Search, Date, Notifications, Profile Avatar */}
+            {/* Right: Search, Date, Notifications, Profile Dropdown */}
             <div className="flex items-center gap-2.5 sm:gap-3">
               {/* Date Pill (hidden on small mobile) */}
               <div className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white border border-[#e8ede6] text-xs font-medium text-[#5e6f5e] shadow-xs">
@@ -120,14 +156,105 @@ export default function AppHeader() {
                 <span className="w-2 h-2 rounded-full bg-[#5ba83c] absolute top-2 right-2 border-2 border-white" />
               </button>
 
-              {/* Profile Avatar */}
-              <Link
-                to="/profile"
-                className="w-9 h-9 rounded-2xl bg-[#5ba83c]/10 border border-[#5ba83c]/30 flex items-center justify-center text-xs font-bold text-[#3b7e23] hover:ring-2 hover:ring-[#5ba83c]/30 transition-all shadow-xs"
-                title="Profile & Settings"
-              >
-                {displayName.charAt(0).toUpperCase()}
-              </Link>
+              {/* Profile Avatar & Interactive Dropdown Menu */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setProfileDropdownOpen((prev) => !prev)}
+                  className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-2xl bg-white border border-[#e8ede6] hover:border-[#5ba83c]/40 hover:bg-[#edf2ea]/50 transition-all shadow-xs group"
+                  aria-expanded={profileDropdownOpen}
+                  aria-haspopup="true"
+                  title="Account & Session Menu"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-xs font-bold text-[#3b7e23] relative">
+                    {displayName.charAt(0).toUpperCase()}
+                    <span className="w-2 h-2 rounded-full bg-[#5ba83c] absolute -bottom-0.5 -right-0.5 ring-2 ring-white" />
+                  </div>
+                  <span className="hidden md:inline text-xs font-bold text-[#192418] max-w-[100px] truncate">
+                    {firstName}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-[#7a8c79] group-hover:text-[#192418] transition-transform ${
+                    profileDropdownOpen ? 'rotate-180' : ''
+                  }`} />
+                </button>
+
+                {/* Dropdown Card */}
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-3xl border border-[#e8ede6] shadow-xl p-3 z-50 animate-scale-up space-y-2">
+                    {/* User Info Header */}
+                    <div className="p-3 bg-[#f6f8f5] rounded-2xl border border-[#e8ede6]">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-xl bg-[#5ba83c] flex items-center justify-center text-sm font-bold text-white shadow-xs">
+                          {displayName.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-[#192418] truncate">
+                            {displayName}
+                          </p>
+                          <p className="text-[11px] text-[#7a8c79] font-medium truncate">
+                            {userEmail}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-2.5 pt-2 border-t border-[#e8ede6] flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#3b7e23] bg-[#eef7eb] px-2 py-0.5 rounded-full border border-[#d6ebd0]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#5ba83c] animate-pulse" />
+                          Session Active
+                        </span>
+                        <span className="text-[10px] text-[#7a8c79]">
+                          Data Protected
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick Menu Items */}
+                    <div className="py-1 space-y-0.5">
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] hover:bg-[#f6f8f5] transition-colors"
+                      >
+                        <User className="w-4 h-4 text-[#5ba83c]" />
+                        <span>Profile & Biometrics</span>
+                      </Link>
+
+                      <Link
+                        to="/food"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] hover:bg-[#f6f8f5] transition-colors"
+                      >
+                        <Activity className="w-4 h-4 text-[#5ba83c]" />
+                        <span>Food & Nutrition Log</span>
+                      </Link>
+
+                      <Link
+                        to="/coach"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] hover:bg-[#f6f8f5] transition-colors"
+                      >
+                        <MessageSquare className="w-4 h-4 text-[#5ba83c]" />
+                        <span>AI Fitness Coach</span>
+                      </Link>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px bg-[#e8ede6] my-1" />
+
+                    {/* Sign Out Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        setSignOutModalOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left"
+                    >
+                      <LogOut className="w-4 h-4 text-rose-500 stroke-[2.2]" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -166,6 +293,14 @@ export default function AppHeader() {
           </div>
         </div>
       </header>
+
+      {/* Sign Out Confirmation Modal */}
+      <SignOutConfirmModal
+        isOpen={signOutModalOpen}
+        onClose={() => setSignOutModalOpen(false)}
+        onConfirm={handleConfirmSignOut}
+        userName={displayName}
+      />
 
       {/* Mobile Sidebar Drawer Overlay */}
       {mobileDrawerOpen && (

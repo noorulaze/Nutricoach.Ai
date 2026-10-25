@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Settings, User, Target, Dumbbell, Utensils, 
-  Key, ShieldCheck, Save, RotateCcw, Check, Sparkles, Activity 
+  Key, ShieldCheck, Save, RotateCcw, Check, Sparkles, Activity,
+  LogOut, Lock, Database
 } from 'lucide-react';
 import { 
   getProfile, saveProfile, calculateBMR, 
@@ -12,11 +14,23 @@ import {
   ActivityLevel, EquipmentType, DietType, BudgetTier 
 } from '../types';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import SignOutConfirmModal from '../components/SignOutConfirmModal';
 
 export default function ProfilePage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [profile, setProfile] = useState<UserProfile>(() => getProfile());
   const [apiKeyVisible, setApiKeyVisible] = useState(false);
+  const [signOutModalOpen, setSignOutModalOpen] = useState(false);
+
+  const handleConfirmSignOut = () => {
+    setSignOutModalOpen(false);
+    logout();
+    showToast('Signed out safely. All your food logs and workouts are preserved.', 'info', 'Signed Out');
+    navigate('/login', { replace: true });
+  };
 
   // Common allergens list
   const ALLERGEN_OPTIONS = [
@@ -479,6 +493,85 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* SECTION 6: ACCOUNT, SECURITY & SESSION MANAGEMENT */}
+        <div className="bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#f0f4ee]">
+            <div className="w-8 h-8 rounded-xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c]">
+              <Lock className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-extrabold text-[#192418]">
+                Account & Session Management
+              </h2>
+              <span className="text-xs text-[#5e6f5e] font-medium">
+                Active session status and data preservation architecture
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Account Details Pill */}
+            <div className="bg-[#f6f8f5] border border-[#e8ede6] rounded-2xl p-4 space-y-2">
+              <span className="text-[10px] uppercase font-bold text-[#7a8c79] tracking-wider block">
+                Active NutriCoach Profile
+              </span>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#5ba83c] text-white flex items-center justify-center text-sm font-bold shadow-xs">
+                  {(user?.name || profile.name || 'A').charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-[#192418] truncate">
+                    {user?.name || profile.name}
+                  </p>
+                  <p className="text-[11px] text-[#5e6f5e] font-medium truncate">
+                    {user?.email || 'demo@nutricoach.ai'}
+                  </p>
+                </div>
+              </div>
+              <div className="pt-2 flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#3b7e23] bg-[#eef7eb] px-2.5 py-1 rounded-full border border-[#d6ebd0]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#5ba83c] animate-pulse" />
+                  Authenticated Session
+                </span>
+                <span className="text-[10px] text-[#7a8c79]">
+                  ID: {user?.id || 'usr_demo_alex'}
+                </span>
+              </div>
+            </div>
+
+            {/* Data Preservation Guarantee Callout */}
+            <div className="bg-[#f6f8f5] border border-[#e8ede6] rounded-2xl p-4 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#2d6a1b]">
+                <ShieldCheck className="w-4 h-4 text-[#5ba83c] shrink-0" />
+                <span>Zero Data Loss Guarantee</span>
+              </div>
+              <p className="text-[11px] text-[#5e6f5e] leading-relaxed">
+                Signing out clears only your active session token. <strong>Your logged meals, custom recipes, training routines, and progress records remain safely preserved</strong> in your browser's private storage and will be reloaded immediately upon your next login.
+              </p>
+            </div>
+          </div>
+
+          {/* Sign Out Card Action */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 bg-amber-50/50 border border-amber-200/60 rounded-2xl p-4">
+            <div>
+              <h4 className="text-xs font-bold text-[#192418]">
+                End Current Session
+              </h4>
+              <p className="text-[11px] text-[#5e6f5e]">
+                Safely sign out on this device. You will be redirected to the Login page.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSignOutModalOpen(true)}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-rose-600 bg-white hover:bg-rose-50 border border-rose-200 shadow-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            >
+              <LogOut className="w-4 h-4 text-rose-600 stroke-[2.2]" />
+              <span>Sign Out of NutriCoach AI</span>
+            </button>
+          </div>
+        </div>
+
         {/* ACTIONS */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#e8ede6]">
           <button
@@ -498,6 +591,14 @@ export default function ProfilePage() {
           </button>
         </div>
       </form>
+
+      {/* Sign Out Confirmation Modal */}
+      <SignOutConfirmModal
+        isOpen={signOutModalOpen}
+        onClose={() => setSignOutModalOpen(false)}
+        onConfirm={handleConfirmSignOut}
+        userName={user?.name || profile.name || 'Friend'}
+      />
     </div>
   );
 }
