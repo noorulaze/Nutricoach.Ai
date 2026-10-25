@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import loginBg from '../assets/login-bg.jpg';
 
 export default function SignupPage() {
   const { signup, isAuthenticated } = useAuth();
@@ -80,10 +81,8 @@ export default function SignupPage() {
       <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden border-r border-[var(--border-subtle)]">
         {/* Background Image with Dark Gradient Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
-          style={{ 
-            backgroundImage: `url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1470&auto=format&fit=crop')` 
-          }}
+          className="absolute inset-0 bg-cover bg-[center_top] bg-no-repeat transition-transform duration-1000 scale-[1.02]"
+          style={{ backgroundImage: `url(${loginBg})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#090a0f] via-[#090a0f]/80 to-[#090a0f]/45 backdrop-blur-[2px]" />
 

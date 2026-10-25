@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck, 
-  Sparkles, AlertCircle, CheckCircle2, X, Zap 
+  Sparkles, AlertCircle, CheckCircle2, X, Utensils, 
+  Dumbbell, TrendingUp, Zap 
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import loginBg from '../assets/login-bg.jpg';
 
 export default function LoginPage() {
   const { login, resetPassword, isAuthenticated } = useAuth();
@@ -94,248 +96,305 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#090a0f] text-zinc-100 flex selection:bg-[#ccff00] selection:text-black">
-      {/* DESKTOP LEFT COLUMN: High-Impact Cinematic Fitness Visuals */}
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden border-r border-[var(--border-subtle)]">
-        {/* Background Image with Dark Gradient Overlay */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
-          style={{ 
-            backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')` 
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#090a0f] via-[#090a0f]/75 to-[#090a0f]/40 backdrop-blur-[2px]" />
+    <div className="min-h-screen w-full bg-[#090a0f] text-zinc-100 flex flex-col lg:flex-row relative selection:bg-[#ccff00] selection:text-black font-sans">
+      
+      {/* ========================================================================= */}
+      {/* DESKTOP LEFT COLUMN: Cinematic Athlete Imagery + Brand Messaging          */}
+      {/* ========================================================================= */}
+      <div className="relative w-full lg:w-[58%] min-h-[460px] lg:min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-14 overflow-hidden border-b lg:border-b-0 lg:border-r border-zinc-800/80">
         
-        {/* Neon Ambient Glow */}
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[#ccff00]/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Background Athlete Photo */}
+        <div 
+          className="absolute inset-0 bg-cover bg-[center_top] bg-no-repeat transition-transform duration-1000 scale-[1.02]"
+          style={{ backgroundImage: `url(${loginBg})` }}
+        />
 
-        {/* Brand Header */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#ccff00] flex items-center justify-center text-black font-black text-sm shadow-[0_0_15px_rgba(204,255,0,0.4)]">
-            ⚡
+        {/* Ambient Dark Gradients (dark on left, smooth fade to right border) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60 lg:bg-gradient-to-r lg:from-black/85 lg:via-black/40 lg:to-[#090a0f] pointer-events-none" />
+        <div className="hidden lg:block absolute inset-y-0 right-0 w-36 bg-gradient-to-r from-transparent to-[#090a0f] pointer-events-none" />
+
+        {/* Top-Left: Logo & Subtitle */}
+        <div className="relative z-10 flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-[#ccff00] flex items-center justify-center text-black font-black shadow-[0_0_20px_rgba(204,255,0,0.4)]">
+            {/* Custom 4-point fitness star glyph */}
+            <svg className="w-6 h-6 fill-black" viewBox="0 0 24 24">
+              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
+            </svg>
           </div>
           <div>
-            <span className="font-heading font-black text-white text-xl tracking-wider">
-              NUTRICOACH <span className="text-[#ccff00]">AI</span>
-            </span>
-            <span className="block text-[10px] text-zinc-400 font-mono tracking-widest uppercase">
-              Precision Fitness & Nutrition Platform
+            <div className="flex items-center gap-1.5 leading-none">
+              <span className="font-heading font-black text-xl sm:text-2xl tracking-wider text-white">
+                NUTRI<span className="text-[#ccff00]">COACH</span>
+              </span>
+              <span className="text-[10px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/40">
+                AI
+              </span>
+            </div>
+            <span className="text-[9px] font-bold text-zinc-400 tracking-widest uppercase mt-1 block">
+              PERSONAL FITNESS & NUTRITION COACH
             </span>
           </div>
         </div>
 
-        {/* Motivational Centerpiece */}
-        <div className="relative z-10 max-w-lg space-y-6 my-auto">
-          <div className="inline-flex items-center gap-2 bg-[#ccff00]/10 border border-[#ccff00]/25 px-3 py-1 rounded-full">
-            <Sparkles className="w-3.5 h-3.5 text-[#ccff00]" />
-            <span className="text-xs font-mono text-[#ccff00] font-semibold uppercase tracking-wider">
-              Personalized Human Performance
-            </span>
+        {/* Center / Lower-Left: Bold Motto & Feature Pillars */}
+        <div className="relative z-10 max-w-xl space-y-7 my-auto pt-12 pb-6">
+          {/* Main Hero Typography */}
+          <div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-[1.05] italic uppercase">
+              <span className="text-white block">BETTER FOOD.</span>
+              <span className="text-[#ccff00] block">STRONGER YOU.</span>
+            </h1>
+
+            <p className="text-sm sm:text-base text-zinc-300 italic font-normal mt-3 leading-relaxed">
+              Track your nutrition. Follow your workouts.<br className="hidden sm:inline" />
+              Build a healthier, stronger you — with AI.
+            </p>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black font-heading text-white tracking-tight leading-none uppercase">
-            Discipline over motivation. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ccff00] to-emerald-400">
-              Science over guesswork.
-            </span>
-          </h1>
-
-          <p className="text-sm text-zinc-300 leading-relaxed font-normal">
-            Take control of your daily macronutrient distribution, progressive overload schedule, and biological recovery with an intelligent system engineered specifically for your body.
-          </p>
-
-          {/* Social Proof / Capability Badges */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-zinc-800/80 text-left font-mono">
-            <div className="bg-zinc-950/70 border border-zinc-800 p-3 rounded-xl backdrop-blur-md">
-              <span className="text-[#ccff00] font-black text-lg block">99.4%</span>
-              <span className="text-[10px] text-zinc-400 uppercase">Macro Precision</span>
+          {/* 4 Feature Items (Matches the mockup layout) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+            <div className="flex flex-col items-start gap-1.5">
+              <Utensils className="w-5 h-5 text-[#ccff00]" />
+              <span className="text-xs font-semibold text-zinc-200 leading-snug">
+                Track<br />Nutrition
+              </span>
             </div>
-            <div className="bg-zinc-950/70 border border-zinc-800 p-3 rounded-xl backdrop-blur-md">
-              <span className="text-white font-black text-lg block">40+</span>
-              <span className="text-[10px] text-zinc-400 uppercase">Compound Cues</span>
+
+            <div className="flex flex-col items-start gap-1.5">
+              <Dumbbell className="w-5 h-5 text-[#ccff00]" />
+              <span className="text-xs font-semibold text-zinc-200 leading-snug">
+                Plan<br />Workouts
+              </span>
             </div>
-            <div className="bg-zinc-950/70 border border-zinc-800 p-3 rounded-xl backdrop-blur-md">
-              <span className="text-emerald-400 font-black text-lg block">100%</span>
-              <span className="text-[10px] text-zinc-400 uppercase">Client-Side Safe</span>
+
+            <div className="flex flex-col items-start gap-1.5">
+              <TrendingUp className="w-5 h-5 text-[#ccff00]" />
+              <span className="text-xs font-semibold text-zinc-200 leading-snug">
+                Monitor<br />Progress
+              </span>
+            </div>
+
+            <div className="flex flex-col items-start gap-1.5">
+              <Sparkles className="w-5 h-5 text-[#ccff00]" />
+              <span className="text-xs font-semibold text-zinc-200 leading-snug">
+                Get AI<br />Coaching
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Bottom Security Note */}
-        <div className="relative z-10 flex items-center gap-2 text-xs text-zinc-400 font-mono">
-          <ShieldCheck className="w-4 h-4 text-[#ccff00]" />
-          <span>Client-side cryptographic credential hashing & private storage isolation.</span>
+        {/* Bottom Left Footer Tag */}
+        <div className="relative z-10 flex items-center gap-3 text-xs font-mono tracking-widest text-zinc-500 uppercase">
+          <span>SMALL STEPS</span>
+          <span className="text-zinc-700">/</span>
+          <span>BIG CHANGES</span>
+          <div className="h-px bg-zinc-800 flex-1 max-w-[140px]" />
         </div>
       </div>
 
-      {/* RIGHT COLUMN: Authentication Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 sm:px-12 lg:px-16 py-12 relative overflow-y-auto">
-        <div className="w-full max-w-md space-y-7 animate-fade-in">
-          {/* Mobile Brand Banner */}
-          <div className="lg:hidden flex items-center gap-3 pb-4 border-b border-[var(--border-subtle)]">
-            <div className="w-8 h-8 rounded-xl bg-[#ccff00] flex items-center justify-center text-black font-black text-sm">
-              ⚡
+      {/* ========================================================================= */}
+      {/* RIGHT COLUMN: Authentication Form + Diagonal Accent Streaks              */}
+      {/* ========================================================================= */}
+      <div className="relative w-full lg:w-[42%] min-h-screen bg-[#090a0f] flex flex-col justify-between p-6 sm:p-10 lg:p-12 overflow-y-auto">
+        
+        {/* Subtle Diagonal Neon Streaks (Matches the mockup graphics in corners) */}
+        <svg 
+          className="absolute top-0 right-0 w-64 h-64 pointer-events-none opacity-30 text-[#ccff00]" 
+          viewBox="0 0 200 200" 
+          fill="none"
+        >
+          <line x1="160" y1="0" x2="200" y2="40" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="130" y1="0" x2="200" y2="70" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="100" y1="0" x2="200" y2="100" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="170" y1="0" x2="200" y2="30" stroke="currentColor" strokeWidth="2" strokeOpacity="0.7" />
+        </svg>
+
+        <svg 
+          className="absolute bottom-0 left-0 w-64 h-64 pointer-events-none opacity-20 text-[#ccff00]" 
+          viewBox="0 0 200 200" 
+          fill="none"
+        >
+          <line x1="0" y1="160" x2="40" y2="200" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="0" y1="130" x2="70" y2="200" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="0" y1="100" x2="100" y2="200" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+
+        {/* Top-Right: Quick Sign Up Link */}
+        <div className="relative z-10 flex justify-end items-center text-xs text-zinc-400">
+          <span>Don't have an account? </span>
+          <Link 
+            to="/signup" 
+            className="text-[#ccff00] font-bold ml-1.5 hover:underline inline-flex items-center gap-1 transition-all"
+          >
+            Sign Up <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* Center: Card Content */}
+        <div className="relative z-10 w-full max-w-sm mx-auto my-auto py-8 space-y-6 animate-fade-in">
+          
+          {/* NutriCoach Logo Header inside the right panel */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#ccff00] flex items-center justify-center text-black font-black shadow-[0_0_15px_rgba(204,255,0,0.35)]">
+              <svg className="w-5 h-5 fill-black" viewBox="0 0 24 24">
+                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
+              </svg>
             </div>
             <div>
-              <span className="font-heading font-black text-white text-lg tracking-wider">
-                NUTRICOACH <span className="text-[#ccff00]">AI</span>
-              </span>
-              <span className="block text-[10px] text-zinc-400 font-mono">
-                Personal Nutrition & Fitness App
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className="font-heading font-black text-xl tracking-wider text-white">
+                  NUTRI<span className="text-[#ccff00]">COACH</span>
+                </span>
+                <span className="text-[9px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/40">
+                  AI
+                </span>
+              </div>
+              <span className="text-[8px] font-bold text-zinc-400 tracking-widest uppercase mt-0.5 block">
+                PERSONAL FITNESS & NUTRITION COACH
               </span>
             </div>
           </div>
 
-          {/* Form Header */}
+          {/* Heading */}
           <div>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#ccff00] block mb-1">
-              SECURE PORTAL
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Welcome back
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+              Welcome Back
             </h2>
             <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-              Log in to sync your food diary, workout split, and personal recovery metrics.
+              Your goals. Our AI. A healthier you.
             </p>
           </div>
 
-          {/* 1-Click Quick Demo Account Card */}
-          <div className="bg-zinc-900/90 border border-zinc-800 hover:border-[#ccff00]/40 rounded-2xl p-4 transition-all">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-mono uppercase text-[#ccff00] font-bold flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5" /> Instant Demo Access
-              </span>
-              <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded">
-                Pre-configured
+          {/* 1-Click Demo Login Pill */}
+          <div className="bg-[#11131a] border border-zinc-800/80 hover:border-[#ccff00]/40 rounded-xl p-3 flex items-center justify-between gap-2 transition-all">
+            <div className="flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5 text-[#ccff00]" />
+              <span className="text-[11px] font-mono text-zinc-300">
+                Demo Account: <strong>Alex Vance</strong>
               </span>
             </div>
-            <p className="text-xs text-zinc-300 mb-3">
-              Evaluate with full sample nutrition data, workouts, and biometrics:
-            </p>
             <button
               type="button"
               onClick={handleQuickDemoLogin}
               disabled={isSubmitting}
-              className="w-full py-2.5 px-3 bg-zinc-800 hover:bg-zinc-700 text-white hover:text-[#ccff00] border border-zinc-700/80 rounded-xl text-xs font-semibold font-mono flex items-center justify-center gap-2 transition-colors"
+              className="text-[11px] font-mono text-[#ccff00] hover:underline font-bold px-2 py-0.5 rounded hover:bg-[#ccff00]/10 transition-colors"
             >
-              <span>Log in as Alex Vance (demo@nutricoach.ai)</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#ccff00]" />
+              Instant Login →
             </button>
           </div>
 
-          {/* Error Banner */}
+          {/* Error Message */}
           {errorMessage && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3.5 flex items-start gap-2.5 text-xs text-red-300 animate-fade-in">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 flex items-start gap-2.5 text-xs text-red-300 animate-fade-in">
               <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          {/* Login Form */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email Field */}
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            {/* Email Field with embedded label */}
+            <div className="bg-[#11141c] border border-zinc-800 focus-within:border-[#ccff00]/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 transition-colors shadow-sm">
+              <Mail className="w-4 h-4 text-zinc-500 shrink-0" />
+              <div className="flex-1">
+                <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 leading-tight">
+                  Email address
+                </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="alex@nutricoach.ai"
-                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#ccff00] transition-colors"
+                  placeholder="you@example.com"
+                  className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none"
                 />
               </div>
             </div>
 
-            {/* Password Field */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            {/* Password Field with embedded label & show/hide toggle */}
+            <div className="bg-[#11141c] border border-zinc-800 focus-within:border-[#ccff00]/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 transition-colors shadow-sm">
+              <Lock className="w-4 h-4 text-zinc-500 shrink-0" />
+              <div className="flex-1">
+                <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 leading-tight">
                   Password
                 </label>
-                <button
-                  type="button"
-                  onClick={() => setIsForgotModalOpen(true)}
-                  className="text-xs text-[#ccff00] hover:underline font-mono"
-                >
-                  Forgot password?
-                </button>
-              </div>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl pl-10 pr-11 py-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#ccff00] transition-colors"
+                  placeholder="At least 8 characters"
+                  className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white p-1"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-zinc-500 hover:text-zinc-300 p-1 transition-colors"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center">
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between text-xs pt-1">
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-[#ccff00] accent-[#ccff00] focus:ring-0"
+                  className="w-4 h-4 rounded bg-[#11141c] border-zinc-700 text-[#ccff00] accent-[#ccff00] focus:ring-0"
                 />
-                <span className="text-xs text-zinc-300 font-medium">Remember this device</span>
+                <span className="text-zinc-300 font-medium text-xs">Remember me</span>
               </label>
+
+              <button
+                type="button"
+                onClick={() => setIsForgotModalOpen(true)}
+                className="text-[#ccff00] hover:underline font-medium text-xs"
+              >
+                Forgot password?
+              </button>
             </div>
 
-            {/* Submit Button */}
+            {/* Log In Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 px-4 bg-[#ccff00] hover:bg-[#b8e600] disabled:opacity-50 text-black font-extrabold uppercase text-xs tracking-wider rounded-xl transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3.5 px-4 bg-[#ccff00] hover:bg-[#b8e600] disabled:opacity-50 text-black font-extrabold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(204,255,0,0.3)] flex items-center justify-center gap-2 mt-4 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  <span>Verifying Credentials...</span>
+                  <span>Logging In...</span>
                 </>
               ) : (
                 <>
-                  <span>Log In to Dashboard</span>
                   <ArrowRight className="w-4 h-4" />
+                  <span>Log In</span>
                 </>
               )}
             </button>
           </form>
 
-          {/* Social Sign In Divider */}
-          <div className="relative my-6">
+          {/* OR Divider */}
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-zinc-800" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase font-mono">
-              <span className="bg-[#090a0f] px-3 text-zinc-500">Or continue with</span>
+            <div className="relative flex justify-center text-[10px] uppercase font-mono">
+              <span className="bg-[#090a0f] px-3 text-zinc-500">OR</span>
             </div>
           </div>
 
-          {/* Google OAuth Button */}
+          {/* Google Sign In Button */}
           <button
             type="button"
             onClick={() => setIsGoogleModalOpen(true)}
-            className="w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-850 text-zinc-200 border border-zinc-700/80 rounded-xl text-xs font-semibold flex items-center justify-center gap-2.5 transition-colors"
+            className="w-full py-3 px-4 bg-[#11141c] hover:bg-[#161a24] border border-zinc-800 rounded-xl text-xs font-semibold text-zinc-200 flex items-center justify-center gap-3 transition-colors cursor-pointer"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -356,28 +415,33 @@ export default function LoginPage() {
             <span>Continue with Google</span>
           </button>
 
-          {/* Link to Sign Up */}
+          {/* Bottom Link to Sign Up */}
           <div className="text-center pt-2">
             <p className="text-xs text-zinc-400">
-              Don't have an account?{' '}
+              New to NUTRICOACH AI?{' '}
               <Link 
                 to="/signup" 
-                className="text-[#ccff00] font-bold hover:underline transition-colors"
+                className="text-[#ccff00] font-bold hover:underline inline-flex items-center gap-1 transition-colors"
               >
-                Create Account
+                Create an account <ArrowRight className="w-3 h-3" />
               </Link>
             </p>
           </div>
         </div>
+
+        {/* Empty bottom spacer to balance layout */}
+        <div className="hidden lg:block h-6" />
       </div>
 
-      {/* FORGOT PASSWORD MODAL */}
+      {/* ========================================================================= */}
+      {/* FORGOT PASSWORD MODAL                                                     */}
+      {/* ========================================================================= */}
       {isForgotModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-3xl p-6 sm:p-8 shadow-2xl animate-fade-in space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-md bg-[#10131a] border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
             <button
               onClick={() => setIsForgotModalOpen(false)}
-              className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800"
+              className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -390,7 +454,7 @@ export default function LoginPage() {
                 Reset Account Password
               </h3>
               <p className="text-xs text-zinc-400 mt-1">
-                Enter your registered email and choose a new secure password.
+                Enter your registered email and specify a new secure password.
               </p>
             </div>
 
@@ -453,10 +517,12 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* GOOGLE OAUTH CONFIGURATION NOTICE MODAL */}
+      {/* ========================================================================= */}
+      {/* GOOGLE OAUTH CONFIGURATION NOTICE MODAL                                   */}
+      {/* ========================================================================= */}
       {isGoogleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-3xl p-6 sm:p-8 shadow-2xl animate-fade-in space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-md bg-[#10131a] border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
             <button
               onClick={() => setIsGoogleModalOpen(false)}
               className="absolute top-5 right-5 text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800"
@@ -483,7 +549,7 @@ export default function LoginPage() {
             </p>
 
             <p className="text-xs text-zinc-400 leading-relaxed">
-              To proceed right now, please use the <strong>built-in secure email authentication</strong> or click the 1-click <strong>Instant Demo Access</strong> button above.
+              To log in right now, please use the <strong>built-in secure email authentication</strong> or click the 1-click <strong>Instant Login</strong> button above.
             </p>
 
             <div className="pt-2">
