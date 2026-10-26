@@ -4,7 +4,7 @@ import {
   ChevronLeft, ChevronRight, Calendar, Sparkles, X, 
   CheckCircle2, Flame, Apple, Coffee, Moon, Sun, 
   Star, Clock, BookOpen, Filter, Check, ArrowRight,
-  Globe, Info, RefreshCw
+  Globe, Info, RefreshCw, Sliders
 } from 'lucide-react';
 import { 
   getProfile, getFoodLog, addFoodEntry, 
@@ -18,6 +18,7 @@ import {
   toFoodItem, ComprehensiveFood, ServingSize, FoodCuisine, FoodCategory,
   DietaryType, UserCustomRecipe, RecipeIngredient, customRecipeToComprehensiveFood
 } from '../data/foodDatabase';
+import DishIngredientCalculatorModal from '../components/DishIngredientCalculatorModal';
 import { FoodItem, MealType, PresetFood } from '../types';
 import { useToast } from '../context/ToastContext';
 
@@ -56,15 +57,28 @@ export default function FoodTrackerPage() {
 
   // Custom Recipe Builder State
   const [recipeName, setRecipeName] = useState('');
-  const [recipeMalayalamName, setRecipeMalayalamName] = useState('');
   const [recipeServings, setRecipeServings] = useState<number>(2);
   const [recipeIngredients, setRecipeIngredients] = useState<RecipeIngredient[]>([]);
   const [recipeIngredientSearch, setRecipeIngredientSearch] = useState('');
   const [recipeIngredientGrams, setRecipeIngredientGrams] = useState<number>(100);
   const [selectedRecipeFood, setSelectedRecipeFood] = useState<ComprehensiveFood | null>(null);
 
+  // Curated list of popular curries and sides for quick-access showcase
+  const [curryShowcaseFilter, setCurryShowcaseFilter] = useState<'all' | 'kerala' | 'chicken' | 'beef' | 'seafood' | 'veg'>('all');
+
   // Favorites trigger state to force re-render
   const [favoritesVersion, setFavoritesVersion] = useState(0);
+
+  // Dish Ingredients & Nutrition Calculator State
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [calculatorFood, setCalculatorFood] = useState<ComprehensiveFood | null>(null);
+  const [calculatorMeal, setCalculatorMeal] = useState<MealType>('lunch');
+
+  const handleOpenCalculator = (food: ComprehensiveFood, meal: MealType = 'lunch') => {
+    setCalculatorFood(food);
+    setCalculatorMeal(meal);
+    setIsCalculatorOpen(true);
+  };
 
   const profile = getProfile();
 
@@ -153,6 +167,47 @@ export default function FoodTrackerPage() {
     const effectiveGrams = isCustomGramsActive ? customGramInput : (selectedServing?.grams || selectedFood.defaultServing.grams);
     return calculatePortionNutrition(selectedFood, effectiveGrams);
   }, [selectedFood, selectedServing, customGramInput, isCustomGramsActive]);
+
+  // Curated list of popular curries and sides for quick-access showcase
+  const featuredCurriesList = useMemo(() => {
+    const curries = COMPREHENSIVE_FOOD_DATABASE.filter(
+      (f) => f.category === 'curries_gravies' || f.category === 'vegetarian_sides'
+    );
+    if (curryShowcaseFilter === 'kerala') {
+      return curries.filter((c) => c.cuisine === 'kerala');
+    }
+    if (curryShowcaseFilter === 'chicken') {
+      return curries.filter((c) => c.name.toLowerCase().includes('chicken'));
+    }
+    if (curryShowcaseFilter === 'beef') {
+      return curries.filter((c) => c.name.toLowerCase().includes('beef'));
+    }
+    if (curryShowcaseFilter === 'seafood') {
+      return curries.filter((c) => 
+        c.dietaryType === 'pescatarian' || 
+        c.name.toLowerCase().includes('fish') || 
+        c.name.toLowerCase().includes('prawn') || 
+        c.name.toLowerCase().includes('sardine') || 
+        c.name.toLowerCase().includes('mackerel') || 
+        c.name.toLowerCase().includes('squid')
+      );
+    }
+    if (curryShowcaseFilter === 'veg') {
+      return curries.filter((c) => c.dietaryType === 'vegetarian' || c.dietaryType === 'vegan');
+    }
+    return curries;
+  }, [curryShowcaseFilter]);
+
+  // Open Modal directly focused on a selected Curry
+  const handleOpenCurryModal = (food: ComprehensiveFood, meal: MealType = 'lunch') => {
+    setActiveMealCategory(meal);
+    setSelectedFood(food);
+    setSelectedServing(food.defaultServing);
+    setIsCustomGramsActive(false);
+    setSearchQuery('');
+    setActiveModalTab('search');
+    setIsModalOpen(true);
+  };
 
   // Open Add Modal
   const handleOpenAddModal = (meal: MealType) => {
@@ -336,7 +391,6 @@ export default function FoodTrackerPage() {
     const newRecipe: UserCustomRecipe = {
       id: 'custom_rec_' + Date.now(),
       name: recipeName.trim(),
-      malayalamName: recipeMalayalamName.trim() || undefined,
       cuisine: 'kerala',
       servingsYield: yields,
       ingredients: recipeIngredients,
@@ -354,7 +408,6 @@ export default function FoodTrackerPage() {
     saveUserCustomRecipe(newRecipe);
     setFavoritesVersion((v) => v + 1);
     setRecipeName('');
-    setRecipeMalayalamName('');
     setRecipeIngredients([]);
     setActiveModalTab('search');
     showToast(`Saved recipe "${newRecipe.name}"!`, 'success');
@@ -375,7 +428,7 @@ export default function FoodTrackerPage() {
             Food & Macronutrient Tracker
           </h1>
           <p className="text-xs sm:text-sm text-[#5e6f5e] mt-0.5 font-medium">
-            Log foods by precise portion size, track Malayalam & regional Indian cuisines, and balance macros in real time.
+            Log foods by precise portion size, track Kerala, regional Indian & international curries, and balance macros in real time.
           </p>
         </div>
 
@@ -581,6 +634,138 @@ export default function FoodTrackerPage() {
               </span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* FEATURED CURRIES & AUTHENTIC SIDE DISHES MENU             */}
+      {/* ========================================================= */}
+      <div className="bg-white border border-[#e8ede6] rounded-[28px] p-5 sm:p-7 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
+                AUTHENTIC CURRIES & SIDES MENU
+              </span>
+              <span className="text-xs text-[#7a8c79] font-medium">Kerala • Regional Indian • International</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#192418] tracking-tight">
+              Featured Curries & Traditional Side Dishes
+            </h2>
+            <p className="text-xs text-[#5e6f5e] mt-0.5 font-medium">
+              Select any authentic curry or side dish, choose your portion size (100g, 1 cup, 1 bowl, or custom grams), and add it directly to your Food Tracker.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedCategory('curries_gravies');
+                handleOpenAddModal('lunch');
+              }}
+              className="px-4 py-2 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs active:scale-[0.98]"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Browse All Curries</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+          {[
+            { key: 'all', label: 'All Curries & Sides' },
+            { key: 'kerala', label: 'Kerala Specialties' },
+            { key: 'chicken', label: 'Chicken Curries' },
+            { key: 'beef', label: 'Beef Curries' },
+            { key: 'seafood', label: 'Fish & Seafood' },
+            { key: 'veg', label: 'Vegetarian & Dals' }
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setCurryShowcaseFilter(tab.key as any)}
+              className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                curryShowcaseFilter === tab.key
+                  ? 'bg-[#192418] text-white shadow-xs'
+                  : 'bg-[#f6f8f5] text-[#5e6f5e] hover:text-[#192418] border border-[#e8ede6]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Curries Grid (Showing 8 top curated items according to filter) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+          {featuredCurriesList.slice(0, 8).map((curry) => (
+            <div
+              key={curry.id}
+              onClick={() => handleOpenCalculator(curry, 'lunch')}
+              className="p-4 rounded-2xl border border-[#e8ede6] dark:border-[#394139] bg-[#fcfdfc] dark:bg-[#272E29] hover:border-[#5ba83c] hover:bg-white dark:hover:bg-[#1C211D] transition-all flex flex-col justify-between shadow-xs group cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#3b7e23] dark:text-[#8BAF78] bg-[#eef7eb] dark:bg-[#1C211D] px-2 py-0.5 rounded-md border border-[#d6ebd0] dark:border-[#394139]">
+                    {curry.region}
+                  </span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                    curry.dietaryType === 'non_vegetarian'
+                      ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40'
+                      : curry.dietaryType === 'pescatarian'
+                      ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/40 dark:text-sky-400 border border-sky-200 dark:border-sky-900/40'
+                      : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40'
+                  }`}>
+                    {curry.dietaryType === 'non_vegetarian' ? 'Non-Veg' : curry.dietaryType === 'pescatarian' ? 'Seafood' : 'Vegetarian'}
+                  </span>
+                </div>
+
+                <h3 className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7] group-hover:text-[#5ba83c] transition-colors leading-snug">
+                  {curry.name}
+                </h3>
+
+                <p className="text-[11px] text-[#5e6f5e] dark:text-[#A2AAA1] mt-1 line-clamp-2 leading-relaxed">
+                  {curry.description}
+                </p>
+
+                <div className="mt-2.5 pt-2 border-t border-[#f0f4ee] dark:border-[#394139] flex items-center justify-between text-[11px]">
+                  <span className="text-[#7a8c79] dark:text-[#A2AAA1]">Per 100g:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-[#192418] dark:text-[#E8EDE7]">{curry.per100g.calories} kcal</span>
+                    <span className="font-bold text-rose-600 dark:text-rose-400">{curry.per100g.protein}g Protein</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-3 mt-2 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenCalculator(curry, 'lunch');
+                  }}
+                  className="px-2.5 py-1.5 rounded-xl bg-[#eef7eb] dark:bg-[#1C211D] hover:bg-[#d6ebd0] dark:hover:bg-[#394139] text-[#3b7e23] dark:text-[#8BAF78] text-[11px] font-bold transition-all shadow-xs flex items-center gap-1 active:scale-95 border border-[#d6ebd0] dark:border-[#394139]"
+                  title="Customize ingredients, adjust oil/quantities, and calculate live nutrition"
+                >
+                  <Sliders className="w-3 h-3 text-[#5ba83c]" />
+                  <span>Customize</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenCurryModal(curry, 'lunch');
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 flex items-center gap-1 active:scale-95"
+                >
+                  <Plus className="w-3 h-3 stroke-[2.5]" />
+                  <span>Select & Add</span>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -875,14 +1060,14 @@ export default function FoodTrackerPage() {
               {/* TAB 1: SEARCH FOOD DATABASE */}
               {activeModalTab === 'search' && (
                 <div className="space-y-4">
-                  {/* Search Bar with Multilingual prompt */}
+                  {/* Search Bar with Curry & Food prompt */}
                   <div className="relative">
                     <Search className="w-4 h-4 text-[#8e9f8e] absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search in English, Manglish, or Malayalam (e.g. puttu, മീൻ കറി, kadala, biriyani, dosa, chicken)..."
+                      placeholder="Search curries, sides, & foods (e.g. chicken curry, beef curry, fish curry, sambar, avial, thoran, kadala, butter chicken, dal)..."
                       className="w-full bg-[#f6f8f5] border border-[#e8ede6] rounded-2xl pl-10 pr-4 py-2.5 text-xs text-[#192418] placeholder-[#8e9f8e] focus:outline-none focus:ring-2 focus:ring-[#5ba83c]/30 focus:border-[#5ba83c]"
                       autoFocus
                     />
@@ -902,8 +1087,8 @@ export default function FoodTrackerPage() {
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                       <span className="text-[10px] font-bold uppercase text-[#7a8c79] mr-1 shrink-0">Cuisine:</span>
                       {[
-                        { key: 'all', label: 'All' },
-                        { key: 'kerala', label: '🌴 Kerala Cuisine (കേരളം)' },
+                        { key: 'all', label: 'All Cuisines' },
+                        { key: 'kerala', label: '🌴 Kerala Cuisine' },
                         { key: 'south_indian', label: 'South Indian' },
                         { key: 'north_indian', label: 'North Indian' },
                         { key: 'middle_eastern', label: 'Middle Eastern' },
@@ -926,7 +1111,7 @@ export default function FoodTrackerPage() {
                       ))}
                     </div>
 
-                    {/* Secondary Filters (Category, Dietary, High Protein) */}
+                    {/* Secondary Filters (Category, Dietary, Quick Curry Buttons, High Protein) */}
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <select
                         value={selectedCategory}
@@ -934,12 +1119,12 @@ export default function FoodTrackerPage() {
                         className="bg-[#f6f8f5] border border-[#e8ede6] rounded-xl px-2.5 py-1 text-[11px] text-[#192418] font-bold focus:outline-none"
                       >
                         <option value="all">All Categories</option>
+                        <option value="curries_gravies">🍛 Curries & Gravies</option>
+                        <option value="vegetarian_sides">🥗 Veg Sides & Thorans</option>
                         <option value="breakfast">Breakfast</option>
                         <option value="staples_grains">Staples & Grains</option>
-                        <option value="curries_gravies">Curries & Gravies</option>
                         <option value="seafood">Seafood</option>
                         <option value="meat_poultry">Meat & Poultry</option>
-                        <option value="vegetarian_sides">Veg Sides & Sadya</option>
                         <option value="snacks_streetfood">Snacks & Street Food</option>
                         <option value="beverages">Drinks & Beverages</option>
                         <option value="desserts">Desserts & Sweets</option>
@@ -954,9 +1139,35 @@ export default function FoodTrackerPage() {
                         <option value="all">All Diets</option>
                         <option value="vegetarian">Vegetarian</option>
                         <option value="vegan">Vegan</option>
-                        <option value="pescatarian">Pescatarian</option>
+                        <option value="pescatarian">Pescatarian (Fish & Seafood)</option>
                         <option value="non_vegetarian">Non-Vegetarian</option>
                       </select>
+
+                      {/* Quick Curry Category Shortcut */}
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCategory(selectedCategory === 'curries_gravies' ? 'all' : 'curries_gravies')}
+                        className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 ${
+                          selectedCategory === 'curries_gravies'
+                            ? 'bg-[#3b7e23] text-white shadow-xs'
+                            : 'bg-[#f6f8f5] text-[#5e6f5e] hover:text-[#192418] border border-[#e8ede6]'
+                        }`}
+                      >
+                        <span>🍛 Curries</span>
+                      </button>
+
+                      {/* Quick Veg Sides Shortcut */}
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCategory(selectedCategory === 'vegetarian_sides' ? 'all' : 'vegetarian_sides')}
+                        className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 ${
+                          selectedCategory === 'vegetarian_sides'
+                            ? 'bg-[#3b7e23] text-white shadow-xs'
+                            : 'bg-[#f6f8f5] text-[#5e6f5e] hover:text-[#192418] border border-[#e8ede6]'
+                        }`}
+                      >
+                        <span>🥗 Veg Sides & Thoran</span>
+                      </button>
 
                       <button
                         type="button"
@@ -984,7 +1195,7 @@ export default function FoodTrackerPage() {
                       {filteredFoods.length === 0 ? (
                         <div className="py-8 text-center bg-[#fdfefd] border border-dashed border-[#e8ede6] rounded-2xl">
                           <p className="text-xs text-[#7a8c79] font-medium">
-                            No foods match "{searchQuery}". Try searching in English, Manglish, or Malayalam.
+                            No foods match "{searchQuery}". Try searching by curry name, ingredient, or cuisine.
                           </p>
                           <button
                             onClick={() => {
@@ -1018,11 +1229,15 @@ export default function FoodTrackerPage() {
                                   <h4 className="text-xs font-bold text-[#192418] truncate">
                                     {food.name}
                                   </h4>
-                                  {food.malayalamName && (
-                                    <span className="text-[11px] font-semibold text-[#3b7e23]">
-                                      {food.malayalamName}
-                                    </span>
-                                  )}
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                                    food.dietaryType === 'vegetarian' || food.dietaryType === 'vegan'
+                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                      : food.dietaryType === 'pescatarian'
+                                      ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                                      : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  }`}>
+                                    {food.dietaryType === 'vegetarian' ? 'Veg' : food.dietaryType === 'vegan' ? 'Vegan' : food.dietaryType === 'pescatarian' ? 'Seafood' : 'Non-Veg'}
+                                  </span>
                                 </div>
                                 <div className="text-[10px] text-[#7a8c79] mt-0.5 flex items-center gap-2">
                                   <span className="capitalize">{food.region}</span>
@@ -1072,11 +1287,6 @@ export default function FoodTrackerPage() {
                             <h4 className="text-sm font-extrabold text-[#192418]">
                               {selectedFood.name}
                             </h4>
-                            {selectedFood.malayalamName && (
-                              <p className="text-xs font-bold text-[#3b7e23]">
-                                {selectedFood.malayalamName}
-                              </p>
-                            )}
                             <p className="text-[11px] text-[#5e6f5e] mt-1 line-clamp-2">
                               {selectedFood.description}
                             </p>
@@ -1165,15 +1375,54 @@ export default function FoodTrackerPage() {
                             </div>
                           </div>
 
-                          {/* Log Button */}
-                          <button
-                            type="button"
-                            onClick={handleLogSelectedFood}
-                            className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
-                          >
-                            <Plus className="w-4 h-4 stroke-[2.5]" />
-                            <span>Add to {activeMealCategory}</span>
-                          </button>
+                          {/* Target Meal Selection & Log Button */}
+                          <div className="pt-2 border-t border-[#e8ede6] space-y-2">
+                            <div className="flex items-center justify-between">
+                              <label className="text-[10px] font-bold text-[#192418] uppercase tracking-wider">
+                                Log into Meal:
+                              </label>
+                              <div className="flex items-center gap-1">
+                                {(['breakfast', 'lunch', 'dinner', 'snacks'] as MealType[]).map((m) => (
+                                  <button
+                                    key={m}
+                                    type="button"
+                                    onClick={() => setActiveMealCategory(m)}
+                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold capitalize transition-colors ${
+                                      activeMealCategory === m
+                                        ? 'bg-[#192418] text-white shadow-xs'
+                                        : 'bg-white text-[#5e6f5e] hover:bg-[#edf2ea] border border-[#e8ede6]'
+                                    }`}
+                                  >
+                                    {m}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Customize Ingredients & Nutrition Calculator Entrypoint */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (selectedFood) {
+                                  setIsModalOpen(false);
+                                  handleOpenCalculator(selectedFood, activeMealCategory);
+                                }
+                              }}
+                              className="w-full py-2.5 bg-[#eef7eb] hover:bg-[#d6ebd0] text-[#3b7e23] border border-[#d6ebd0] font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                            >
+                              <Sliders className="w-3.5 h-3.5 text-[#5ba83c]" />
+                              <span>Customize Ingredients & Live Calculator</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={handleLogSelectedFood}
+                              className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                            >
+                              <Plus className="w-4 h-4 stroke-[2.5]" />
+                              <span>Add to {activeMealCategory}</span>
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center text-center py-10 px-4 text-[#7a8c79]">
@@ -1220,11 +1469,15 @@ export default function FoodTrackerPage() {
                                 <h4 className="text-xs font-bold text-[#192418] group-hover:text-[#5ba83c] transition-colors">
                                   {food.name}
                                 </h4>
-                                {food.malayalamName && (
-                                  <span className="text-[11px] font-semibold text-[#3b7e23] block">
-                                    {food.malayalamName}
-                                  </span>
-                                )}
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md inline-block mt-0.5 ${
+                                  food.dietaryType === 'vegetarian' || food.dietaryType === 'vegan'
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : food.dietaryType === 'pescatarian'
+                                    ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                                    : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                }`}>
+                                  {food.dietaryType === 'vegetarian' ? 'Veg' : food.dietaryType === 'vegan' ? 'Vegan' : food.dietaryType === 'pescatarian' ? 'Seafood' : 'Non-Veg'}
+                                </span>
                               </div>
                               <button
                                 type="button"
@@ -1404,8 +1657,7 @@ export default function FoodTrackerPage() {
                     {recipeIngredientSearch.trim() && (
                       <div className="max-h-36 overflow-y-auto divide-y divide-[#f0f4ee] border border-[#e8ede6] rounded-xl">
                         {COMPREHENSIVE_FOOD_DATABASE.filter((f) =>
-                          f.name.toLowerCase().includes(recipeIngredientSearch.toLowerCase()) ||
-                          (f.malayalamName && f.malayalamName.includes(recipeIngredientSearch))
+                          f.name.toLowerCase().includes(recipeIngredientSearch.toLowerCase())
                         ).slice(0, 5).map((f) => (
                           <div
                             key={f.id}
@@ -1416,7 +1668,7 @@ export default function FoodTrackerPage() {
                                 : 'hover:bg-[#f6f8f5] text-[#192418]'
                             }`}
                           >
-                            <span>{f.name} {f.malayalamName && `(${f.malayalamName})`}</span>
+                            <span>{f.name}</span>
                             <span className="text-[10px] opacity-80">{f.per100g.calories} kcal/100g</span>
                           </div>
                         ))}
@@ -1626,6 +1878,24 @@ export default function FoodTrackerPage() {
           </div>
         </div>
       )}
+
+      {/* DISH INGREDIENTS & NUTRITION CALCULATOR MODAL */}
+      <DishIngredientCalculatorModal
+        food={calculatorFood}
+        isOpen={isCalculatorOpen}
+        onClose={() => {
+          setIsCalculatorOpen(false);
+          setCalculatorFood(null);
+        }}
+        selectedDate={selectedDate}
+        defaultMeal={calculatorMeal}
+        onRecipeSaved={() => {
+          setFavoritesVersion((v) => v + 1);
+        }}
+        onFoodLogged={() => {
+          setFoods(getFoodLog(selectedDate));
+        }}
+      />
     </div>
   );
 }

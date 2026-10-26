@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     /* Wellness Palette: Soft Greens, Light Whites, Warm Pastels */
@@ -9,8 +11,9 @@
     --color-primary-dark: #274917;
     
     --bg-page: #f6f8f5;
-    --bg-card: #ffffff;
-    --bg-card-subtle: #f9fbf8;
+    --bg-surface: #ffffff;
+    --bg-surface-subtle: #f9fbf8;
+    --bg-surface-hover: #edf2ea;
     
     --border-subtle: #e8ede6;
     --border-hover: #d2ddd0;
@@ -19,11 +22,50 @@
     --text-secondary: #5e6f5e;
     --text-muted: #8e9f8e;
     
+    /* Sage Green Accent */
+    --accent-sage: #5ba83c;
+    --accent-sage-hover: #4e9631;
+    --accent-sage-subtle: #eef7eb;
+    --accent-sage-border: #d6ebd0;
+    --accent-sage-text: #3b7e23;
+
+    --scrollbar-track: #f1f4ef;
+    --scrollbar-thumb: #cbd7c8;
+    
     /* Pastels for Nutrition and Biometrics */
     --pastel-coral: #fb7185;
     --pastel-amber: #f59e0b;
     --pastel-blue: #38bdf8;
     --pastel-mint: #34d399;
+  }
+
+  .dark {
+    /* Premium Clean Neutral Dark Charcoal Palette */
+    --color-primary: #8BAF78;
+    --color-primary-hover: #9CBD89;
+    --color-primary-light: #243022;
+    --color-primary-dark: #161D15;
+
+    --bg-page: #1C211D;
+    --bg-surface: #272E29;
+    --bg-surface-subtle: #222823;
+    --bg-surface-hover: #313A33;
+
+    --border-subtle: #394139;
+    --border-hover: #485348;
+
+    --text-primary: #E8EDE7;
+    --text-secondary: #A2AAA1;
+    --text-muted: #7A8279;
+
+    --accent-sage: #8BAF78;
+    --accent-sage-hover: #9CBD89;
+    --accent-sage-subtle: #243022;
+    --accent-sage-border: #3A4B35;
+    --accent-sage-text: #9DC388;
+
+    --scrollbar-track: #1C211D;
+    --scrollbar-thumb: #394139;
   }
 
   * {
@@ -40,6 +82,7 @@
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   #root {
@@ -59,14 +102,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #f1f4ef;
+    background: var(--scrollbar-track);
   }
   ::-webkit-scrollbar-thumb {
-    background: #cbd7c8;
+    background: var(--scrollbar-thumb);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #5ba83c;
+    background: var(--accent-sage);
   }
 }
 
@@ -78,40 +121,219 @@
 
 /* Modern Wellness Cards */
 .wellness-card {
-  background-color: #ffffff;
-  border: 1px solid #e8ede6;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 1.5rem;
-  box-shadow: 0 2px 14px -2px rgba(25, 36, 24, 0.04);
+  box-shadow: 0 2px 14px -2px rgba(0, 0, 0, 0.04);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .wellness-card:hover {
-  border-color: #d6e2d3;
-  box-shadow: 0 6px 20px -3px rgba(25, 36, 24, 0.06);
+  border-color: var(--border-hover);
+  box-shadow: 0 6px 20px -3px rgba(0, 0, 0, 0.08);
 }
 
 .wellness-card-elevated {
-  background-color: #ffffff;
-  border: 1px solid #dfe6dd;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 1.75rem;
-  box-shadow: 0 8px 30px -4px rgba(25, 36, 24, 0.06);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.08);
 }
 
 /* Backward-compatible alias for existing .app-card classes */
 .app-card {
-  background-color: #ffffff;
-  border: 1px solid #e8ede6;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 1.5rem;
-  box-shadow: 0 2px 14px -2px rgba(25, 36, 24, 0.04);
-  color: #192418;
+  box-shadow: 0 2px 14px -2px rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
 }
 
 .app-card-elevated {
-  background-color: #ffffff;
-  border: 1px solid #dfe6dd;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 1.75rem;
-  box-shadow: 0 8px 30px -4px rgba(25, 36, 24, 0.06);
-  color: #192418;
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+/* Form Controls in Dark Mode */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dark select,
+.dark textarea {
+  background-color: #272E29;
+  color: #E8EDE7;
+  border-color: #394139;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #7A8279;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #8BAF78;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 175, 120, 0.25);
+}
+
+/* Deep UI Consistency Adapters for Dark Mode */
+.dark .bg-\[\#f6f8f5\] {
+  background-color: #1C211D !important;
+}
+
+.dark .bg-white {
+  background-color: #272E29 !important;
+}
+
+.dark .bg-\[\#f9fbf8\] {
+  background-color: #222823 !important;
+}
+
+.dark .bg-\[\#edf2ea\] {
+  background-color: #313A33 !important;
+}
+
+.dark .bg-\[\#eef7eb\] {
+  background-color: #243022 !important;
+}
+
+.dark .bg-\[\#fcfdfc\],
+.dark .bg-\[\#fdfefd\] {
+  background-color: #222823 !important;
+}
+
+.dark .border-\[\#e8ede6\] {
+  border-color: #394139 !important;
+}
+
+.dark .border-\[\#e8ede6\]\/60 {
+  border-color: rgba(57, 65, 57, 0.6) !important;
+}
+
+.dark .border-\[\#d6ebd0\] {
+  border-color: #3A4B35 !important;
+}
+
+.dark .border-\[\#f0f4ee\] {
+  border-color: #394139 !important;
+}
+
+.dark .text-\[\#192418\] {
+  color: #E8EDE7 !important;
+}
+
+.dark .text-\[\#5e6f5e\] {
+  color: #A2AAA1 !important;
+}
+
+.dark .text-\[\#7a8c79\] {
+  color: #A2AAA1 !important;
+}
+
+.dark .text-\[\#8e9f8e\] {
+  color: #7A8279 !important;
+}
+
+.dark .text-\[\#3b7e23\] {
+  color: #8BAF78 !important;
+}
+
+.dark .fill-\[\#5ba83c\] {
+  fill: #8BAF78 !important;
+}
+
+.dark .stroke-\[\#5ba83c\] {
+  stroke: #8BAF78 !important;
+}
+
+.dark .stroke-\[\#3b7e23\] {
+  stroke: #8BAF78 !important;
+}
+
+.dark .stroke-\[\#5e6f5e\] {
+  stroke: #A2AAA1 !important;
+}
+
+.dark .hover\:bg-\[\#edf2ea\]:hover {
+  background-color: #313A33 !important;
+}
+
+.dark .hover\:text-\[\#192418\]:hover {
+  color: #E8EDE7 !important;
+}
+
+.dark .hover\:border-\[\#5ba83c\]\/40:hover {
+  border-color: rgba(139, 175, 120, 0.45) !important;
+}
+
+/* Primary buttons with sage green in dark mode */
+.dark .bg-\[\#5ba83c\] {
+  background-color: #8BAF78 !important;
+  color: #161D15 !important;
+}
+
+.dark .bg-\[\#5ba83c\]:hover,
+.dark .hover\:bg-\[\#4d9630\]:hover {
+  background-color: #9CBD89 !important;
+}
+
+/* Nutrition and stat pastel card adaptation in dark mode */
+.dark .bg-rose-50,
+.dark .bg-rose-50\/40,
+.dark .bg-rose-50\/30 {
+  background-color: rgba(244, 63, 94, 0.12) !important;
+  border-color: rgba(244, 63, 94, 0.25) !important;
+}
+
+.dark .bg-amber-50,
+.dark .bg-amber-50\/40,
+.dark .bg-amber-50\/50 {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.25) !important;
+}
+
+.dark .bg-sky-50,
+.dark .bg-sky-50\/40,
+.dark .bg-sky-50\/30 {
+  background-color: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+}
+
+.dark .bg-emerald-50,
+.dark .bg-emerald-50\/40,
+.dark .bg-emerald-50\/30 {
+  background-color: rgba(52, 211, 153, 0.12) !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+}
+
+.dark .bg-purple-50,
+.dark .bg-purple-50\/40 {
+  background-color: rgba(168, 85, 247, 0.12) !important;
+  border-color: rgba(168, 85, 247, 0.25) !important;
+}
+
+/* Text on pastels in dark mode */
+.dark .text-rose-600 {
+  color: #FDA4AF !important;
+}
+
+.dark .text-amber-600 {
+  color: #FCD34D !important;
+}
+
+.dark .text-sky-600 {
+  color: #7DD3FC !important;
+}
+
+.dark .text-emerald-600 {
+  color: #6EE7B7 !important;
+}
+
+.dark .text-purple-600 {
+  color: #D8B4FE !important;
 }
 
 /* Animation utilities */

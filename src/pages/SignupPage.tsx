@@ -9,16 +9,30 @@ import {
   ArrowRight, 
   Bot, 
   Check, 
-  AlertCircle, 
-  X,
-  Sparkles 
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import AuthWellnessBanner from '../components/AuthWellnessBanner';
+import ThemeToggle from '../components/ThemeToggle';
+import NutriCoachLogo from '../components/NutriCoachLogo';
+import AccountLinkingModal from '../components/AccountLinkingModal';
+import OAuthSetupModal from '../components/OAuthSetupModal';
+import { AccountLinkingContext, SocialProvider } from '../utils/socialAuth';
 
 export default function SignupPage() {
-  const { signup, isAuthenticated, login } = useAuth();
+  const { 
+    signup, 
+    isAuthenticated, 
+    login,
+    loginWithGoogle,
+    loginWithApple,
+    loginWithSocialSandbox,
+    linkSocialAccount,
+    isSocialConfigured,
+    oauthConfig,
+    updateOAuthConfig
+  } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -31,11 +45,11 @@ export default function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Social OAuth modal info
-  const [socialModalInfo, setSocialModalInfo] = useState<{ open: boolean; provider: 'Google' | 'Apple' | null }>({
-    open: false,
-    provider: null
-  });
+  // Social OAuth & Account Linking Modals
+  const [linkingModalOpen, setLinkingModalOpen] = useState(false);
+  const [linkingContext, setLinkingContext] = useState<AccountLinkingContext | null>(null);
+  const [oauthSetupModalOpen, setOauthSetupModalOpen] = useState(false);
+  const [activeOauthProvider, setActiveOauthProvider] = useState<SocialProvider | null>(null);
 
   // If already authenticated, redirect
   React.useEffect(() => {
@@ -105,24 +119,102 @@ export default function SignupPage() {
     }
   };
 
-  const handleSocialClick = (provider: 'Google' | 'Apple') => {
-    setSocialModalInfo({ open: true, provider });
-  };
+  const handleGoogleClick = async () => {
+    setErrorMessage('');
+    if (!isSocialConfigured('google')) {
+      setActiveOauthProvider('google');
+      setOauthSetupModalOpen(true);
+      return;
+    }
 
-  const handleSocialDemoConfirm = async () => {
-    setSocialModalInfo({ open: false, provider: null });
     setIsSubmitting(true);
-    const res = await login('demo@nutricoach.ai', 'Password123!', true);
-    setIsSubmitting(false);
-    if (res.success) {
-      showToast('Logged in as Alex Vance (Verified Session)', 'success', 'Welcome');
-      navigate('/', { replace: true });
+    try {
+      const res = await loginWithGoogle();
+      if (res.success && res.user) {
+        showToast(`Welcome to NutriCoach AI, ${res.user.name}!`, 'success', 'Google Sign-Up');
+        const target = res.user.onboarded ? '/' : '/onboarding';
+        navigate(target, { replace: true });
+      } else if (res.requiresLinking && res.linkingContext) {
+        setLinkingContext(res.linkingContext);
+        setLinkingModalOpen(true);
+      } else if (res.error) {
+        setErrorMessage(res.error);
+        showToast(res.error, 'error');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const handleAppleClick = async () => {
+    setErrorMessage('');
+    if (!isSocialConfigured('apple')) {
+      setActiveOauthProvider('apple');
+      setOauthSetupModalOpen(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await loginWithApple();
+      if (res.success && res.user) {
+        showToast(`Welcome to NutriCoach AI, ${res.user.name}!`, 'success', 'Apple Sign-Up');
+        const target = res.user.onboarded ? '/' : '/onboarding';
+        navigate(target, { replace: true });
+      } else if (res.requiresLinking && res.linkingContext) {
+        setLinkingContext(res.linkingContext);
+        setLinkingModalOpen(true);
+      } else if (res.error) {
+        setErrorMessage(res.error);
+        showToast(res.error, 'error');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleTestSandbox = async (provider: SocialProvider, mockProfile?: { email: string; name: string }) => {
+    setIsSubmitting(true);
+    try {
+      const res = await loginWithSocialSandbox(provider, mockProfile);
+      if (res.success && res.user) {
+        showToast(`Welcome ${res.user.name}! Signed up via ${provider === 'google' ? 'Google' : 'Apple'} Sandbox.`, 'success', 'Social Sign-Up');
+        const target = res.user.onboarded ? '/' : '/onboarding';
+        navigate(target, { replace: true });
+      } else if (res.requiresLinking && res.linkingContext) {
+        setLinkingContext(res.linkingContext);
+        setLinkingModalOpen(true);
+      } else if (res.error) {
+        setErrorMessage(res.error);
+        showToast(res.error, 'error');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmLink = async (passwordAttempt: string) => {
+    if (!linkingContext) return { success: false, error: 'Linking context missing' };
+    const res = await linkSocialAccount(linkingContext, passwordAttempt);
+    if (res.success && res.user) {
+      showToast(`Account linked successfully! Welcome back, ${res.user.name}.`, 'success', 'Account Linked');
+      setLinkingModalOpen(false);
+      setLinkingContext(null);
+      const target = res.user.onboarded ? '/' : '/onboarding';
+      navigate(target, { replace: true });
+      return { success: true };
+    }
+    return { success: false, error: res.error || 'Password verification failed.' };
+  };
+
   return (
-    <div className="min-h-screen w-full bg-[#f6f8f5] text-[#192418] flex flex-col lg:flex-row relative selection:bg-[#5ba83c]/20 font-sans">
+    <div className="min-h-screen w-full bg-[#f6f8f5] dark:bg-[#1C211D] text-[#192418] dark:text-[#E8EDE7] flex flex-col lg:flex-row relative selection:bg-[#8BAF78]/25 font-sans transition-colors duration-200">
       
+      {/* Theme Toggle Button top right */}
+      <div className="absolute top-4 right-4 z-30">
+        <ThemeToggle variant="icon" />
+      </div>
+
       {/* ========================================================================= */}
       {/* LEFT SECTION: Branded Wellness Presentation (matches reference image)     */}
       {/* ========================================================================= */}
@@ -131,23 +223,14 @@ export default function SignupPage() {
       {/* ========================================================================= */}
       {/* RIGHT SECTION: The Elevated Clean White Registration Card                 */}
       {/* ========================================================================= */}
-      <div className="w-full lg:w-[46%] xl:w-[44%] flex items-center justify-center p-4 sm:p-8 lg:p-12 xl:p-14 bg-[#f6f8f5]">
-        <div className="w-full max-w-[460px] bg-white border border-[#e8ede6] rounded-[32px] p-6 sm:p-9 shadow-[0_12px_40px_-8px_rgba(25,36,24,0.06)] animate-fade-in space-y-5">
+      <div className="w-full lg:w-[46%] xl:w-[44%] flex items-center justify-center p-4 sm:p-8 lg:p-12 xl:p-14 bg-[#f6f8f5] dark:bg-[#1C211D]">
+        <div className="w-full max-w-[460px] bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-[32px] p-6 sm:p-9 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] animate-fade-in space-y-5">
           
           {/* Top Card Branding */}
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-xl bg-[#5ba83c] flex items-center justify-center text-white shadow-xs">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M21 3c-6.627 0-12 5.373-12 12 0 1.258.196 2.47.558 3.606L3 21l2.394-6.558C4.196 13.31 4 12.098 4 11 4 4.373 9.373-1 16-1c2.146 0 4.148.566 5.88 1.558L21 3z" />
-                </svg>
-              </div>
-              <span className="font-heading font-extrabold text-lg text-[#192418] tracking-tight">
-                NutriCoach <span className="text-[#5ba83c]">AI</span>
-              </span>
-            </div>
+            <NutriCoachLogo size="md" className="mb-2" />
 
-            <h2 className="text-2xl sm:text-[26px] font-black text-[#192418] tracking-tight">
+            <h2 className="text-2xl sm:text-[26px] font-black text-[#192418] dark:text-[#E8EDE7] tracking-tight">
               Create your account
             </h2>
             <p className="text-xs sm:text-[13px] text-[#5e6f5e] font-medium mt-0.5">
@@ -156,11 +239,12 @@ export default function SignupPage() {
           </div>
 
           {/* Social OAuth Buttons */}
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <button
               type="button"
-              onClick={() => handleSocialClick('Google')}
-              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99]"
+              onClick={handleGoogleClick}
+              disabled={isSubmitting}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99] cursor-pointer disabled:opacity-60"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -180,18 +264,19 @@ export default function SignupPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Sign up with Google</span>
+              <span>Continue with Google</span>
             </button>
 
             <button
               type="button"
-              onClick={() => handleSocialClick('Apple')}
-              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99]"
+              onClick={handleAppleClick}
+              disabled={isSubmitting}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99] cursor-pointer disabled:opacity-60"
             >
               <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.77 1.04-1.84.93-2.92-.93.04-2.07.62-2.73 1.39-.58.67-1.09 1.76-.96 2.81 1.04.08 2.14-.51 2.76-1.28z" />
               </svg>
-              <span>Sign up with Apple</span>
+              <span>Continue with Apple</span>
             </button>
           </div>
 
@@ -397,49 +482,36 @@ export default function SignupPage() {
         </div>
       </div>
 
-      {/* Social OAuth Modal */}
-      {socialModalInfo.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#e8ede6] relative space-y-4 text-center">
-            <button
-              type="button"
-              onClick={() => setSocialModalInfo({ open: false, provider: null })}
-              className="absolute top-4 right-4 p-1.5 rounded-xl text-[#8e9f8e] hover:text-[#192418]"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      {/* ========================================================================= */}
+      {/* ACCOUNT LINKING VERIFICATION MODAL                                        */}
+      {/* ========================================================================= */}
+      <AccountLinkingModal
+        isOpen={linkingModalOpen}
+        context={linkingContext}
+        onClose={() => {
+          setLinkingModalOpen(false);
+          setLinkingContext(null);
+        }}
+        onConfirmLink={handleConfirmLink}
+      />
 
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-[#eef7eb] flex items-center justify-center text-[#5ba83c]">
-              <Sparkles className="w-6 h-6 text-[#5ba83c]" />
-            </div>
-
-            <h3 className="text-lg font-extrabold text-[#192418]">
-              {socialModalInfo.provider} Sign-Up
-            </h3>
-
-            <p className="text-xs text-[#5e6f5e] leading-relaxed">
-              In this client-side environment, third-party {socialModalInfo.provider} OAuth is simulated. You can instantly access the demo account with 1 click.
-            </p>
-
-            <div className="pt-2 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={handleSocialDemoConfirm}
-                className="w-full py-2.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold text-xs shadow-xs"
-              >
-                Sign Up with {socialModalInfo.provider} Demo
-              </button>
-              <button
-                type="button"
-                onClick={() => setSocialModalInfo({ open: false, provider: null })}
-                className="w-full py-2 text-xs text-[#7a8c79] hover:text-[#192418]"
-              >
-                Use Email & Password Instead
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ========================================================================= */}
+      {/* OAUTH CREDENTIALS SETUP & VERIFICATION MODAL                              */}
+      {/* ========================================================================= */}
+      <OAuthSetupModal
+        isOpen={oauthSetupModalOpen}
+        provider={activeOauthProvider}
+        config={oauthConfig}
+        onClose={() => {
+          setOauthSetupModalOpen(false);
+          setActiveOauthProvider(null);
+        }}
+        onSaveConfig={(cfg) => {
+          updateOAuthConfig(cfg);
+          showToast('OAuth configuration updated successfully.', 'success', 'Saved');
+        }}
+        onTestSandbox={handleTestSandbox}
+      />
 
     </div>
   );

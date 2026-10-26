@@ -8,8 +8,9 @@ const STORAGE_CURRENT_USER_ID_KEY = 'nutricoach_current_user_id';
  * Generate a cryptographically secure random salt hex string
  */
 export const generateSalt = (): string => {
+  const cryptoObj = typeof window !== 'undefined' && window.crypto ? window.crypto : globalThis.crypto;
   const array = new Uint8Array(16);
-  window.crypto.getRandomValues(array);
+  cryptoObj.getRandomValues(array);
   return Array.from(array)
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
@@ -20,9 +21,10 @@ export const generateSalt = (): string => {
  * Passwords are NEVER stored or transmitted in plaintext.
  */
 export const hashPassword = async (password: string, salt: string): Promise<string> => {
+  const cryptoObj = typeof window !== 'undefined' && window.crypto ? window.crypto : globalThis.crypto;
   const encoder = new TextEncoder();
   const data = encoder.encode(password + '::nutricoach_salt::' + salt);
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await cryptoObj.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 };
@@ -163,6 +165,13 @@ export const authenticateUser = async (
     return { success: false, error: 'Invalid email or password. Please check your credentials.' };
   }
 
+  if (!account.passwordHash || !account.salt) {
+    return { 
+      success: false, 
+      error: 'This account was registered using a social provider (Google or Apple). Please sign in using your social account.' 
+    };
+  }
+
   const computedHash = await hashPassword(password, account.salt);
   if (computedHash !== account.passwordHash) {
     return { success: false, error: 'Invalid email or password. Please check your credentials.' };
@@ -217,9 +226,13 @@ export const saveAuthSession = (user: AuthUser, rememberMe = true): void => {
     const serialized = JSON.stringify(user);
     if (rememberMe) {
       localStorage.setItem(STORAGE_SESSION_KEY, serialized);
-      sessionStorage.removeItem(STORAGE_SESSION_KEY);
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem(STORAGE_SESSION_KEY);
+      }
     } else {
-      sessionStorage.setItem(STORAGE_SESSION_KEY, serialized);
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem(STORAGE_SESSION_KEY, serialized);
+      }
       localStorage.removeItem(STORAGE_SESSION_KEY);
     }
     // Set active user ID for storage isolation
@@ -231,7 +244,8 @@ export const saveAuthSession = (user: AuthUser, rememberMe = true): void => {
 
 export const getAuthSession = (): AuthUser | null => {
   try {
-    const raw = localStorage.getItem(STORAGE_SESSION_KEY) || sessionStorage.getItem(STORAGE_SESSION_KEY);
+    const sessionVal = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(STORAGE_SESSION_KEY) : null;
+    const raw = localStorage.getItem(STORAGE_SESSION_KEY) || sessionVal;
     if (raw) {
       const user = JSON.parse(raw);
       if (user && user.id) {
@@ -248,7 +262,9 @@ export const getAuthSession = (): AuthUser | null => {
 export const clearAuthSession = (): void => {
   try {
     localStorage.removeItem(STORAGE_SESSION_KEY);
-    sessionStorage.removeItem(STORAGE_SESSION_KEY);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(STORAGE_SESSION_KEY);
+    }
     localStorage.removeItem(STORAGE_CURRENT_USER_ID_KEY);
   } catch (err) {
     console.error('Error clearing auth session', err);

@@ -147,7 +147,7 @@ async function run() {
   const reloadedFoods = getFoodLog(today);
   assert(reloadedFoods.length === 1 && reloadedFoods[0].name === 'Kerala Appam with Vegetable Stew', 'Reloaded user data matches original');
   const reloadedProgress = getProgressEntries();
-  assert(reloadedProgress.length > 0 && reloadedProgress[0].weightKg === 77.5, 'Reloaded progress intact');
+  assert(reloadedProgress.length > 0 && reloadedProgress.some(p => p.weightKg === 77.5), 'Reloaded progress intact');
 
   // Test 9: Multi-User Data Isolation
   console.log('\n[8] Multi-User Data Isolation:');

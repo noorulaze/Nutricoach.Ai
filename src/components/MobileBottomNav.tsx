@@ -12,7 +12,7 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#e8ede6] px-3 py-1.5 flex items-center justify-around shadow-lg">
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#272E29]/95 backdrop-blur-md border-t border-[#e8ede6] dark:border-[#394139] px-3 py-1.5 flex items-center justify-around shadow-lg transition-colors">
       {items.map((item) => {
         const Icon = item.icon;
         return (
@@ -23,17 +23,17 @@ export default function MobileBottomNav() {
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all ${
                 isActive
-                  ? 'text-[#3b7e23] font-bold'
-                  : 'text-[#7a8c79] hover:text-[#192418]'
+                  ? 'text-[#3b7e23] dark:text-[#8BAF78] font-bold'
+                  : 'text-[#7a8c79] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
               }`
             }
           >
             {({ isActive }) => (
               <>
                 <div className={`p-1 rounded-xl transition-colors ${
-                  isActive ? 'bg-[#eef7eb]' : ''
+                  isActive ? 'bg-[#eef7eb] dark:bg-[#243022]' : ''
                 }`}>
-                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[#3b7e23] stroke-[2.5]' : ''}`} />
+                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[#3b7e23] dark:stroke-[#8BAF78] stroke-[2.5]' : ''}`} />
                 </div>
                 <span className="text-[10px] tracking-tight">{item.name}</span>
               </>

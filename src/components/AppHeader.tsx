@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Bell, 
@@ -14,13 +14,18 @@ import {
   Settings,
   ShieldCheck,
   Activity,
-  MessageSquare
+  MessageSquare,
+  Utensils,
+  Dumbbell,
+  TrendingUp,
+  LayoutDashboard
 } from 'lucide-react';
 import { getProfile, getFoodLog } from '../utils/storage';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import AppSidebar from './AppSidebar';
 import SignOutConfirmModal from './SignOutConfirmModal';
+import ThemeToggle from './ThemeToggle';
 
 export default function AppHeader() {
   const { user, logout } = useAuth();
@@ -41,6 +46,14 @@ export default function AppHeader() {
   const displayName = user?.name || profile.name || 'Friend';
   const firstName = displayName.split(' ')[0];
   const userEmail = user?.email || 'demo@nutricoach.ai';
+
+  const topNavItems = [
+    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Nutrition', path: '/food', icon: Utensils },
+    { name: 'Workout', path: '/workouts', icon: Dumbbell },
+    { name: 'Progress', path: '/progress', icon: TrendingUp },
+    { name: 'Chat', path: '/coach', icon: MessageSquare }
+  ];
 
   // Format today's date in style: "Today, Oct 25, 2026"
   const todayFormatted = `Today, ${new Date().toLocaleDateString('en-US', {
@@ -121,39 +134,66 @@ export default function AppHeader() {
               </div>
             </div>
 
-            {/* Right: Search, Date, Notifications, Profile Dropdown */}
-            <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Center Desktop Navigation (matches reference image: Dashboard, Nutrition, Workout, Progress, Chat) */}
+            <nav className="hidden xl:flex items-center gap-1 bg-white/70 dark:bg-[#272E29]/70 p-1.5 rounded-2xl border border-[#e8ede6] dark:border-[#394139] shadow-2xs">
+              {topNavItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    end={item.path === '/'}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all relative ${
+                        isActive
+                          ? 'text-[#325b39] dark:text-[#8BAF78] bg-[#eef7eb] dark:bg-[#223023] shadow-2xs'
+                          : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#1F2620]'
+                      }`
+                    }
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+
+            {/* Right: Search, Date, Theme, Notifications, Profile Dropdown */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
               {/* Date Pill (hidden on small mobile) */}
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white border border-[#e8ede6] text-xs font-medium text-[#5e6f5e] shadow-xs">
-                <Calendar className="w-3.5 h-3.5 text-[#5ba83c]" />
+              <div className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-xs font-medium text-[#5e6f5e] dark:text-[#A2AAA1] shadow-xs">
+                <Calendar className="w-3.5 h-3.5 text-[#5ba83c] dark:text-[#8BAF78]" />
                 <span>{todayFormatted}</span>
               </div>
 
               {/* Global Search Input */}
               <form onSubmit={handleSearchSubmit} className="relative hidden sm:block">
-                <Search className="w-4 h-4 text-[#8e9f8e] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-4 h-4 text-[#8e9f8e] dark:text-[#7A8279] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   id="global-search-input"
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search meals, nutrients, or anything..."
-                  className="w-56 md:w-64 lg:w-72 pl-9 pr-10 py-2 rounded-2xl bg-white border border-[#e8ede6] text-xs text-[#192418] placeholder-[#8e9f8e] focus:outline-none focus:ring-2 focus:ring-[#5ba83c]/30 focus:border-[#5ba83c] transition-all shadow-xs"
+                  className="w-52 md:w-60 lg:w-68 pl-9 pr-10 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-xs text-[#192418] dark:text-[#E8EDE7] placeholder-[#8e9f8e] dark:placeholder-[#7A8279] focus:outline-none focus:ring-2 focus:ring-[#8BAF78]/30 focus:border-[#8BAF78] transition-all shadow-xs"
                 />
-                <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#8e9f8e] bg-[#f6f8f5] px-1.5 py-0.5 rounded border border-[#e8ede6] pointer-events-none">
+                <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#8e9f8e] dark:text-[#7A8279] bg-[#f6f8f5] dark:bg-[#1C211D] px-1.5 py-0.5 rounded border border-[#e8ede6] dark:border-[#394139] pointer-events-none">
                   ⌘ K
                 </kbd>
               </form>
 
+              {/* Theme Mode Toggle Button */}
+              <ThemeToggle />
+
               {/* Notification Bell */}
               <button
                 type="button"
-                className="w-9 h-9 rounded-2xl bg-white border border-[#e8ede6] text-[#5e6f5e] hover:text-[#192418] hover:bg-[#edf2ea] flex items-center justify-center transition-colors shadow-xs relative"
-                title="Notifications"
+                className="w-9 h-9 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] hover:bg-[#edf2ea] dark:hover:bg-[#313A33] flex items-center justify-center transition-colors shadow-xs relative"
+                title="Notifications & AI Coach"
                 onClick={() => navigate('/coach')}
               >
                 <Bell className="w-4 h-4" />
-                <span className="w-2 h-2 rounded-full bg-[#5ba83c] absolute top-2 right-2 border-2 border-white" />
+                <span className="w-2 h-2 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] absolute top-2 right-2 border-2 border-white dark:border-[#272E29]" />
               </button>
 
               {/* Profile Avatar & Interactive Dropdown Menu */}
@@ -161,47 +201,47 @@ export default function AppHeader() {
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-2xl bg-white border border-[#e8ede6] hover:border-[#5ba83c]/40 hover:bg-[#edf2ea]/50 transition-all shadow-xs group"
+                  className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] hover:border-[#8BAF78]/40 hover:bg-[#edf2ea]/50 dark:hover:bg-[#313A33] transition-all shadow-xs group"
                   aria-expanded={profileDropdownOpen}
                   aria-haspopup="true"
                   title="Account & Session Menu"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-xs font-bold text-[#3b7e23] relative">
+                  <div className="w-8 h-8 rounded-xl bg-[#eef7eb] dark:bg-[#243022] border border-[#d6ebd0] dark:border-[#3A4B35] flex items-center justify-center text-xs font-bold text-[#3b7e23] dark:text-[#8BAF78] relative">
                     {displayName.charAt(0).toUpperCase()}
-                    <span className="w-2 h-2 rounded-full bg-[#5ba83c] absolute -bottom-0.5 -right-0.5 ring-2 ring-white" />
+                    <span className="w-2 h-2 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] absolute -bottom-0.5 -right-0.5 ring-2 ring-white dark:ring-[#272E29]" />
                   </div>
-                  <span className="hidden md:inline text-xs font-bold text-[#192418] max-w-[100px] truncate">
+                  <span className="hidden md:inline text-xs font-bold text-[#192418] dark:text-[#E8EDE7] max-w-[100px] truncate">
                     {firstName}
                   </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-[#7a8c79] group-hover:text-[#192418] transition-transform ${
+                  <ChevronDown className={`w-3.5 h-3.5 text-[#7a8c79] dark:text-[#A2AAA1] group-hover:text-[#192418] dark:group-hover:text-[#E8EDE7] transition-transform ${
                     profileDropdownOpen ? 'rotate-180' : ''
                   }`} />
                 </button>
 
                 {/* Dropdown Card */}
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-3xl border border-[#e8ede6] shadow-xl p-3 z-50 animate-scale-up space-y-2">
+                  <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-[#272E29] rounded-3xl border border-[#e8ede6] dark:border-[#394139] shadow-xl p-3 z-50 animate-scale-up space-y-2">
                     {/* User Info Header */}
-                    <div className="p-3 bg-[#f6f8f5] rounded-2xl border border-[#e8ede6]">
+                    <div className="p-3 bg-[#f6f8f5] dark:bg-[#1C211D] rounded-2xl border border-[#e8ede6] dark:border-[#394139]">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-xl bg-[#5ba83c] flex items-center justify-center text-sm font-bold text-white shadow-xs">
+                        <div className="w-9 h-9 rounded-xl bg-[#5ba83c] dark:bg-[#8BAF78] flex items-center justify-center text-sm font-bold text-white dark:text-[#161D15] shadow-xs">
                           {displayName.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs font-bold text-[#192418] truncate">
+                          <p className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7] truncate">
                             {displayName}
                           </p>
-                          <p className="text-[11px] text-[#7a8c79] font-medium truncate">
+                          <p className="text-[11px] text-[#7a8c79] dark:text-[#A2AAA1] font-medium truncate">
                             {userEmail}
                           </p>
                         </div>
                       </div>
-                      <div className="mt-2.5 pt-2 border-t border-[#e8ede6] flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#3b7e23] bg-[#eef7eb] px-2 py-0.5 rounded-full border border-[#d6ebd0]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#5ba83c] animate-pulse" />
+                      <div className="mt-2.5 pt-2 border-t border-[#e8ede6] dark:border-[#394139] flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#3b7e23] dark:text-[#8BAF78] bg-[#eef7eb] dark:bg-[#243022] px-2 py-0.5 rounded-full border border-[#d6ebd0] dark:border-[#3A4B35]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] animate-pulse" />
                           Session Active
                         </span>
-                        <span className="text-[10px] text-[#7a8c79]">
+                        <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
                           Data Protected
                         </span>
                       </div>
@@ -212,33 +252,41 @@ export default function AppHeader() {
                       <Link
                         to="/profile"
                         onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] hover:bg-[#f6f8f5] transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] dark:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#1C211D] transition-colors"
                       >
-                        <User className="w-4 h-4 text-[#5ba83c]" />
+                        <User className="w-4 h-4 text-[#5ba83c] dark:text-[#8BAF78]" />
                         <span>Profile & Biometrics</span>
                       </Link>
 
                       <Link
                         to="/food"
                         onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] hover:bg-[#f6f8f5] transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] dark:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#1C211D] transition-colors"
                       >
-                        <Activity className="w-4 h-4 text-[#5ba83c]" />
+                        <Activity className="w-4 h-4 text-[#5ba83c] dark:text-[#8BAF78]" />
                         <span>Food & Nutrition Log</span>
                       </Link>
 
                       <Link
                         to="/coach"
                         onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] hover:bg-[#f6f8f5] transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#192418] dark:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#1C211D] transition-colors"
                       >
-                        <MessageSquare className="w-4 h-4 text-[#5ba83c]" />
+                        <MessageSquare className="w-4 h-4 text-[#5ba83c] dark:text-[#8BAF78]" />
                         <span>AI Fitness Coach</span>
                       </Link>
                     </div>
 
+                    {/* Appearance Switcher inside Dropdown */}
+                    <div className="px-3 py-2 bg-[#f6f8f5] dark:bg-[#1C211D] rounded-2xl border border-[#e8ede6] dark:border-[#394139] flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-[#5e6f5e] dark:text-[#A2AAA1]">
+                        Theme
+                      </span>
+                      <ThemeToggle variant="segmented" />
+                    </div>
+
                     {/* Divider */}
-                    <div className="h-px bg-[#e8ede6] my-1" />
+                    <div className="h-px bg-[#e8ede6] dark:bg-[#394139] my-1" />
 
                     {/* Sign Out Button */}
                     <button
@@ -247,9 +295,9 @@ export default function AppHeader() {
                         setProfileDropdownOpen(false);
                         setSignOutModalOpen(true);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors text-left"
                     >
-                      <LogOut className="w-4 h-4 text-rose-500 stroke-[2.2]" />
+                      <LogOut className="w-4 h-4 stroke-[2.2]" />
                       <span>Sign Out</span>
                     </button>
                   </div>
@@ -261,22 +309,22 @@ export default function AppHeader() {
           {/* Sub Header Action Bar: Daily Goal and + Log Food Button */}
           <div className="flex items-center justify-between sm:justify-end gap-3 pt-1">
             {/* Daily Goal Pill */}
-            <div className="flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-white border border-[#e8ede6] shadow-xs">
-              <div className="w-6 h-6 rounded-lg bg-[#eef7eb] flex items-center justify-center text-[#5ba83c]">
-                <Flame className="w-3.5 h-3.5 fill-[#5ba83c]" />
+            <div className="flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] shadow-xs">
+              <div className="w-6 h-6 rounded-lg bg-[#eef7eb] dark:bg-[#243022] flex items-center justify-center text-[#5ba83c] dark:text-[#8BAF78]">
+                <Flame className="w-3.5 h-3.5 fill-[#5ba83c] dark:fill-[#8BAF78]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-[#8e9f8e]">
+                <span className="text-[10px] uppercase tracking-wider font-bold text-[#8e9f8e] dark:text-[#7A8279]">
                   Daily Goal
                 </span>
-                <span className="text-xs font-bold text-[#192418] leading-tight">
+                <span className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7] leading-tight">
                   {calorieTarget.toLocaleString()} kcal
                 </span>
               </div>
               {/* Mini progress bar */}
-              <div className="w-16 sm:w-20 h-2 bg-[#eef7eb] rounded-full overflow-hidden ml-1">
+              <div className="w-16 sm:w-20 h-2 bg-[#eef7eb] dark:bg-[#243022] rounded-full overflow-hidden ml-1">
                 <div 
-                  className="h-full bg-[#5ba83c] rounded-full transition-all duration-300"
+                  className="h-full bg-[#5ba83c] dark:bg-[#8BAF78] rounded-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -285,7 +333,7 @@ export default function AppHeader() {
             {/* + Log Food Action Button */}
             <Link
               to="/food"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] dark:bg-[#8BAF78] dark:hover:bg-[#9CBD89] text-white dark:text-[#161D15] text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Log Food</span>
@@ -312,12 +360,12 @@ export default function AppHeader() {
           />
 
           {/* Drawer Content */}
-          <div className="relative w-72 max-w-[85vw] bg-[#f6f8f5] h-full shadow-2xl z-10 animate-fade-in flex flex-col">
+          <div className="relative w-72 max-w-[85vw] bg-[#f6f8f5] dark:bg-[#1C211D] h-full shadow-2xl z-10 animate-fade-in flex flex-col">
             <div className="absolute top-4 right-4 z-20">
               <button
                 type="button"
                 onClick={() => setMobileDrawerOpen(false)}
-                className="p-1.5 rounded-xl bg-white border border-[#e8ede6] text-[#5e6f5e] hover:text-[#192418]"
+                className="p-1.5 rounded-xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]"
               >
                 <X className="w-4 h-4" />
               </button>

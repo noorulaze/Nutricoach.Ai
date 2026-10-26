@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Settings, User, Target, Dumbbell, Utensils, 
   Key, ShieldCheck, Save, RotateCcw, Check, Sparkles, Activity,
-  LogOut, Lock, Database
+  LogOut, Lock, Database, Sun, Moon
 } from 'lucide-react';
 import { 
   getProfile, saveProfile, calculateBMR, 
@@ -16,6 +16,7 @@ import {
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import SignOutConfirmModal from '../components/SignOutConfirmModal';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -540,14 +541,34 @@ export default function ProfilePage() {
             </div>
 
             {/* Data Preservation Guarantee Callout */}
-            <div className="bg-[#f6f8f5] border border-[#e8ede6] rounded-2xl p-4 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#2d6a1b]">
-                <ShieldCheck className="w-4 h-4 text-[#5ba83c] shrink-0" />
+            <div className="bg-[#f6f8f5] dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#2d6a1b] dark:text-[#8BAF78]">
+                <ShieldCheck className="w-4 h-4 text-[#5ba83c] dark:text-[#8BAF78] shrink-0" />
                 <span>Zero Data Loss Guarantee</span>
               </div>
-              <p className="text-[11px] text-[#5e6f5e] leading-relaxed">
-                Signing out clears only your active session token. <strong>Your logged meals, custom recipes, training routines, and progress records remain safely preserved</strong> in your browser's private storage and will be reloaded immediately upon your next login.
+              <p className="text-[11px] text-[#5e6f5e] dark:text-[#A2AAA1] leading-relaxed">
+                Signing out clears only your active session token. <strong className="text-[#192418] dark:text-[#E8EDE7]">Your logged meals, custom recipes, training routines, and progress records remain safely preserved</strong> in your browser's private storage and will be reloaded immediately upon your next login.
               </p>
+            </div>
+
+            {/* Visual Theme Appearance Card */}
+            <div className="bg-[#f6f8f5] dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 space-y-3 col-span-1 md:col-span-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#edf2ea] dark:bg-[#222823] border border-[#e8ede6] dark:border-[#394139] text-[#5ba83c] dark:text-[#8BAF78] flex items-center justify-center shrink-0">
+                    <Sun className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7]">
+                      Theme Appearance
+                    </h4>
+                    <p className="text-[11px] text-[#5e6f5e] dark:text-[#A2AAA1]">
+                      Switch between Light Wellness (#f6f8f5) and Dark Charcoal (#1C211D) with balanced sage accents (#8BAF78).
+                    </p>
+                  </div>
+                </div>
+                <ThemeToggle variant="segmented" />
+              </div>
             </div>
           </div>
 

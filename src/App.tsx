@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppSidebar from './components/AppSidebar';
@@ -35,15 +36,15 @@ function AppLayout() {
   // While initializing authentication session from storage
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f6f8f5] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-[#eef7eb] border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c] text-xl font-bold animate-pulse shadow-xs">
+      <div className="min-h-screen bg-[#f6f8f5] dark:bg-[#1C211D] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-[#eef7eb] dark:bg-[#243022] border border-[#d6ebd0] dark:border-[#3A4B35] flex items-center justify-center text-[#5ba83c] dark:text-[#8BAF78] text-xl font-bold animate-pulse shadow-xs">
           🌱
         </div>
-        <div className="flex items-center gap-2 text-xs font-medium text-[#5e6f5e]">
-          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce" />
-          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce [animation-delay:0.2s]" />
-          <div className="w-2 h-2 rounded-full bg-[#5ba83c] animate-bounce [animation-delay:0.4s]" />
-          <span className="ml-1 text-[#192418] font-medium">Verifying session...</span>
+        <div className="flex items-center gap-2 text-xs font-medium text-[#5e6f5e] dark:text-[#A2AAA1]">
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] animate-bounce" />
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] animate-bounce [animation-delay:0.2s]" />
+          <div className="w-2 h-2 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] animate-bounce [animation-delay:0.4s]" />
+          <span className="ml-1 text-[#192418] dark:text-[#E8EDE7] font-medium">Verifying session...</span>
         </div>
       </div>
     );
@@ -52,7 +53,7 @@ function AppLayout() {
   // When logged out or on public auth routes, completely prevent protected UI mounting
   if (!isAuthenticated || !user || isAuthOrOnboardingRoute) {
     return (
-      <main className="min-h-screen bg-[#f6f8f5] text-[#192418] flex flex-col font-sans antialiased">
+      <main className="min-h-screen bg-[#f6f8f5] dark:bg-[#1C211D] text-[#192418] dark:text-[#E8EDE7] flex flex-col font-sans antialiased">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -72,7 +73,7 @@ function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f8f5] text-[#192418] flex font-sans antialiased selection:bg-[#5ba83c]/20 selection:text-[#192418]">
+    <div className="min-h-screen bg-[#f6f8f5] dark:bg-[#1C211D] text-[#192418] dark:text-[#E8EDE7] flex font-sans antialiased selection:bg-[#8BAF78]/25 selection:text-[#192418] dark:selection:text-[#E8EDE7]">
       {/* Desktop Left Sidebar */}
       <div className="hidden lg:block shrink-0">
         <AppSidebar />
@@ -163,13 +164,15 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <AppLayout />
-        </BrowserRouter>
-      </AuthProvider>
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <AppLayout />
+          </BrowserRouter>
+        </AuthProvider>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }

@@ -2,19 +2,24 @@ import { ComprehensiveFood, FoodSearchFilters, ServingSize, UserCustomRecipe } f
 import { KERALA_FOODS } from './keralaFoods';
 import { INDIAN_REGIONAL_FOODS } from './indianRegionalFoods';
 import { INTERNATIONAL_FOODS } from './internationalFoods';
+import { CURRIES_AND_SIDES } from './curriesAndSides';
 import { PresetFood, FoodItem, MealType } from '../../types';
 
 export * from './types';
 export * from './keralaFoods';
 export * from './indianRegionalFoods';
 export * from './internationalFoods';
+export * from './curriesAndSides';
 
-// Complete Combined Database
-export const COMPREHENSIVE_FOOD_DATABASE: ComprehensiveFood[] = [
-  ...KERALA_FOODS,
-  ...INDIAN_REGIONAL_FOODS,
-  ...INTERNATIONAL_FOODS
-];
+// Complete Combined Database with extensive Curries and Side Dishes
+const foodMap = new Map<string, ComprehensiveFood>();
+[...CURRIES_AND_SIDES, ...KERALA_FOODS, ...INDIAN_REGIONAL_FOODS, ...INTERNATIONAL_FOODS].forEach((f) => {
+  if (!foodMap.has(f.id)) {
+    foodMap.set(f.id, f);
+  }
+});
+
+export const COMPREHENSIVE_FOOD_DATABASE: ComprehensiveFood[] = Array.from(foodMap.values());
 
 /**
  * Calculates exact nutritional values for any specified gram weight of a food item.
@@ -136,7 +141,7 @@ export const toPresetFood = (
   }
 
   return {
-    name: food.malayalamName ? `${food.name} (${food.malayalamName})` : food.name,
+    name: food.name,
     category: legacyCategory,
     defaultPortion: targetServing.label,
     grams: targetServing.grams,
@@ -174,7 +179,7 @@ export const toFoodItem = (
     : serving.label;
 
   return {
-    name: food.malayalamName ? `${food.name} (${food.malayalamName})` : food.name,
+    name: food.name,
     meal,
     portion: portionLabel,
     grams,
@@ -186,7 +191,7 @@ export const toFoodItem = (
     isCustom: food.verificationStatus === 'user_provided',
     category: food.category,
     budgetFriendly: food.budgetFriendly,
-    malayalamName: food.malayalamName,
+    malayalamName: undefined,
     cuisine: food.cuisine,
     verificationStatus: food.verificationStatus
   };

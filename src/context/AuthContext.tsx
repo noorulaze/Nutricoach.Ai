@@ -5,6 +5,20 @@ import {
   authenticateUser, registerUser, resetUserPassword, 
   ensureDemoAccount, markUserOnboarded 
 } from '../utils/cryptoAuth';
+import { 
+  SocialProvider, 
+  SocialAuthResult, 
+  AccountLinkingContext, 
+  OAuthConfig,
+  getOAuthConfig, 
+  saveOAuthConfig, 
+  isSocialProviderConfigured, 
+  startGoogleSignIn, 
+  startAppleSignIn, 
+  processSocialLogin, 
+  verifyAndLinkSocialAccount, 
+  simulateSocialAuth 
+} from '../utils/socialAuth';
 import { getProfile, saveProfile, calculateBMR, calculateTDEE, calculateTargets } from '../utils/storage';
 
 interface AuthContextType {
@@ -17,6 +31,15 @@ interface AuthContextType {
   resetPassword: (email: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
   completeOnboarding: (profileUpdates?: Partial<UserProfile>) => void;
   refreshUser: () => void;
+  
+  // Social OAuth & Account Linking
+  loginWithGoogle: () => Promise<SocialAuthResult>;
+  loginWithApple: () => Promise<SocialAuthResult>;
+  loginWithSocialSandbox: (provider: SocialProvider, mockProfile?: { email: string; name: string; avatarUrl?: string }) => Promise<SocialAuthResult>;
+  linkSocialAccount: (context: AccountLinkingContext, passwordAttempt: string) => Promise<SocialAuthResult>;
+  isSocialConfigured: (provider: SocialProvider) => boolean;
+  oauthConfig: OAuthConfig;
+  updateOAuthConfig: (config: Partial<OAuthConfig>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,6 +47,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [oauthConfigState, setOAuthConfigState] = useState<OAuthConfig>(getOAuthConfig);
 
   // Initialize session on mount
   useEffect(() => {
@@ -96,6 +120,87 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithGoogle = async (): Promise<SocialAuthResult> => {
+    setIsLoading(true);
+    try {
+      const payload = await startGoogleSignIn();
+      const result = await processSocialLogin(payload);
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return result;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Google authentication failed';
+      return { success: false, error: message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithApple = async (): Promise<SocialAuthResult> => {
+    setIsLoading(true);
+    try {
+      const payload = await startAppleSignIn();
+      const result = await processSocialLogin(payload);
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return result;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Apple authentication failed';
+      return { success: false, error: message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithSocialSandbox = async (
+    provider: SocialProvider,
+    mockProfile?: { email: string; name: string; avatarUrl?: string }
+  ): Promise<SocialAuthResult> => {
+    setIsLoading(true);
+    try {
+      const result = await simulateSocialAuth(provider, mockProfile);
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return result;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Sandbox login failed';
+      return { success: false, error: message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const linkSocialAccount = async (
+    context: AccountLinkingContext, 
+    passwordAttempt: string
+  ): Promise<SocialAuthResult> => {
+    setIsLoading(true);
+    try {
+      const result = await verifyAndLinkSocialAccount(context, passwordAttempt);
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return result;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Account linking failed';
+      return { success: false, error: message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isSocialConfigured = (provider: SocialProvider): boolean => {
+    return isSocialProviderConfigured(provider);
+  };
+
+  const updateOAuthConfig = (config: Partial<OAuthConfig>): void => {
+    saveOAuthConfig(config);
+    setOAuthConfigState(getOAuthConfig());
+  };
+
   const logout = () => {
     clearAuthSession();
     setUser(null);
@@ -162,7 +267,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         resetPassword,
         completeOnboarding,
-        refreshUser
+        refreshUser,
+        loginWithGoogle,
+        loginWithApple,
+        loginWithSocialSandbox,
+        linkSocialAccount,
+        isSocialConfigured,
+        oauthConfig: oauthConfigState,
+        updateOAuthConfig
       }}
     >
       {children}

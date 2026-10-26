@@ -15,9 +15,25 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import AuthWellnessBanner from '../components/AuthWellnessBanner';
+import ThemeToggle from '../components/ThemeToggle';
+import NutriCoachLogo from '../components/NutriCoachLogo';
+import AccountLinkingModal from '../components/AccountLinkingModal';
+import OAuthSetupModal from '../components/OAuthSetupModal';
+import { AccountLinkingContext, SocialProvider } from '../utils/socialAuth';
 
 export default function LoginPage() {
-  const { login, resetPassword, isAuthenticated } = useAuth();
+  const { 
+    login, 
+    resetPassword, 
+    isAuthenticated,
+    loginWithGoogle,
+    loginWithApple,
+    loginWithSocialSandbox,
+    linkSocialAccount,
+    isSocialConfigured,
+    oauthConfig,
+    updateOAuthConfig
+  } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,11 +52,11 @@ export default function LoginPage() {
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const [forgotSuccess, setForgotSuccess] = useState(false);
 
-  // Social OAuth modal / informational prompt
-  const [socialModalInfo, setSocialModalInfo] = useState<{ open: boolean; provider: 'Google' | 'Apple' | null }>({
-    open: false,
-    provider: null
-  });
+  // Social OAuth & Account Linking Modals
+  const [linkingModalOpen, setLinkingModalOpen] = useState(false);
+  const [linkingContext, setLinkingContext] = useState<AccountLinkingContext | null>(null);
+  const [oauthSetupModalOpen, setOauthSetupModalOpen] = useState(false);
+  const [activeOauthProvider, setActiveOauthProvider] = useState<SocialProvider | null>(null);
 
   // If already logged in, redirect to dashboard
   React.useEffect(() => {
@@ -115,18 +131,102 @@ export default function LoginPage() {
     }
   };
 
-  const handleSocialClick = (provider: 'Google' | 'Apple') => {
-    setSocialModalInfo({ open: true, provider });
+  const handleGoogleClick = async () => {
+    setErrorMessage('');
+    if (!isSocialConfigured('google')) {
+      setActiveOauthProvider('google');
+      setOauthSetupModalOpen(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await loginWithGoogle();
+      if (res.success && res.user) {
+        showToast(`Welcome, ${res.user.name}! Signed in with Google.`, 'success', 'Google Sign-In');
+        const target = res.user.onboarded ? '/' : '/onboarding';
+        navigate(target, { replace: true });
+      } else if (res.requiresLinking && res.linkingContext) {
+        setLinkingContext(res.linkingContext);
+        setLinkingModalOpen(true);
+      } else if (res.error) {
+        setErrorMessage(res.error);
+        showToast(res.error, 'error');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSocialDemoConfirm = async () => {
-    setSocialModalInfo({ open: false, provider: null });
-    await handleQuickDemoLogin();
+  const handleAppleClick = async () => {
+    setErrorMessage('');
+    if (!isSocialConfigured('apple')) {
+      setActiveOauthProvider('apple');
+      setOauthSetupModalOpen(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await loginWithApple();
+      if (res.success && res.user) {
+        showToast(`Welcome, ${res.user.name}! Signed in with Apple.`, 'success', 'Apple Sign-In');
+        const target = res.user.onboarded ? '/' : '/onboarding';
+        navigate(target, { replace: true });
+      } else if (res.requiresLinking && res.linkingContext) {
+        setLinkingContext(res.linkingContext);
+        setLinkingModalOpen(true);
+      } else if (res.error) {
+        setErrorMessage(res.error);
+        showToast(res.error, 'error');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleTestSandbox = async (provider: SocialProvider, mockProfile?: { email: string; name: string }) => {
+    setIsSubmitting(true);
+    try {
+      const res = await loginWithSocialSandbox(provider, mockProfile);
+      if (res.success && res.user) {
+        showToast(`Signed in as ${res.user.name} (${provider === 'google' ? 'Google' : 'Apple'})`, 'success', 'Social Login');
+        const target = res.user.onboarded ? '/' : '/onboarding';
+        navigate(target, { replace: true });
+      } else if (res.requiresLinking && res.linkingContext) {
+        setLinkingContext(res.linkingContext);
+        setLinkingModalOpen(true);
+      } else if (res.error) {
+        setErrorMessage(res.error);
+        showToast(res.error, 'error');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmLink = async (passwordAttempt: string) => {
+    if (!linkingContext) return { success: false, error: 'Linking context missing' };
+    const res = await linkSocialAccount(linkingContext, passwordAttempt);
+    if (res.success && res.user) {
+      showToast(`Account linked successfully! Welcome back, ${res.user.name}.`, 'success', 'Account Linked');
+      setLinkingModalOpen(false);
+      setLinkingContext(null);
+      const target = res.user.onboarded ? '/' : '/onboarding';
+      navigate(target, { replace: true });
+      return { success: true };
+    }
+    return { success: false, error: res.error || 'Password verification failed.' };
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f6f8f5] text-[#192418] flex flex-col lg:flex-row relative selection:bg-[#5ba83c]/20 font-sans">
+    <div className="min-h-screen w-full bg-[#f6f8f5] dark:bg-[#1C211D] text-[#192418] dark:text-[#E8EDE7] flex flex-col lg:flex-row relative selection:bg-[#8BAF78]/25 font-sans transition-colors duration-200">
       
+      {/* Theme Toggle Button top right */}
+      <div className="absolute top-4 right-4 z-30">
+        <ThemeToggle variant="icon" />
+      </div>
+
       {/* ========================================================================= */}
       {/* LEFT SECTION: Branded Wellness Presentation (matches reference image)     */}
       {/* ========================================================================= */}
@@ -135,23 +235,14 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {/* RIGHT SECTION: The Elevated Clean White Login Card                         */}
       {/* ========================================================================= */}
-      <div className="w-full lg:w-[46%] xl:w-[44%] flex items-center justify-center p-4 sm:p-8 lg:p-12 xl:p-14 bg-[#f6f8f5]">
-        <div className="w-full max-w-[460px] bg-white border border-[#e8ede6] rounded-[32px] p-6 sm:p-9 shadow-[0_12px_40px_-8px_rgba(25,36,24,0.06)] animate-fade-in space-y-6">
+      <div className="w-full lg:w-[46%] xl:w-[44%] flex items-center justify-center p-4 sm:p-8 lg:p-12 xl:p-14 bg-[#f6f8f5] dark:bg-[#1C211D]">
+        <div className="w-full max-w-[460px] bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-[32px] p-6 sm:p-9 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] animate-fade-in space-y-6">
           
           {/* Top Card Branding */}
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-xl bg-[#5ba83c] flex items-center justify-center text-white shadow-xs">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M21 3c-6.627 0-12 5.373-12 12 0 1.258.196 2.47.558 3.606L3 21l2.394-6.558C4.196 13.31 4 12.098 4 11 4 4.373 9.373-1 16-1c2.146 0 4.148.566 5.88 1.558L21 3z" />
-                </svg>
-              </div>
-              <span className="font-heading font-extrabold text-lg text-[#192418] tracking-tight">
-                NutriCoach <span className="text-[#5ba83c]">AI</span>
-              </span>
-            </div>
+            <NutriCoachLogo size="md" className="mb-3" />
 
-            <h2 className="text-2xl sm:text-[26px] font-black text-[#192418] tracking-tight">
+            <h2 className="text-2xl sm:text-[26px] font-black text-[#192418] dark:text-[#E8EDE7] tracking-tight">
               Welcome back!
             </h2>
             <p className="text-xs sm:text-[13px] text-[#5e6f5e] font-medium mt-1">
@@ -164,8 +255,9 @@ export default function LoginPage() {
             {/* Google Button */}
             <button
               type="button"
-              onClick={() => handleSocialClick('Google')}
-              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99]"
+              onClick={handleGoogleClick}
+              disabled={isSubmitting}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99] cursor-pointer disabled:opacity-60"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -191,8 +283,9 @@ export default function LoginPage() {
             {/* Apple Button */}
             <button
               type="button"
-              onClick={() => handleSocialClick('Apple')}
-              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99]"
+              onClick={handleAppleClick}
+              disabled={isSubmitting}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white hover:bg-[#f9fbf8] border border-[#e2e8df] hover:border-[#cbd7c8] text-xs font-bold text-[#192418] flex items-center justify-center gap-3 transition-all shadow-2xs active:scale-[0.99] cursor-pointer disabled:opacity-60"
             >
               <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.77 1.04-1.84.93-2.92-.93.04-2.07.62-2.73 1.39-.58.67-1.09 1.76-.96 2.81 1.04.08 2.14-.51 2.76-1.28z" />
@@ -449,50 +542,35 @@ export default function LoginPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* SOCIAL OAUTH NOTICE MODAL                                                 */}
+      {/* ACCOUNT LINKING VERIFICATION MODAL                                        */}
       {/* ========================================================================= */}
-      {socialModalInfo.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#e8ede6] relative space-y-4 text-center">
-            <button
-              type="button"
-              onClick={() => setSocialModalInfo({ open: false, provider: null })}
-              className="absolute top-4 right-4 p-1.5 rounded-xl text-[#8e9f8e] hover:text-[#192418]"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      <AccountLinkingModal
+        isOpen={linkingModalOpen}
+        context={linkingContext}
+        onClose={() => {
+          setLinkingModalOpen(false);
+          setLinkingContext(null);
+        }}
+        onConfirmLink={handleConfirmLink}
+      />
 
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-[#eef7eb] flex items-center justify-center text-[#5ba83c]">
-              <Sparkles className="w-6 h-6 text-[#5ba83c]" />
-            </div>
-
-            <h3 className="text-lg font-extrabold text-[#192418]">
-              {socialModalInfo.provider} Sign-In
-            </h3>
-
-            <p className="text-xs text-[#5e6f5e] leading-relaxed">
-              In this client-side environment, third-party {socialModalInfo.provider} OAuth uses simulated single sign-on. You can continue as a verified user with 1 click.
-            </p>
-
-            <div className="pt-2 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={handleSocialDemoConfirm}
-                className="w-full py-2.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white font-bold text-xs shadow-xs"
-              >
-                Continue with {socialModalInfo.provider} Demo
-              </button>
-              <button
-                type="button"
-                onClick={() => setSocialModalInfo({ open: false, provider: null })}
-                className="w-full py-2 text-xs text-[#7a8c79] hover:text-[#192418]"
-              >
-                Use Email & Password Instead
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ========================================================================= */}
+      {/* OAUTH CREDENTIALS SETUP & VERIFICATION MODAL                              */}
+      {/* ========================================================================= */}
+      <OAuthSetupModal
+        isOpen={oauthSetupModalOpen}
+        provider={activeOauthProvider}
+        config={oauthConfig}
+        onClose={() => {
+          setOauthSetupModalOpen(false);
+          setActiveOauthProvider(null);
+        }}
+        onSaveConfig={(cfg) => {
+          updateOAuthConfig(cfg);
+          showToast('OAuth configuration updated successfully.', 'success', 'Saved');
+        }}
+        onTestSandbox={handleTestSandbox}
+      />
 
     </div>
   );

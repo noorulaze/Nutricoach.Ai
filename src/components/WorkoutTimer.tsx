@@ -97,35 +97,35 @@ export default function WorkoutTimer() {
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 bg-white/95 hover:bg-white border border-[#e8ede6] text-[#192418] px-3.5 py-2.5 rounded-full shadow-md backdrop-blur-md transition-all duration-200 group"
+          className="flex items-center gap-2 bg-white/95 dark:bg-[#272E29]/95 hover:bg-white dark:hover:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] px-3.5 py-2.5 rounded-full shadow-md backdrop-blur-md transition-all duration-200 group"
         >
-          <TimerIcon className="w-4 h-4 text-[#5ba83c] group-hover:rotate-45 transition-transform" />
+          <TimerIcon className="w-4 h-4 text-[#5ba83c] dark:text-[#8BAF78] group-hover:rotate-45 transition-transform" />
           <span className="text-xs font-bold uppercase tracking-wider font-mono">
             {isActive ? formatTime(seconds) : 'TRAINING TIMER'}
           </span>
           {isActive && (
-            <span className="w-2 h-2 rounded-full bg-[#5ba83c] animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-[#5ba83c] dark:bg-[#8BAF78] animate-ping" />
           )}
         </button>
       ) : (
-        <div className="w-72 bg-white border border-[#e8ede6] rounded-3xl p-4 shadow-2xl backdrop-blur-xl animate-fade-in space-y-3">
+        <div className="w-72 bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-3xl p-4 shadow-2xl backdrop-blur-xl animate-fade-in space-y-3">
           {/* Header */}
-          <div className="flex items-center justify-between pb-2 border-b border-[#f0f4ee]">
-            <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase text-[#192418] tracking-wide">
-              <TimerIcon className="w-4 h-4 text-[#5ba83c]" />
+          <div className="flex items-center justify-between pb-2 border-b border-[#f0f4ee] dark:border-[#394139]">
+            <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase text-[#192418] dark:text-[#E8EDE7] tracking-wide">
+              <TimerIcon className="w-4 h-4 text-[#5ba83c] dark:text-[#8BAF78]" />
               <span>INTERVAL CLOCK</span>
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setSoundEnabled(!soundEnabled)}
-                className="text-[#7a8c79] hover:text-[#192418] p-1 rounded-lg"
+                className="text-[#7a8c79] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] p-1 rounded-lg"
                 title={soundEnabled ? 'Mute sound' : 'Enable sound'}
               >
-                {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#5ba83c]" /> : <VolumeX className="w-3.5 h-3.5" />}
+                {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#5ba83c] dark:text-[#8BAF78]" /> : <VolumeX className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-[#7a8c79] hover:text-[#192418] p-1 rounded-lg"
+                className="text-[#7a8c79] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] p-1 rounded-lg"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -133,14 +133,16 @@ export default function WorkoutTimer() {
           </div>
 
           {/* Mode Switcher */}
-          <div className="grid grid-cols-2 gap-1.5 bg-[#f6f8f5] p-1 rounded-xl text-[11px] font-bold">
+          <div className="grid grid-cols-2 gap-1.5 bg-[#f6f8f5] dark:bg-[#1C211D] p-1 rounded-xl text-[11px] font-bold">
             <button
               onClick={() => {
                 setMode('tabata');
                 handleReset();
               }}
               className={`py-1.5 rounded-lg transition-colors ${
-                mode === 'tabata' ? 'bg-[#5ba83c] text-white shadow-xs' : 'text-[#5e6f5e] hover:text-[#192418]'
+                mode === 'tabata' 
+                  ? 'bg-[#5ba83c] dark:bg-[#8BAF78] text-white dark:text-[#161D15] shadow-xs' 
+                  : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
               }`}
             >
               TABATA (20/10)
@@ -152,7 +154,9 @@ export default function WorkoutTimer() {
                 setIsActive(false);
               }}
               className={`py-1.5 rounded-lg transition-colors ${
-                mode === 'stopwatch' ? 'bg-[#5ba83c] text-white shadow-xs' : 'text-[#5e6f5e] hover:text-[#192418]'
+                mode === 'stopwatch' 
+                  ? 'bg-[#5ba83c] dark:bg-[#8BAF78] text-white dark:text-[#161D15] shadow-xs' 
+                  : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
               }`}
             >
               STOPWATCH
@@ -160,23 +164,23 @@ export default function WorkoutTimer() {
           </div>
 
           {/* Main Display */}
-          <div className="text-center py-3 bg-[#f6f8f5] rounded-2xl border border-[#e8ede6]">
+          <div className="text-center py-3 bg-[#f6f8f5] dark:bg-[#1C211D] rounded-2xl border border-[#e8ede6] dark:border-[#394139]">
             {mode === 'tabata' && (
               <div className="text-[10px] font-mono font-bold tracking-widest uppercase mb-1">
                 <span
                   className={
                     tabataPhase === 'WORK'
-                      ? 'text-[#3b7e23] font-black'
-                      : 'text-sky-600 font-black'
+                      ? 'text-[#3b7e23] dark:text-[#8BAF78] font-black'
+                      : 'text-sky-600 dark:text-sky-400 font-black'
                   }
                 >
                   {tabataPhase === 'WORK' ? '⚡ WORK INTERVAL' : '❄ REST / RECOVER'}
                 </span>
-                <span className="text-[#7a8c79] ml-2">ROUND {round}/{totalRounds}</span>
+                <span className="text-[#7a8c79] dark:text-[#A2AAA1] ml-2">ROUND {round}/{totalRounds}</span>
               </div>
             )}
 
-            <div className="font-mono text-4xl font-black text-[#192418] tracking-wider">
+            <div className="font-mono text-4xl font-black text-[#192418] dark:text-[#E8EDE7] tracking-wider">
               {formatTime(seconds)}
             </div>
           </div>
@@ -187,8 +191,8 @@ export default function WorkoutTimer() {
               onClick={() => setIsActive(!isActive)}
               className={`flex-1 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-xs ${
                 isActive
-                  ? 'bg-amber-100 text-amber-800'
-                  : 'bg-[#5ba83c] hover:bg-[#4d9630] text-white'
+                  ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
+                  : 'bg-[#5ba83c] hover:bg-[#4d9630] dark:bg-[#8BAF78] dark:hover:bg-[#9CBD89] text-white dark:text-[#161D15]'
               }`}
             >
               {isActive ? (
@@ -197,13 +201,13 @@ export default function WorkoutTimer() {
                 </>
               ) : (
                 <>
-                  <Play className="w-3.5 h-3.5 fill-white" /> START
+                  <Play className="w-3.5 h-3.5 fill-current" /> START
                 </>
               )}
             </button>
             <button
               onClick={handleReset}
-              className="p-2.5 bg-[#f6f8f5] hover:bg-[#edf2ea] text-[#5e6f5e] hover:text-[#192418] rounded-2xl border border-[#e8ede6]"
+              className="p-2.5 bg-[#f6f8f5] dark:bg-[#1C211D] hover:bg-[#edf2ea] dark:hover:bg-[#313A33] text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] rounded-2xl border border-[#e8ede6] dark:border-[#394139]"
               title="Reset timer"
             >
               <RotateCcw className="w-4 h-4" />

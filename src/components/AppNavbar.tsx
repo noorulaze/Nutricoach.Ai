@@ -8,6 +8,7 @@ import {
 import { getProfile, getFoodLog } from '../utils/storage';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import NutriCoachLogo from './NutriCoachLogo';
 
 export default function AppNavbar() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -54,24 +55,7 @@ export default function AppNavbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Brand Logo */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ccff00] to-[#a3e635] flex items-center justify-center text-black shadow-[0_0_15px_rgba(204,255,0,0.35)] group-hover:scale-105 transition-transform">
-                <Sparkles className="w-5 h-5 fill-black stroke-black" />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 leading-none">
-                  <span className="font-heading text-xl sm:text-2xl font-black tracking-wider text-white">
-                    NUTRI<span className="text-[#ccff00]">COACH</span>
-                  </span>
-                  <span className="text-[9px] font-mono font-bold bg-[#ccff00]/15 text-[#ccff00] px-1.5 py-0.5 rounded border border-[#ccff00]/30 leading-none">
-                    AI
-                  </span>
-                </div>
-                <span className="text-[9px] font-semibold tracking-wider uppercase text-zinc-400 mt-0.5 hidden sm:block">
-                  PERSONAL HEALTH INTELLIGENCE
-                </span>
-              </div>
-            </Link>
+            <NutriCoachLogo to="/" size="md" theme="dark" />
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1 bg-[#12141c]/80 p-1 rounded-2xl border border-white/[0.06]">

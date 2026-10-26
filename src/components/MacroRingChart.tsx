@@ -17,8 +17,8 @@ export default function MacroRingChart({
   consumed,
   target,
   unit,
-  color = '#ccff00',
-  secondaryColor = 'rgba(255, 255, 255, 0.08)',
+  color = '#8BAF78',
+  secondaryColor,
   size = 140,
   strokeWidth = 10,
   subtitle
@@ -38,8 +38,9 @@ export default function MacroRingChart({
             cy={size / 2}
             r={radius}
             fill="transparent"
-            stroke={secondaryColor}
+            stroke={secondaryColor || 'currentColor'}
             strokeWidth={strokeWidth}
+            className={secondaryColor ? '' : 'text-[#edf2ea] dark:text-[#394139]'}
           />
           {/* Progress Ring */}
           <circle
@@ -58,24 +59,24 @@ export default function MacroRingChart({
 
         {/* Center Numbers */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-xl sm:text-2xl font-black font-mono text-white leading-none">
+          <span className="text-xl sm:text-2xl font-black font-mono text-[#192418] dark:text-[#E8EDE7] leading-none">
             {Math.round(consumed)}
           </span>
-          <span className="text-[10px] font-mono text-zinc-400 mt-0.5 leading-none">
+          <span className="text-[10px] font-mono text-[#7a8c79] dark:text-[#A2AAA1] mt-0.5 leading-none">
             / {target} {unit}
           </span>
-          <span className="text-[9px] font-bold uppercase tracking-wider text-[#ccff00] mt-1 font-mono">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-[#5ba83c] dark:text-[#8BAF78] mt-1 font-mono">
             {percentage}%
           </span>
         </div>
       </div>
 
       <div className="mt-2 text-center">
-        <span className="text-xs font-bold uppercase tracking-wider text-zinc-200 block">
+        <span className="text-xs font-bold uppercase tracking-wider text-[#192418] dark:text-[#E8EDE7] block">
           {label}
         </span>
         {subtitle && (
-          <span className="text-[10px] text-zinc-500 font-mono block">
+          <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-mono block">
             {subtitle}
           </span>
         )}

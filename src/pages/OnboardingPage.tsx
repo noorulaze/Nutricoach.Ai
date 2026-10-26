@@ -11,6 +11,8 @@ import {
   EquipmentType, DietType, BudgetTier 
 } from '../types';
 import { calculateBMR, calculateTDEE, calculateTargets } from '../utils/storage';
+import ThemeToggle from '../components/ThemeToggle';
+import NutriCoachLogo from '../components/NutriCoachLogo';
 
 export default function OnboardingPage() {
   const { user, completeOnboarding } = useAuth();
@@ -83,32 +85,23 @@ export default function OnboardingPage() {
       <div className="max-w-4xl mx-auto w-full space-y-6 animate-fade-in">
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e8ede6]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#5ba83c] flex items-center justify-center text-white shadow-xs">
-              <svg 
-                className="w-5 h-5 fill-current" 
-                viewBox="0 0 24 24"
-              >
-                <path d="M21 3c-6.627 0-12 5.373-12 12 0 1.258.196 2.47.558 3.606L3 21l2.394-6.558C4.196 13.31 4 12.098 4 11 4 4.373 9.373-1 16-1c2.146 0 4.148.566 5.88 1.558L21 3z" />
-              </svg>
-            </div>
-            <div>
-              <span className="font-heading font-extrabold text-xl text-[#192418] tracking-tight">
-                NutriCoach <span className="text-[#5ba83c]">AI</span>
-              </span>
-              <span className="block text-xs text-[#7a8c79] font-medium">
-                First-Time Profile Setup • Welcome {user?.name || ''}
-              </span>
-            </div>
+          <div className="flex flex-col">
+            <NutriCoachLogo size="md" />
+            <span className="block text-xs text-[#7a8c79] font-medium mt-1">
+              First-Time Profile Setup • Welcome {user?.name || ''}
+            </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleSkip}
-            className="text-xs text-[#7a8c79] hover:text-[#192418] font-bold hover:underline self-start sm:self-auto"
-          >
-            Skip for now & use defaults →
-          </button>
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            <ThemeToggle variant="pill" />
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="text-xs text-[#7a8c79] hover:text-[#192418] font-bold hover:underline"
+            >
+              Skip for now & use defaults →
+            </button>
+          </div>
         </div>
 
         {/* Step Progression Pills */}

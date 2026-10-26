@@ -20,6 +20,7 @@ import {
   Info,
   X
 } from 'lucide-react';
+import { NutriCoachSymbol } from '../components/NutriCoachLogo';
 import { 
   getProfile, 
   getFoodLog, 
@@ -154,29 +155,27 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* Daily Wellness Tip Card (8 cols on lg) */}
-        <div className="lg:col-span-8 bg-gradient-to-br from-[#eaf4e6] via-[#f3f9f0] to-[#e4f0e0] border border-[#d6ebd0] rounded-[28px] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-xs group">
-          {/* Subtle decorative leaf watermark */}
+        <div className="lg:col-span-8 bg-gradient-to-br from-[#eaf4e6] via-[#f3f9f0] to-[#e4f0e0] dark:from-[#212B22] dark:via-[#263128] dark:to-[#1F2821] border border-[#d6ebd0] dark:border-[#384639] rounded-[28px] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-xs group">
+          {/* Subtle decorative folded-leaf N symbol watermark */}
           <div className="absolute top-2 right-1/3 opacity-15 pointer-events-none select-none">
-            <svg className="w-32 h-32 fill-[#5ba83c]" viewBox="0 0 24 24">
-              <path d="M21 3c-6.627 0-12 5.373-12 12 0 1.258.196 2.47.558 3.606L3 21l2.394-6.558C4.196 13.31 4 12.098 4 11 4 4.373 9.373-1 16-1c2.146 0 4.148.566 5.88 1.558L21 3z" />
-            </svg>
+            <NutriCoachSymbol className="w-32 h-32" />
           </div>
 
           <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="max-w-md space-y-3.5 text-left">
               {/* Tip Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#d2e7cc] text-[11px] font-bold text-[#3b7e23] shadow-xs">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-[#272E29]/90 border border-[#d2e7cc] dark:border-[#394139] text-[11px] font-bold text-[#3b7e23] dark:text-[#8BAF78] shadow-xs">
                 <Lightbulb className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                 <span>Daily Wellness Tip</span>
               </div>
 
               {/* Headline */}
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#192418] tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight leading-snug">
                 Eat more whole foods,<br />less processed foods.
               </h2>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm text-[#5e6f5e] font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#5e6f5e] dark:text-[#A2AAA1] font-medium leading-relaxed">
                 Whole foods give you more nutrients, fiber and long-lasting energy.
               </p>
 
@@ -185,7 +184,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowTipModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#5ba83c] dark:bg-[#8BAF78] hover:bg-[#4d9630] dark:hover:bg-[#7a9d68] text-white dark:text-[#192418] text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
                 >
                   <span>Learn More</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -196,11 +195,11 @@ export default function DashboardPage() {
             {/* Circular Grain Bowl Hero Photography */}
             <div className="relative shrink-0 w-44 h-44 sm:w-56 sm:h-56 lg:w-64 lg:h-64 flex items-center justify-center">
               {/* Outer soft glow ring */}
-              <div className="absolute inset-0 rounded-full bg-white/40 blur-sm transform scale-105" />
+              <div className="absolute inset-0 rounded-full bg-white/40 dark:bg-[#272E29]/40 blur-sm transform scale-105" />
               <img
                 src={grainBowlImg}
                 alt="Nutritious grain bowl with avocado, chickpeas, and fresh greens"
-                className="w-full h-full object-cover rounded-full shadow-lg border-4 border-white transition-transform duration-500 group-hover:scale-102"
+                className="w-full h-full object-cover rounded-full shadow-lg border-4 border-white dark:border-[#272E29] transition-transform duration-500 group-hover:scale-102"
               />
             </div>
           </div>
@@ -225,7 +224,7 @@ export default function DashboardPage() {
                   cx="70"
                   cy="70"
                   r={ringRadius}
-                  className="stroke-[#edf2ea]"
+                  className="stroke-[#edf2ea] dark:stroke-[#394139]"
                   strokeWidth="12"
                   fill="transparent"
                 />
@@ -234,7 +233,7 @@ export default function DashboardPage() {
                   cx="70"
                   cy="70"
                   r={ringRadius}
-                  className="stroke-[#5ba83c] transition-all duration-700 ease-out"
+                  className="stroke-[#5ba83c] dark:stroke-[#8BAF78] transition-all duration-700 ease-out"
                   strokeWidth="12"
                   strokeDasharray={ringCircumference}
                   strokeDashoffset={calorieStrokeDashoffset}
@@ -334,15 +333,15 @@ export default function DashboardPage() {
               <div className="relative w-full h-32 flex items-end">
                 <svg className="w-full h-full overflow-visible" viewBox="0 0 350 100">
                   {/* Subtle horizontal grid lines */}
-                  <line x1="0" y1="20" x2="340" y2="20" stroke="#f0f4ee" strokeDasharray="3 3" />
-                  <line x1="0" y1="50" x2="340" y2="50" stroke="#f0f4ee" strokeDasharray="3 3" />
-                  <line x1="0" y1="80" x2="340" y2="80" stroke="#f0f4ee" strokeDasharray="3 3" />
+                  <line x1="0" y1="20" x2="340" y2="20" stroke="currentColor" className="text-[#f0f4ee] dark:text-[#394139]" strokeDasharray="3 3" />
+                  <line x1="0" y1="50" x2="340" y2="50" stroke="currentColor" className="text-[#f0f4ee] dark:text-[#394139]" strokeDasharray="3 3" />
+                  <line x1="0" y1="80" x2="340" y2="80" stroke="currentColor" className="text-[#f0f4ee] dark:text-[#394139]" strokeDasharray="3 3" />
 
                   {/* Gradient Area under line */}
                   <defs>
                     <linearGradient id="activityGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#5ba83c" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#5ba83c" stopOpacity="0.0" />
+                      <stop offset="0%" stopColor="#8BAF78" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#8BAF78" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
                   <polygon
@@ -353,11 +352,12 @@ export default function DashboardPage() {
                   {/* Activity Green Polyline */}
                   <polyline
                     fill="none"
-                    stroke="#5ba83c"
+                    stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     points={pointsString}
+                    className="text-[#5ba83c] dark:text-[#8BAF78]"
                   />
 
                   {/* Circular Nodes */}
@@ -367,7 +367,7 @@ export default function DashboardPage() {
                       cx={d.x}
                       cy={d.y}
                       r="4"
-                      className="fill-white stroke-[#5ba83c] stroke-2 hover:r-5 transition-all cursor-pointer"
+                      className="fill-white dark:fill-[#272E29] stroke-[#5ba83c] dark:stroke-[#8BAF78] stroke-2 hover:r-5 transition-all cursor-pointer"
                     />
                   ))}
                 </svg>
@@ -570,7 +570,7 @@ export default function DashboardPage() {
                   cx="50"
                   cy="50"
                   r={waterRadius}
-                  className="stroke-[#edf4fc]"
+                  className="stroke-[#edf4fc] dark:stroke-[#394139]"
                   strokeWidth="8"
                   fill="transparent"
                 />
@@ -588,28 +588,28 @@ export default function DashboardPage() {
               </svg>
 
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-black text-[#192418] leading-none">
-                  {waterGlasses}<span className="text-sm font-bold text-[#7a8c79]"> / 8</span>
+                <span className="text-2xl font-black text-[#192418] dark:text-[#E8EDE7] leading-none">
+                  {waterGlasses}<span className="text-sm font-bold text-[#7a8c79] dark:text-[#A2AAA1]"> / 8</span>
                 </span>
-                <span className="text-[10px] font-medium text-[#7a8c79] mt-1">
+                <span className="text-[10px] font-medium text-[#7a8c79] dark:text-[#A2AAA1] mt-1">
                   glasses
                 </span>
               </div>
             </div>
 
             {/* Motivational message */}
-            <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-[#192418]">
+            <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-[#192418] dark:text-[#E8EDE7]">
               <Droplets className="w-3.5 h-3.5 text-[#38bdf8] fill-[#38bdf8]" />
               <span>You're doing great!</span>
             </div>
-            <span className="text-[11px] text-[#7a8c79]">Keep it up!</span>
+            <span className="text-[11px] text-[#7a8c79] dark:text-[#A2AAA1]">Keep it up!</span>
           </div>
 
           {/* + Log Water Button */}
           <button
             type="button"
             onClick={handleLogWater}
-            className="w-full py-2.5 px-4 rounded-2xl bg-[#eef7eb] hover:bg-[#e2f2dd] text-[#3b7e23] text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            className="w-full py-2.5 px-4 rounded-2xl bg-[#eef7eb] hover:bg-[#e2f2dd] text-[#3b7e23] dark:bg-[#2F3931] dark:hover:bg-[#38463B] dark:text-[#8BAF78] text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Log Water</span>
@@ -855,26 +855,26 @@ export default function DashboardPage() {
         <div className="lg:col-span-4 space-y-4">
           
           {/* AI Nutrition Coach Card */}
-          <div className="bg-gradient-to-br from-[#eef7eb] via-[#f7fbf6] to-[#e6f4e2] border border-[#d6ebd0] rounded-[28px] p-6 relative overflow-hidden shadow-xs flex flex-col justify-between">
+          <div className="bg-gradient-to-br from-[#eef7eb] via-[#f7fbf6] to-[#e6f4e2] dark:from-[#212B22] dark:via-[#263128] dark:to-[#1F2821] border border-[#d6ebd0] dark:border-[#384639] rounded-[28px] p-6 relative overflow-hidden shadow-xs flex flex-col justify-between">
             {/* Robot Avatar and Title */}
             <div className="space-y-3 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-white border border-[#d6ebd0] flex items-center justify-center text-[#5ba83c] shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#272E29] border border-[#d6ebd0] dark:border-[#384639] flex items-center justify-center text-[#5ba83c] dark:text-[#8BAF78] shadow-xs">
                   <div className="relative">
-                    <Sparkles className="w-6 h-6 text-[#5ba83c] fill-[#5ba83c]" />
+                    <Sparkles className="w-6 h-6 text-[#5ba83c] dark:text-[#8BAF78] fill-[#5ba83c] dark:fill-[#8BAF78]" />
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-base font-extrabold text-[#192418]">
+                  <h4 className="text-base font-extrabold text-[#192418] dark:text-[#E8EDE7]">
                     AI Nutrition Coach
                   </h4>
-                  <span className="text-[11px] font-semibold text-[#5ba83c]">
+                  <span className="text-[11px] font-semibold text-[#5ba83c] dark:text-[#8BAF78]">
                     Online & Ready
                   </span>
                 </div>
               </div>
 
-              <p className="text-xs text-[#5e6f5e] font-medium leading-relaxed">
+              <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] font-medium leading-relaxed">
                 Get personalized advice, meal ideas, and answers to your nutrition questions.
               </p>
             </div>
@@ -883,7 +883,7 @@ export default function DashboardPage() {
             <div className="pt-4 relative z-10">
               <Link
                 to="/coach"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#5ba83c] dark:bg-[#8BAF78] hover:bg-[#4d9630] dark:hover:bg-[#7a9d68] text-white dark:text-[#192418] text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
               >
                 <span>Ask AI Coach</span>
                 <ArrowRight className="w-3.5 h-3.5" />

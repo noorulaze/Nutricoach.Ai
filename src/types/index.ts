@@ -134,6 +134,32 @@ export interface ProgressEntry {
   photoDataUrl?: string; // Stored locally
 }
 
+export interface ChatFoodCard {
+  foodId: string;
+  name: string;
+  category: string;
+  cuisine: string;
+  dietaryType: string;
+  description: string;
+  per100g: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    sodiumMg?: number;
+  };
+  servings: {
+    label: string;
+    grams: number;
+    isDefault?: boolean;
+  }[];
+  defaultServing: {
+    label: string;
+    grams: number;
+  };
+}
+
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'ai';
@@ -141,6 +167,18 @@ export interface ChatMessage {
   timestamp: string;
   contextSummary?: string;
   actionSuggestions?: { label: string; action: string }[];
+  foodCard?: ChatFoodCard;
+  isError?: boolean;
+}
+
+export type AuthProviderType = 'email' | 'google' | 'apple';
+
+export interface LinkedSocialProvider {
+  provider: 'google' | 'apple';
+  providerUserId: string; // The Google or Apple 'sub' identifier
+  email: string;
+  linkedAt: string;
+  avatarUrl?: string;
 }
 
 export interface AuthUser {
@@ -150,14 +188,20 @@ export interface AuthUser {
   avatarUrl?: string;
   createdAt: string;
   onboarded: boolean;
+  authProvider?: AuthProviderType;
+  linkedProviders?: LinkedSocialProvider[];
 }
 
 export interface StoredUserAccount {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
-  salt: string;
+  passwordHash?: string;
+  salt?: string;
   createdAt: string;
   onboarded: boolean;
+  authProvider?: AuthProviderType;
+  avatarUrl?: string;
+  linkedProviders?: LinkedSocialProvider[];
+  emailVerified?: boolean;
 }
