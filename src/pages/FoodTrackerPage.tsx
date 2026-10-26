@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Utensils, Plus, Trash2, Edit2, Search, 
   ChevronLeft, ChevronRight, Calendar, Sparkles, X, 
@@ -614,6 +615,30 @@ export default function FoodTrackerPage() {
               >
                 Customize
               </button>
+            </div>
+
+            {/* AI Meal Planner Shortcut Banner */}
+            <div className="bg-gradient-to-r from-[#eef7eb] to-[#f4f9f2] dark:from-[#212921] dark:to-[#1C211D] border border-[#d6ebd0] dark:border-[#384639] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-2xs">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-[9px] font-black uppercase text-[#3b7e23] dark:text-[#8BAF78] tracking-wider">
+                    AI NUTRITION PLANNING
+                  </span>
+                </div>
+                <h4 className="text-xs font-extrabold text-[#192418] dark:text-[#E8EDE7] truncate">
+                  AI Personalized Meal Planner
+                </h4>
+                <p className="text-[10px] text-[#5e6f5e] dark:text-[#A2AAA1]">
+                  1-Day & 7-Day authentic Kerala meal schedules
+                </p>
+              </div>
+              <Link
+                to="/meal-planner"
+                className="px-3 py-1.5 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold shrink-0 shadow-xs active:scale-95 transition-all flex items-center gap-1"
+              >
+                <span>Plan Meals</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
             {/* 4 Meals List (Breakfast, Lunch, Dinner, Snack) */}

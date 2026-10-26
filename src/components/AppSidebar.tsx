@@ -10,7 +10,8 @@ import {
   User, 
   Settings, 
   LogOut,
-  Sprout
+  Sprout,
+  CalendarRange
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -39,6 +40,7 @@ export default function AppSidebar({ onCloseMobile }: AppSidebarProps) {
   const navItems = [
     { name: 'Dashboard', path: '/', icon: Home, end: true },
     { name: 'Food Tracker', path: '/food', icon: Utensils },
+    { name: 'AI Meal Planner', path: '/meal-planner', icon: CalendarRange },
     { name: 'Workouts', path: '/workouts', icon: Dumbbell },
     { name: 'Exercises', path: '/exercises', icon: Activity },
     { name: 'AI Coach', path: '/coach', icon: MessageSquare },

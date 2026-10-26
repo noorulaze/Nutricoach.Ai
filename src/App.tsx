@@ -22,6 +22,7 @@ import FoodTrackerPage from './pages/FoodTrackerPage';
 import WorkoutPlannerPage from './pages/WorkoutPlannerPage';
 import ExerciseLibraryPage from './pages/ExerciseLibraryPage';
 import AICoachPage from './pages/AICoachPage';
+import AIMealPlannerPage from './pages/AIMealPlannerPage';
 import ProgressPage from './pages/ProgressPage';
 import ProfilePage from './pages/ProfilePage';
 
@@ -100,6 +101,14 @@ function AppLayout() {
               element={
                 <ProtectedRoute>
                   <FoodTrackerPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/meal-planner" 
+              element={
+                <ProtectedRoute>
+                  <AIMealPlannerPage />
                 </ProtectedRoute>
               } 
             />

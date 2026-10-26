@@ -18,6 +18,7 @@ import {
   UtensilsCrossed,
   Wheat,
   Info,
+  Calendar,
   X
 } from 'lucide-react';
 import { NutriCoachSymbol } from '../components/NutriCoachLogo';
@@ -307,6 +308,19 @@ export default function DashboardPage() {
                 <Dumbbell className="w-4 h-4" />
               </div>
               <span>Start Workout</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#7a8c79]" />
+          </Link>
+
+          <Link
+            to="/meal-planner"
+            className="w-full flex items-center justify-between p-3 rounded-2xl bg-[#f6f8f5] dark:bg-[#1C211D] hover:bg-[#eef7eb] dark:hover:bg-[#223023] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] text-xs font-bold transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] flex items-center justify-center text-[#5ba83c]">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <span>AI Meal Planner</span>
             </div>
             <ArrowRight className="w-4 h-4 text-[#7a8c79]" />
           </Link>
