@@ -1,26 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Bell, 
-  Calendar, 
-  Plus, 
   Menu, 
   X, 
-  Flame,
   User,
   LogOut,
   ChevronDown,
-  Settings,
-  ShieldCheck,
   Activity,
-  MessageSquare,
-  Utensils,
-  Dumbbell,
-  TrendingUp,
-  LayoutDashboard
+  MessageSquare
 } from 'lucide-react';
-import { getProfile, getFoodLog } from '../utils/storage';
+import { getProfile } from '../utils/storage';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import AppSidebar from './AppSidebar';
@@ -40,29 +31,9 @@ export default function AppHeader() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const profile = getProfile();
-  const todayFoods = getFoodLog();
-  const consumedCalories = todayFoods.reduce((acc, f) => acc + f.calories, 0);
-  const calorieTarget = profile.calorieTarget || 1750;
-  const progressPercent = Math.min(100, Math.round((consumedCalories / calorieTarget) * 100));
-
-  const displayName = user?.name || profile.name || 'Friend';
-  const firstName = displayName.split(' ')[0];
-  const userEmail = user?.email || 'demo@nutricoach.ai';
-
-  const topNavItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Nutrition', path: '/food', icon: Utensils },
-    { name: 'Workout', path: '/workouts', icon: Dumbbell },
-    { name: 'Progress', path: '/progress', icon: TrendingUp },
-    { name: 'Chat', path: '/coach', icon: MessageSquare }
-  ];
-
-  // Format today's date in style: "Today, Oct 25, 2026"
-  const todayFormatted = `Today, ${new Date().toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })}`;
+  const displayName = user?.name || profile.name || 'Nooru';
+  const firstName = displayName.split(' ')[0] || 'Nooru';
+  const userEmail = user?.email || 'nooru@nutricoach.ai';
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -147,38 +118,8 @@ export default function AppHeader() {
               </div>
             </div>
 
-            {/* Center Desktop Navigation (matches reference image: Dashboard, Nutrition, Workout, Progress, Chat) */}
-            <nav className="hidden xl:flex items-center gap-1 bg-white/70 dark:bg-[#272E29]/70 p-1.5 rounded-2xl border border-[#e8ede6] dark:border-[#394139] shadow-2xs">
-              {topNavItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    end={item.path === '/'}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all relative ${
-                        isActive
-                          ? 'text-[#325b39] dark:text-[#8BAF78] bg-[#eef7eb] dark:bg-[#223023] shadow-2xs'
-                          : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#1F2620]'
-                      }`
-                    }
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.name}</span>
-                  </NavLink>
-                );
-              })}
-            </nav>
-
-            {/* Right: Search, Date, Theme, Notifications, Profile Dropdown */}
+            {/* Right: Search, Theme Toggle, Notifications, Profile Dropdown */}
             <div className="flex items-center gap-2 sm:gap-2.5">
-              {/* Date Pill (hidden on small mobile) */}
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-xs font-medium text-[#5e6f5e] dark:text-[#A2AAA1] shadow-xs">
-                <Calendar className="w-3.5 h-3.5 text-[#5ba83c] dark:text-[#8BAF78]" />
-                <span>{todayFormatted}</span>
-              </div>
-
               {/* Global Search Input */}
               <form onSubmit={handleSearchSubmit} className="relative hidden sm:block">
                 <Search className="w-4 h-4 text-[#8e9f8e] dark:text-[#7A8279] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -188,7 +129,7 @@ export default function AppHeader() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search meals, nutrients, or anything..."
-                  className="w-52 md:w-60 lg:w-68 pl-9 pr-10 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-xs text-[#192418] dark:text-[#E8EDE7] placeholder-[#8e9f8e] dark:placeholder-[#7A8279] focus:outline-none focus:ring-2 focus:ring-[#8BAF78]/30 focus:border-[#8BAF78] transition-all shadow-xs"
+                  className="w-52 md:w-60 lg:w-72 pl-9 pr-10 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-xs text-[#192418] dark:text-[#E8EDE7] placeholder-[#8e9f8e] dark:placeholder-[#7A8279] focus:outline-none focus:ring-2 focus:ring-[#8BAF78]/30 focus:border-[#8BAF78] transition-all shadow-xs"
                 />
                 <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#8e9f8e] dark:text-[#7A8279] bg-[#f6f8f5] dark:bg-[#1C211D] px-1.5 py-0.5 rounded border border-[#e8ede6] dark:border-[#394139] pointer-events-none">
                   ⌘ K
@@ -317,40 +258,6 @@ export default function AppHeader() {
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Sub Header Action Bar: Daily Goal and + Log Food Button (Desktop) */}
-          <div className="hidden lg:flex items-center justify-end gap-3 pt-1">
-            {/* Daily Goal Pill */}
-            <div className="flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] shadow-xs">
-              <div className="w-6 h-6 rounded-lg bg-[#eef7eb] dark:bg-[#243022] flex items-center justify-center text-[#5ba83c] dark:text-[#8BAF78]">
-                <Flame className="w-3.5 h-3.5 fill-[#5ba83c] dark:fill-[#8BAF78]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-[#8e9f8e] dark:text-[#7A8279]">
-                  Daily Goal
-                </span>
-                <span className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7] leading-tight">
-                  {calorieTarget.toLocaleString()} kcal
-                </span>
-              </div>
-              {/* Mini progress bar */}
-              <div className="w-16 sm:w-20 h-2 bg-[#eef7eb] dark:bg-[#243022] rounded-full overflow-hidden ml-1">
-                <div 
-                  className="h-full bg-[#5ba83c] dark:bg-[#8BAF78] rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
-
-            {/* + Log Food Action Button */}
-            <Link
-              to="/food"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] dark:bg-[#8BAF78] dark:hover:bg-[#9CBD89] text-white dark:text-[#161D15] text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
-            >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>Log Food</span>
-            </Link>
           </div>
         </div>
       </header>
