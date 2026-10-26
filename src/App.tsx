@@ -85,7 +85,7 @@ function AppLayout() {
         <AppHeader />
 
         {/* App Routed Content */}
-        <main className="flex-1 w-full pb-16 lg:pb-6">
+        <main className="flex-1 w-full pb-28 lg:pb-6">
           <Routes>
             <Route 
               path="/" 

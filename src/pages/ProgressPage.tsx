@@ -19,6 +19,7 @@ export default function ProgressPage() {
   const workoutPlan = getWorkoutPlan();
   const [entries, setEntries] = useState<ProgressEntry[]>(() => getProgressEntries());
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [timeframe, setTimeframe] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
 
   // Form State
   const [formWeight, setFormWeight] = useState<number>(profile.weightKg);
@@ -85,13 +86,187 @@ export default function ProgressPage() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#e8ede6]">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
-              HEALTH ANALYTICS
+      {/* ========================================================= */}
+      {/* MOBILE-SPECIFIC PROGRESS VIEW (Screen 7 Reference)        */}
+      {/* ========================================================= */}
+      <div className="lg:hidden space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-1">
+          <div>
+            <h1 className="text-xl font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
+              Progress
+            </h1>
+            <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] font-medium">
+              Health Analytics & Biometrics
+            </p>
+          </div>
+          <button
+            onClick={() => setIsLogModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold flex items-center gap-1 shadow-xs active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>Check-in</span>
+          </button>
+        </div>
+
+        {/* Timeframe Filter Pills (Screen 7 Reference) */}
+        <div className="flex items-center bg-[#f6f8f5] dark:bg-[#272E29] p-1 rounded-2xl border border-[#e8ede6] dark:border-[#394139]">
+          {(['weekly', 'monthly', 'yearly'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTimeframe(t)}
+              className={`flex-1 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
+                timeframe === t
+                  ? 'bg-[#5ba83c] text-white shadow-xs'
+                  : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        {/* Weight Trajectory Card (Screen 7 Reference) */}
+        <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+                CURRENT WEIGHT
+              </span>
+              <div className="text-2xl font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+                {latestWeight} <span className="text-sm font-normal text-[#7a8c79] dark:text-[#A2AAA1]">kg</span>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <span className="text-[10px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+                CHANGE DELTA
+              </span>
+              <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-xs font-black bg-[#eef7eb] dark:bg-[#272E29] text-[#3b7e23] dark:text-[#8BAF78] border border-[#d6ebd0] dark:border-[#394139]">
+                {Number(weightDelta) > 0 ? `+${weightDelta}` : weightDelta} kg
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <WeightTrendChart entries={entries} targetWeight={profile.weightKg} />
+          </div>
+        </div>
+
+        {/* Body Measurements 4-Card Grid (Screen 7 Reference) */}
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              WAIST
             </span>
+            <div className="text-base font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.measurements?.waistCm ? `${entries[0].measurements.waistCm} cm` : '--'}
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              CHEST
+            </span>
+            <div className="text-base font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.measurements?.chestCm ? `${entries[0].measurements.chestCm} cm` : '--'}
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              ARMS
+            </span>
+            <div className="text-base font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.measurements?.armsCm ? `${entries[0].measurements.armsCm} cm` : '--'}
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              THIGHS
+            </span>
+            <div className="text-base font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.measurements?.thighsCm ? `${entries[0].measurements.thighsCm} cm` : '--'}
+            </div>
+          </div>
+        </div>
+
+        {/* Overall Habit & Consistency Score */}
+        <div className="bg-gradient-to-br from-[#eef7eb] via-[#f7fbf6] to-[#e7f4e3] dark:from-[#272E29] dark:via-[#1C211D] dark:to-[#272E29] border border-[#d6ebd0] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-[#3b7e23] dark:text-[#8BAF78] uppercase tracking-wider">
+              CONSISTENCY SCORE
+            </span>
+            <span className="text-2xl font-black text-[#5ba83c]">
+              {scoreBreakdown.totalScore}/100
+            </span>
+          </div>
+          <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1]">
+            {scoreBreakdown.summary}
+          </p>
+          <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-[#d6ebd0] dark:border-[#394139]">
+            <div className="flex justify-between">
+              <span className="text-[#5e6f5e] dark:text-[#A2AAA1]">Workouts:</span>
+              <strong className="text-[#192418] dark:text-[#E8EDE7]">{scoreBreakdown.workoutConsistencyScore}/30</strong>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#5e6f5e] dark:text-[#A2AAA1]">Nutrition:</span>
+              <strong className="text-[#192418] dark:text-[#E8EDE7]">{scoreBreakdown.nutritionAdherenceScore}/30</strong>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#5e6f5e] dark:text-[#A2AAA1]">Recovery:</span>
+              <strong className="text-[#192418] dark:text-[#E8EDE7]">{scoreBreakdown.recoveryScore}/20</strong>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#5e6f5e] dark:text-[#A2AAA1]">Habits:</span>
+              <strong className="text-[#192418] dark:text-[#E8EDE7]">{scoreBreakdown.loggingHabitScore}/20</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* Biological Recovery Ratings */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl text-center">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              ENERGY
+            </span>
+            <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.energyLevel || 8}/10
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl text-center">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              SLEEP
+            </span>
+            <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.sleepHours || 7.5}h
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3 rounded-2xl text-center">
+            <span className="text-[9px] uppercase tracking-wider text-[#7a8c79] dark:text-[#A2AAA1] font-bold block">
+              RECOVERY
+            </span>
+            <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+              {entries[0]?.recoveryRating || 8}/10
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* DESKTOP PROGRESS VIEW (FULL EXISTING INTERFACE)           */}
+      {/* ========================================================= */}
+      <div className="hidden lg:block space-y-6">
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#e8ede6]">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
+                HEALTH ANALYTICS
+              </span>
             <span className="text-xs text-[#7a8c79] font-medium">Objective Consistency & Biometrics</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#192418] tracking-tight">
@@ -330,14 +505,15 @@ export default function ProgressPage() {
           Photographs and visual checks are subjective personal markers and cannot accurately measure true body composition, bone mineral density, visceral adipose tissue, or metabolic health. True body composition requires clinical modalities such as DEXA or hydrostatic weighing. NutriCoach evaluates holistic habits, strength consistency, and nutrition.
         </div>
       </div>
+      </div>
 
       {/* LOG PROGRESS ENTRY MODAL */}
       {isLogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs overflow-y-auto">
-          <div className="relative w-full max-w-xl bg-white border border-[#e8ede6] rounded-3xl p-6 sm:p-8 shadow-2xl my-8 animate-fade-in space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-xs overflow-y-auto">
+          <div className="relative w-full max-w-xl bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl my-4 sm:my-8 animate-fade-in space-y-4 max-h-[92vh] overflow-y-auto">
             <button
               onClick={() => setIsLogModalOpen(false)}
-              className="absolute top-5 right-5 text-[#7a8c79] hover:text-[#192418] p-2 rounded-xl bg-[#f6f8f5] hover:bg-[#edf2ea] transition-colors"
+              className="absolute top-4 right-4 text-[#7a8c79] hover:text-[#192418] p-2 rounded-xl bg-[#f6f8f5] dark:bg-[#272E29] hover:bg-[#edf2ea] transition-colors"
             >
               <X className="w-4 h-4" />
             </button>

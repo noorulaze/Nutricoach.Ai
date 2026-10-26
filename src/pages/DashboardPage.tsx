@@ -56,6 +56,7 @@ export default function DashboardPage() {
   const [showWorkoutSection, setShowWorkoutSection] = useState(false);
 
   const profile = getProfile();
+  const firstName = (profile.name || 'Friend').split(' ')[0];
   const todayFoods = getFoodLog();
   const workoutPlan = getWorkoutPlan();
   const progressEntries = getProgressEntries();
@@ -147,12 +148,212 @@ export default function DashboardPage() {
   const pointsString = activityData.map(d => `${d.x},${d.y}`).join(' ');
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
+    <div className="max-w-[1440px] mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 space-y-5 sm:space-y-6">
       
       {/* ========================================================= */}
-      {/* ROW 1: DAILY WELLNESS TIP (65%) + CALORIES RING (35%)     */}
+      {/* MOBILE DASHBOARD VIEW (< 1024px): Matches Screens 6 & 1   */}
       {/* ========================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className="lg:hidden space-y-4">
+        {/* Mobile Greeting Card */}
+        <div className="space-y-0.5 pt-0.5">
+          <h1 className="text-xl font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
+            Good Morning, {firstName}
+          </h1>
+          <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] font-medium flex items-center gap-1.5">
+            <span>Keep going! You're doing great!</span>
+            <span role="img" aria-label="sprout">🌿</span>
+          </p>
+        </div>
+
+        {/* 3 Summary Cards in a row */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          {/* Card 1: Calories */}
+          <div className="bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3 text-center shadow-xs flex flex-col items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-amber-50 dark:bg-amber-950/30 flex items-center justify-center text-amber-500 mb-1.5">
+              <Flame className="w-4 h-4 fill-amber-500" />
+            </div>
+            <span className="text-sm font-black text-[#192418] dark:text-[#E8EDE7] leading-none">
+              {displayCalories.toLocaleString()}
+            </span>
+            <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-medium mt-1">
+              Calories
+            </span>
+          </div>
+
+          {/* Card 2: Protein */}
+          <div className="bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3 text-center shadow-xs flex flex-col items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-[#5ba83c] dark:text-[#8BAF78] mb-1.5">
+              <UtensilsCrossed className="w-4 h-4" />
+            </div>
+            <span className="text-sm font-black text-[#192418] dark:text-[#E8EDE7] leading-none">
+              {displayProtein}g
+            </span>
+            <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-medium mt-1">
+              Protein
+            </span>
+          </div>
+
+          {/* Card 3: Fiber */}
+          <div className="bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3 text-center shadow-xs flex flex-col items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center text-sky-500 mb-1.5">
+              <Wheat className="w-4 h-4" />
+            </div>
+            <span className="text-sm font-black text-[#192418] dark:text-[#E8EDE7] leading-none">
+              {displayFiber}g
+            </span>
+            <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-medium mt-1">
+              Fiber
+            </span>
+          </div>
+        </div>
+
+        {/* Today's Progress Card with 3 Circular Gauges */}
+        <div className="bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-3xl p-4 sm:p-5 shadow-xs space-y-3">
+          <h3 className="text-sm font-bold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
+            Today's Progress
+          </h3>
+
+          <div className="grid grid-cols-3 gap-2 text-center pt-1">
+            {/* Nutrition Ring */}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="relative w-14 h-14 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" className="stroke-[#edf2ea] dark:stroke-[#394139]" strokeWidth="3" />
+                  <circle 
+                    cx="18" cy="18" r="14" fill="none" 
+                    className="stroke-[#5ba83c] dark:stroke-[#8BAF78] transition-all duration-700" 
+                    strokeWidth="3" 
+                    strokeDasharray="87.96" 
+                    strokeDashoffset={87.96 - (caloriePercent / 100) * 87.96} 
+                    strokeLinecap="round" 
+                  />
+                </svg>
+                <span className="absolute text-[11px] font-black text-[#192418] dark:text-[#E8EDE7]">
+                  {caloriePercent}%
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-[#5e6f5e] dark:text-[#A2AAA1]">Nutrition</span>
+            </div>
+
+            {/* Workout Ring */}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="relative w-14 h-14 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" className="stroke-[#edf2ea] dark:stroke-[#394139]" strokeWidth="3" />
+                  <circle 
+                    cx="18" cy="18" r="14" fill="none" 
+                    className="stroke-[#38bdf8] transition-all duration-700" 
+                    strokeWidth="3" 
+                    strokeDasharray="87.96" 
+                    strokeDashoffset={87.96 - ((todayWorkout?.completed ? 100 : 45) / 100) * 87.96} 
+                    strokeLinecap="round" 
+                  />
+                </svg>
+                <span className="absolute text-[11px] font-black text-[#192418] dark:text-[#E8EDE7]">
+                  {todayWorkout?.completed ? 100 : 45}%
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-[#5e6f5e] dark:text-[#A2AAA1]">Workout</span>
+            </div>
+
+            {/* Water Ring */}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="relative w-14 h-14 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" className="stroke-[#edf2ea] dark:stroke-[#394139]" strokeWidth="3" />
+                  <circle 
+                    cx="18" cy="18" r="14" fill="none" 
+                    className="stroke-[#34d399] transition-all duration-700" 
+                    strokeWidth="3" 
+                    strokeDasharray="87.96" 
+                    strokeDashoffset={87.96 - (waterPercent / 100) * 87.96} 
+                    strokeLinecap="round" 
+                  />
+                </svg>
+                <span className="absolute text-[11px] font-black text-[#192418] dark:text-[#E8EDE7]">
+                  {waterPercent}%
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-[#5e6f5e] dark:text-[#A2AAA1]">Water</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions List matching mockup */}
+        <div className="bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-3xl p-4 shadow-xs space-y-2">
+          <h3 className="text-xs font-bold text-[#8e9f8e] dark:text-[#7A8279] uppercase tracking-wider mb-1">
+            Quick Actions
+          </h3>
+
+          <Link
+            to="/food"
+            className="w-full flex items-center justify-between p-3 rounded-2xl bg-[#f6f8f5] dark:bg-[#1C211D] hover:bg-[#eef7eb] dark:hover:bg-[#223023] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] text-xs font-bold transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] flex items-center justify-center text-[#5ba83c]">
+                <UtensilsCrossed className="w-4 h-4" />
+              </div>
+              <span>Log Food</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#7a8c79]" />
+          </Link>
+
+          <Link
+            to="/workouts"
+            className="w-full flex items-center justify-between p-3 rounded-2xl bg-[#f6f8f5] dark:bg-[#1C211D] hover:bg-[#eef7eb] dark:hover:bg-[#223023] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] text-xs font-bold transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] flex items-center justify-center text-[#5ba83c]">
+                <Dumbbell className="w-4 h-4" />
+              </div>
+              <span>Start Workout</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#7a8c79]" />
+          </Link>
+
+          <Link
+            to="/coach"
+            className="w-full flex items-center justify-between p-3 rounded-2xl bg-[#f6f8f5] dark:bg-[#1C211D] hover:bg-[#eef7eb] dark:hover:bg-[#223023] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] text-xs font-bold transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] flex items-center justify-center text-[#5ba83c]">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <span>Ask AI Coach</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#7a8c79]" />
+          </Link>
+        </div>
+
+        {/* Hero Card: "Your Health Our Priority" matching Screen 1 */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#273728] via-[#1F2D20] to-[#152016] text-white p-5 shadow-md">
+          <div className="max-w-[70%] space-y-2 relative z-10">
+            <h2 className="text-lg font-black tracking-tight leading-tight">
+              Your Health Our Priority
+            </h2>
+            <p className="text-[11px] text-white/80 leading-relaxed font-medium">
+              Personalized nutrition, smarter workouts, better you.
+            </p>
+            <div className="pt-1">
+              <Link
+                to="/food"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-[11px] font-bold shadow-xs active:scale-95 transition-all"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+          <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-25 pointer-events-none">
+            <NutriCoachSymbol className="w-full h-full text-[#8BAF78]" />
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* DESKTOP DASHBOARD VIEW (>= 1024px): Preserved 12-col grid */}
+      {/* ========================================================= */}
+      <div className="hidden lg:block space-y-6">
         
         {/* Daily Wellness Tip Card (8 cols on lg) */}
         <div className="lg:col-span-8 bg-gradient-to-br from-[#eaf4e6] via-[#f3f9f0] to-[#e4f0e0] dark:from-[#212B22] dark:via-[#263128] dark:to-[#1F2821] border border-[#d6ebd0] dark:border-[#384639] rounded-[28px] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-xs group">

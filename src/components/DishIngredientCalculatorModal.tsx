@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { 
   X, Plus, Minus, Trash2, RotateCcw, Check, Bookmark, 
   Flame, ShieldCheck, AlertCircle, Search, Sparkles, 
-  ChevronDown, Utensils, Info, CheckCircle2, Sliders
+  ChevronDown, Utensils, Info, CheckCircle2, Sliders,
+  Heart, ChevronLeft, Clock
 } from 'lucide-react';
 import { ComprehensiveFood } from '../data/foodDatabase/types';
 import { 
@@ -16,7 +17,7 @@ import {
 import { 
   calculateLiveDishNutrition, calculateNutritionDiff 
 } from '../utils/nutritionCalculator';
-import { saveUserCustomRecipe, addFoodEntry } from '../utils/storage';
+import { saveUserCustomRecipe, addFoodEntry, isFoodFavorite, toggleFavoriteFood } from '../utils/storage';
 import { MealType, FoodItem } from '../types';
 import { useToast } from '../context/ToastContext';
 
@@ -80,6 +81,19 @@ export default function DishIngredientCalculatorModal({
 
   // Active filter for ingredient checklist view
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'protein' | 'oil_fat' | 'vegetable' | 'spice'>('all');
+
+  // Mobile sub-tab navigation
+  const [mobileTab, setMobileTab] = useState<'ingredients' | 'nutrition' | 'info'>('ingredients');
+
+  // Favorite toggle state
+  const [isFav, setIsFav] = useState<boolean>(() => food ? isFoodFavorite(food.id) : false);
+
+  const handleToggleFav = () => {
+    if (!food) return;
+    const next = toggleFavoriteFood(food.id);
+    setIsFav(next);
+    showToast(next ? `Added ${food.name} to favorites` : `Removed from favorites`, 'info');
+  };
 
   // Compute live nutrition results
   const liveResult = useMemo(() => {
@@ -328,9 +342,9 @@ export default function DishIngredientCalculatorModal({
   const activeStats = nutritionViewMode === 'per_serving' ? liveResult.perServing : liveResult.totalDish;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5 bg-black/60 backdrop-blur-xs overflow-y-auto">
       <div 
-        className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-[28px] max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto"
+        className="bg-white dark:bg-[#1C211D] border-t sm:border border-[#e8ede6] dark:border-[#394139] rounded-t-[28px] sm:rounded-[28px] max-w-4xl w-full h-[95vh] sm:h-auto sm:max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-0 sm:my-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="calculator-dish-title"
@@ -338,7 +352,7 @@ export default function DishIngredientCalculatorModal({
         {/* ========================================================= */}
         {/* MODAL HEADER WITH DISH BANNER & ACCURACY BADGE            */}
         {/* ========================================================= */}
-        <div className="relative h-36 sm:h-44 w-full shrink-0 overflow-hidden bg-[#192418]">
+        <div className="relative h-40 sm:h-44 w-full shrink-0 overflow-hidden bg-[#192418]">
           <img 
             src={heroImage} 
             alt={food.name} 
@@ -346,15 +360,35 @@ export default function DishIngredientCalculatorModal({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#192418] via-[#192418]/60 to-transparent" />
 
-          {/* Close Button */}
+          {/* Mobile Back Button */}
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-3.5 right-3.5 z-10 p-2 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all active:scale-95"
-            aria-label="Close Calculator"
+            className="sm:hidden absolute top-3.5 left-3.5 z-10 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all active:scale-95 flex items-center justify-center shadow-xs"
+            aria-label="Back to food menu"
           >
-            <X className="w-4 h-4 stroke-[2.5]" />
+            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
           </button>
+
+          {/* Right Action Icons (Favorite Heart + Close X) */}
+          <div className="absolute top-3.5 right-3.5 z-10 flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleToggleFav}
+              className="p-2 rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all active:scale-95 shadow-xs"
+              aria-label="Toggle Favorite"
+            >
+              <Heart className={`w-4 h-4 ${isFav ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all active:scale-95 shadow-xs"
+              aria-label="Close Calculator"
+            >
+              <X className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </div>
 
           {/* Header Badges & Titles */}
           <div className="absolute bottom-3 left-4 sm:left-6 right-4 sm:right-6 flex flex-col justify-end text-white">
@@ -382,10 +416,40 @@ export default function DishIngredientCalculatorModal({
             <h2 id="calculator-dish-title" className="text-lg sm:text-2xl font-black text-white tracking-tight leading-tight">
               {food.name}
             </h2>
-            <p className="text-xs text-white/80 line-clamp-1 mt-0.5">
-              {food.description}
-            </p>
+
+            {/* Metadata Badges: Prep, Cook, Servings (Screen 3 Reference) */}
+            <div className="flex items-center gap-2 mt-1.5 pt-1 border-t border-white/10 text-[10px] text-white/90">
+              <span className="flex items-center gap-1 bg-black/30 px-2 py-0.5 rounded-md backdrop-blur-xs font-semibold">
+                <Clock className="w-3 h-3 text-[#8BAF78]" /> Prep: 15m
+              </span>
+              <span className="flex items-center gap-1 bg-black/30 px-2 py-0.5 rounded-md backdrop-blur-xs font-semibold">
+                <Flame className="w-3 h-3 text-amber-400" /> Cook: 25m
+              </span>
+              <span className="flex items-center gap-1 bg-black/30 px-2 py-0.5 rounded-md backdrop-blur-xs font-semibold">
+                <Utensils className="w-3 h-3 text-sky-400" /> {servings} Servings
+              </span>
+            </div>
           </div>
+        </div>
+
+        {/* ========================================================= */}
+        {/* MOBILE SUBTABS PILL BAR (Screen 3 Reference)              */}
+        {/* ========================================================= */}
+        <div className="sm:hidden bg-[#f0f4ee] dark:bg-[#272E29] border-b border-[#e8ede6] dark:border-[#394139] p-1.5 flex items-center gap-1 shrink-0">
+          {(['ingredients', 'nutrition', 'info'] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setMobileTab(tab)}
+              className={`flex-1 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
+                mobileTab === tab
+                  ? 'bg-[#5ba83c] text-white shadow-xs'
+                  : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418]'
+              }`}
+            >
+              {tab === 'info' ? 'Recipe Info' : tab}
+            </button>
+          ))}
         </div>
 
         {/* ========================================================= */}
@@ -457,7 +521,7 @@ export default function DishIngredientCalculatorModal({
         {/* ========================================================= */}
         {/* LIVE NUTRITION DASHBOARD BAR (REACTIVE REAL-TIME)         */}
         {/* ========================================================= */}
-        <div className="bg-[#fcfdfc] dark:bg-[#1C211D] border-b border-[#e8ede6] dark:border-[#394139] p-4 sm:p-5">
+        <div className={`bg-[#fcfdfc] dark:bg-[#1C211D] border-b border-[#e8ede6] dark:border-[#394139] p-4 sm:p-5 ${mobileTab === 'nutrition' ? 'block' : 'hidden sm:block'}`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2">
               <span className="text-xs font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
@@ -630,7 +694,7 @@ export default function DishIngredientCalculatorModal({
         {/* ========================================================= */}
         {/* INGREDIENT LIST & CUSTOMIZATION WORKBENCH                 */}
         {/* ========================================================= */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+        <div className={`flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 ${mobileTab === 'ingredients' ? 'block' : 'hidden sm:block'}`}>
           {/* Section Header with Category Filter */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -904,21 +968,58 @@ export default function DishIngredientCalculatorModal({
         </div>
 
         {/* ========================================================= */}
+        {/* RECIPE INFO & INSTRUCTIONS VIEW (MOBILE TAB)              */}
+        {/* ========================================================= */}
+        {mobileTab === 'info' && (
+          <div className="sm:hidden flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Cooking Method Card */}
+            <div className="bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] p-4 rounded-2xl shadow-xs space-y-2">
+              <span className="text-[10px] font-bold text-[#3b7e23] dark:text-[#8BAF78] uppercase tracking-wider block">
+                COOKING TECHNIQUE
+              </span>
+              <h4 className="text-sm font-extrabold text-[#192418] dark:text-[#E8EDE7]">
+                {cookingMethod === 'gravy_simmered' && 'Simmered with Traditional Gravy'}
+                {cookingMethod === 'boiled' && 'Slow Boiled / Stewed in Broth'}
+                {cookingMethod === 'steamed' && 'Traditional Steam Preparation'}
+                {cookingMethod === 'roasted' && 'Pan Roasted on Iron Tawa'}
+                {cookingMethod === 'fried' && 'Shallow Fried with Tempering'}
+              </h4>
+              <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] leading-relaxed">
+                Authentic regional preparation technique that balances aroma and nutrient bioavailability.
+              </p>
+            </div>
+
+            {/* Heritage & Nutrition Standards Card */}
+            <div className="bg-gradient-to-br from-[#eef7eb] to-[#f7fbf6] dark:from-[#272E29] dark:to-[#1C211D] border border-[#d6ebd0] dark:border-[#394139] p-4 rounded-2xl shadow-xs space-y-2">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#5ba83c]" />
+                <span className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7]">
+                  {liveResult.accuracyMetadata.verificationLabel}
+                </span>
+              </div>
+              <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] leading-relaxed">
+                Calculated according to ICMR-NIN raw-to-cooked conversion yield factors and USDA nutritional standards.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
         {/* FOOTER ACTIONS: LOG TO TRACKER & SAVE CUSTOM DISH         */}
         {/* ========================================================= */}
-        <div className="bg-[#f6f8f5] dark:bg-[#272E29] border-t border-[#e8ede6] dark:border-[#394139] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+        <div className="bg-[#f6f8f5] dark:bg-[#272E29] border-t border-[#e8ede6] dark:border-[#394139] p-3.5 sm:p-5 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
           {/* Target Meal Selector */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase tracking-wider shrink-0">
               Log Into:
             </span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
               {(['breakfast', 'lunch', 'dinner', 'snack'] as MealType[]).map((m) => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => setTargetMeal(m)}
-                  className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize transition-all ${
+                  className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize transition-all shrink-0 ${
                     targetMeal === m
                       ? 'bg-[#192418] dark:bg-[#8BAF78] text-white dark:text-[#192418] shadow-xs'
                       : 'bg-white dark:bg-[#1C211D] text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] border border-[#e8ede6] dark:border-[#394139]'
@@ -931,25 +1032,25 @@ export default function DishIngredientCalculatorModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 self-end sm:self-auto">
+          <div className="flex items-center gap-2.5 w-full sm:w-auto">
             {/* Save Customized Dish */}
             <button
               type="button"
               onClick={handleSaveCustomRecipe}
-              className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-[#1C211D] hover:bg-[#edf2ea] dark:hover:bg-[#394139] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 active:scale-95"
+              className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-2xl bg-white dark:bg-[#1C211D] hover:bg-[#edf2ea] dark:hover:bg-[#394139] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-95"
             >
               <Bookmark className="w-3.5 h-3.5 text-sky-600" />
-              <span>Save Custom Dish</span>
+              <span>Save Recipe</span>
             </button>
 
             {/* Add to Food Tracker */}
             <button
               type="button"
               onClick={handleAddToFoodTracker}
-              className="px-4 py-2.5 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5 active:scale-95"
+              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-2xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-95"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Add to Food Tracker</span>
+              <span>Add to Tracker</span>
             </button>
           </div>
         </div>

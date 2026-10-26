@@ -27,6 +27,8 @@ import AppSidebar from './AppSidebar';
 import SignOutConfirmModal from './SignOutConfirmModal';
 import ThemeToggle from './ThemeToggle';
 
+import NutriCoachLogo from './NutriCoachLogo';
+
 export default function AppHeader() {
   const { user, logout } = useAuth();
   const { showToast } = useToast();
@@ -107,28 +109,39 @@ export default function AppHeader() {
 
   return (
     <>
-      <header className="w-full bg-[#f6f8f5] px-4 sm:px-6 lg:px-8 py-5 border-b border-[#e8ede6]/60 relative z-30">
-        <div className="flex flex-col gap-4">
-          {/* Top Row: Greeting on Left, Tools & Profile on Right */}
-          <div className="flex items-center justify-between gap-4">
-            {/* Left: Personalized Greeting */}
-            <div className="flex items-center gap-3">
-              {/* Mobile Menu Button */}
+      <header className="w-full bg-[#f6f8f5] dark:bg-[#1C211D] px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-5 border-b border-[#e8ede6]/60 dark:border-[#394139]/60 relative z-30 transition-colors">
+        <div className="flex flex-col gap-3 sm:gap-4">
+          
+          {/* MOBILE VIEW (< 1024px): Matches 10-screen reference layout (Logo on left, Hamburger & Theme on right) */}
+          <div className="flex lg:hidden items-center justify-between gap-3">
+            <Link to="/" className="flex items-center gap-2" aria-label="NutriCoach AI Home">
+              <NutriCoachLogo variant="horizontal" size="sm" />
+            </Link>
+
+            <div className="flex items-center gap-2">
+              <ThemeToggle variant="icon" />
+              
               <button
                 type="button"
                 onClick={() => setMobileDrawerOpen(true)}
-                className="lg:hidden p-2 rounded-2xl bg-white border border-[#e8ede6] text-[#5e6f5e] hover:text-[#192418] hover:bg-[#edf2ea] transition-colors"
+                className="p-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] hover:bg-[#edf2ea] dark:hover:bg-[#313A33] transition-colors shadow-2xs"
                 aria-label="Open navigation menu"
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-5 h-5 stroke-[2.2]" />
               </button>
+            </div>
+          </div>
 
+          {/* DESKTOP VIEW (>= 1024px): Preserved full desktop header */}
+          <div className="hidden lg:flex items-center justify-between gap-4">
+            {/* Left: Personalized Greeting */}
+            <div className="flex items-center gap-3">
               <div>
-                <h1 className="text-xl sm:text-2xl lg:text-[26px] font-extrabold text-[#192418] tracking-tight flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl lg:text-[26px] font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight flex items-center gap-2">
                   <span>Hello, {firstName}!</span>
                   <span className="text-xl select-none" role="img" aria-label="sprout">🌱</span>
                 </h1>
-                <p className="text-xs sm:text-[13px] text-[#5e6f5e] font-medium mt-0.5">
+                <p className="text-xs sm:text-[13px] text-[#5e6f5e] dark:text-[#A2AAA1] font-medium mt-0.5">
                   Let's build healthier habits, one day at a time.
                 </p>
               </div>
@@ -306,8 +319,8 @@ export default function AppHeader() {
             </div>
           </div>
 
-          {/* Sub Header Action Bar: Daily Goal and + Log Food Button */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 pt-1">
+          {/* Sub Header Action Bar: Daily Goal and + Log Food Button (Desktop) */}
+          <div className="hidden lg:flex items-center justify-end gap-3 pt-1">
             {/* Daily Goal Pill */}
             <div className="flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] shadow-xs">
               <div className="w-6 h-6 rounded-lg bg-[#eef7eb] dark:bg-[#243022] flex items-center justify-center text-[#5ba83c] dark:text-[#8BAF78]">

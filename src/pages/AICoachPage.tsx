@@ -291,9 +291,9 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
       </div>
 
       {/* Main Chat Container */}
-      <div className="bg-white border border-[#e8ede6] rounded-3xl overflow-hidden shadow-xs flex flex-col h-[650px] sm:h-[680px]">
+      <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs flex flex-col h-[calc(100vh-210px)] min-h-[520px] sm:h-[680px]">
         {/* Messages Scroll Area */}
-        <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4 bg-[#fcfdfc]">
+        <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4 bg-[#fcfdfc] dark:bg-[#1C211D] touch-scroll">
           {messages.map((msg, index) => {
             const isUser = msg.sender === 'user';
             const isLastMessage = index === messages.length - 1;
@@ -440,13 +440,13 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
             </div>
           </div>
 
-          <div className="overflow-x-auto flex items-center gap-2 pb-0.5 scrollbar-none">
+          <div className="overflow-x-auto flex items-center gap-2 pb-0.5 no-scrollbar touch-scroll">
             {promptCategories[activeSuggestionCategory].map((prompt, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleSendMessage(prompt)}
-                className="bg-white hover:bg-[#eef7eb] hover:text-[#3b7e23] text-[#5e6f5e] text-xs px-3 py-1 rounded-xl border border-[#e8ede6] whitespace-nowrap transition-colors font-medium shadow-xs shrink-0"
+                className="bg-white dark:bg-[#272E29] hover:bg-[#eef7eb] dark:hover:bg-[#394139] hover:text-[#3b7e23] dark:hover:text-[#8BAF78] text-[#5e6f5e] dark:text-[#A2AAA1] text-xs px-3 py-1 rounded-xl border border-[#e8ede6] dark:border-[#394139] whitespace-nowrap transition-colors font-medium shadow-xs shrink-0"
               >
                 {prompt}
               </button>
@@ -455,7 +455,7 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
         </div>
 
         {/* Chat Input Bar */}
-        <div className="p-3 sm:p-4 bg-white border-t border-[#e8ede6]">
+        <div className="p-3 sm:p-4 bg-white dark:bg-[#1C211D] border-t border-[#e8ede6] dark:border-[#394139] pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:pb-4">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -463,7 +463,7 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
             }}
             className="flex items-end gap-2"
           >
-            <div className="flex-1 bg-[#f6f8f5] border border-[#e8ede6] rounded-2xl p-1.5 focus-within:ring-2 focus-within:ring-[#5ba83c]/30 focus-within:border-[#5ba83c] transition-all">
+            <div className="flex-1 bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-1.5 focus-within:ring-2 focus-within:ring-[#5ba83c]/30 focus-within:border-[#5ba83c] transition-all">
               <textarea
                 ref={textareaRef}
                 rows={1}
@@ -475,18 +475,18 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
                     handleSendMessage(inputValue);
                   }
                 }}
-                placeholder="Ask anything (food, curry nutrition, code in Python/React, math, science, daily questions)..."
-                className="w-full bg-transparent px-3 py-1.5 text-xs sm:text-sm text-[#192418] placeholder-[#8e9f8e] focus:outline-none resize-none leading-relaxed"
+                placeholder="Ask about foods, curries, code, fitness..."
+                className="w-full bg-transparent px-3 py-1.5 text-base sm:text-sm text-[#192418] dark:text-[#E8EDE7] placeholder-[#8e9f8e] dark:placeholder-[#A2AAA1] focus:outline-none resize-none leading-relaxed"
               />
             </div>
 
             <button
               type="submit"
               disabled={!inputValue.trim() || isTyping}
-              className="bg-[#5ba83c] hover:bg-[#4d9630] disabled:opacity-40 text-white p-3 rounded-2xl transition-all shadow-xs shrink-0 active:scale-95 flex items-center justify-center"
+              className="w-11 h-11 bg-[#5ba83c] hover:bg-[#4d9630] disabled:opacity-40 text-white rounded-full transition-all shadow-xs shrink-0 active:scale-95 flex items-center justify-center"
               aria-label="Send prompt"
             >
-              <Send className="w-4 h-4 fill-current" />
+              <Send className="w-4 h-4 fill-current ml-0.5" />
             </button>
           </form>
 

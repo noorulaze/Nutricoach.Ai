@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   Dumbbell, Calendar, Clock, Plus, Trash2, 
   CheckCircle2, Sparkles, X, Search, SlidersHorizontal,
-  Flame, Layers, Target, Compass, Timer, Activity
+  Flame, Layers, Target, Compass, Timer, Activity, ChevronRight
 } from 'lucide-react';
 import { 
   getProfile, getWorkoutPlan, saveWorkoutPlan, 
@@ -172,47 +172,82 @@ export default function WorkoutPlannerPage() {
         {/* TAB 1: 3D ANATOMICAL MUSCLE GROUPS (Exact match to attached reference)    */}
         {/* ========================================================================= */}
         {activeTab === 'anatomy' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            
-            {/* --------------------------------------------------------------------- */}
-            {/* LEFT COLUMN: 14 Muscle Groups Navigation List                         */}
-            {/* --------------------------------------------------------------------- */}
-            <div className="lg:col-span-3 xl:col-span-2 space-y-1.5 bg-white/70 dark:bg-[#272E29]/70 backdrop-blur-sm p-2.5 rounded-3xl border border-[#e8ede6] dark:border-[#394139] max-h-[780px] overflow-y-auto shadow-2xs custom-scrollbar">
-              {MUSCLE_GROUPS.map((muscle) => {
-                const isSelected = muscle.id === selectedMuscleId;
-                return (
-                  <button
-                    key={muscle.id}
-                    type="button"
-                    onClick={() => handleSelectMuscle(muscle.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-left transition-all ${
-                      isSelected
-                        ? 'bg-[#eef6eb] dark:bg-[#273728] text-[#192418] dark:text-[#E8EDE7] font-black border border-[#d6ebd0] dark:border-[#3d533f] shadow-2xs'
-                        : 'text-[#4e5e4e] dark:text-[#A2AAA1] hover:bg-[#f6f8f5] dark:hover:bg-[#212722] hover:text-[#192418] dark:hover:text-[#E8EDE7] font-bold border border-transparent'
-                    }`}
-                  >
-                    <MuscleGroupIcon 
-                      muscleId={muscle.id} 
-                      isSelected={isSelected} 
-                      size={28} 
-                    />
-                    <span className="text-xs sm:text-[13px] tracking-tight truncate">
-                      {muscle.name}
-                    </span>
-                  </button>
-                );
-              })}
+          <div className="space-y-4">
+            {/* Mobile Muscle Explorer Header matching Screen 4 in media_1792991978554.jpg */}
+            <div className="lg:hidden space-y-2.5">
+              <div>
+                <h1 className="text-xl font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
+                  Muscle Explorer
+                </h1>
+                <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] font-medium">
+                  Tap a muscle group to see exercises
+                </p>
+              </div>
+
+              {/* Horizontal Scrollable Muscle Selector Chips */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-1 px-1 touch-scroll">
+                {MUSCLE_GROUPS.map((muscle) => {
+                  const isSelected = muscle.id === selectedMuscleId;
+                  return (
+                    <button
+                      key={muscle.id}
+                      type="button"
+                      onClick={() => handleSelectMuscle(muscle.id)}
+                      className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        isSelected
+                          ? 'bg-[#192418] dark:bg-[#8BAF78] text-white dark:text-[#192418] shadow-xs'
+                          : 'bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
+                      }`}
+                    >
+                      <MuscleGroupIcon muscleId={muscle.id} isSelected={isSelected} size={18} />
+                      <span>{muscle.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* --------------------------------------------------------------------- */}
-            {/* CENTER COLUMN: Real 3D Rotatable Human Model & Tips Card              */}
-            {/* --------------------------------------------------------------------- */}
-            <div className="lg:col-span-5 xl:col-span-6 flex flex-col gap-4">
-              {/* 3D Anatomical Body Card */}
-              <div className="w-full bg-white dark:bg-[#272E29] rounded-[32px] border border-[#e8ede6] dark:border-[#394139] shadow-xs relative overflow-hidden flex items-center justify-center min-h-[580px] lg:min-h-[640px]">
-                <HumanAnatomy3D
-                  selectedMuscleId={selectedMuscleId}
-                  onSelectMuscle={handleSelectMuscle}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+              
+              {/* --------------------------------------------------------------------- */}
+              {/* LEFT COLUMN: 14 Muscle Groups Navigation List (Desktop only)          */}
+              {/* --------------------------------------------------------------------- */}
+              <div className="hidden lg:block lg:col-span-3 xl:col-span-2 space-y-1.5 bg-white/70 dark:bg-[#272E29]/70 backdrop-blur-sm p-2.5 rounded-3xl border border-[#e8ede6] dark:border-[#394139] max-h-[780px] overflow-y-auto shadow-2xs custom-scrollbar">
+                {MUSCLE_GROUPS.map((muscle) => {
+                  const isSelected = muscle.id === selectedMuscleId;
+                  return (
+                    <button
+                      key={muscle.id}
+                      type="button"
+                      onClick={() => handleSelectMuscle(muscle.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-left transition-all ${
+                        isSelected
+                          ? 'bg-[#eef6eb] dark:bg-[#273728] text-[#192418] dark:text-[#E8EDE7] font-black border border-[#d6ebd0] dark:border-[#3d533f] shadow-2xs'
+                          : 'text-[#4e5e4e] dark:text-[#A2AAA1] hover:bg-[#f6f8f5] dark:hover:bg-[#212722] hover:text-[#192418] dark:hover:text-[#E8EDE7] font-bold border border-transparent'
+                      }`}
+                    >
+                      <MuscleGroupIcon 
+                        muscleId={muscle.id} 
+                        isSelected={isSelected} 
+                        size={28} 
+                      />
+                      <span className="text-xs sm:text-[13px] tracking-tight truncate">
+                        {muscle.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* --------------------------------------------------------------------- */}
+              {/* CENTER COLUMN: Real 3D Rotatable Human Model & Tips Card              */}
+              {/* --------------------------------------------------------------------- */}
+              <div className="lg:col-span-5 xl:col-span-6 flex flex-col gap-4">
+                {/* 3D Anatomical Body Card */}
+                <div className="w-full bg-white dark:bg-[#272E29] rounded-[32px] border border-[#e8ede6] dark:border-[#394139] shadow-xs relative overflow-hidden flex items-center justify-center min-h-[460px] sm:min-h-[580px] lg:min-h-[640px]">
+                  <HumanAnatomy3D
+                    selectedMuscleId={selectedMuscleId}
+                    onSelectMuscle={handleSelectMuscle}
                   viewMode={modelViewMode}
                   onViewModeChange={setModelViewMode}
                 />
@@ -283,12 +318,40 @@ export default function WorkoutPlannerPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Floating Selected Muscle card on mobile matching Screen 4 */}
+              <div className="lg:hidden flex items-center justify-between p-3.5 bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#eef7eb] dark:bg-[#223023] flex items-center justify-center text-[#5ba83c]">
+                    <MuscleGroupIcon muscleId={selectedMuscleId} isSelected={true} size={24} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-[#7a8c79] dark:text-[#A2AAA1] block">
+                      Selected Muscle
+                    </span>
+                    <span className="text-sm font-extrabold text-[#192418] dark:text-[#E8EDE7] leading-tight">
+                      {currentMuscleInfo.name}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    document.getElementById('anatomy-exercises-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="p-2 rounded-xl bg-[#f6f8f5] dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] text-[#192418] dark:text-[#E8EDE7] hover:bg-[#eef7eb] transition-colors"
+                  aria-label="View exercises"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* --------------------------------------------------------------------- */}
             {/* RIGHT COLUMN: Muscle Info, Difficulty Filter & Exercise Cards         */}
             {/* --------------------------------------------------------------------- */}
-            <div className="lg:col-span-4 xl:col-span-4 bg-white/70 dark:bg-[#272E29]/70 backdrop-blur-sm rounded-[32px] border border-[#e8ede6] dark:border-[#394139] p-5 sm:p-6 space-y-4 shadow-xs">
+            <div id="anatomy-exercises-section" className="lg:col-span-4 xl:col-span-4 bg-white/70 dark:bg-[#272E29]/70 backdrop-blur-sm rounded-[32px] border border-[#e8ede6] dark:border-[#394139] p-5 sm:p-6 space-y-4 shadow-xs">
               
               {/* Muscle Header */}
               <div className="space-y-2 border-b border-[#e8ede6] dark:border-[#394139] pb-4">
@@ -386,6 +449,7 @@ export default function WorkoutPlannerPage() {
 
             </div>
 
+          </div>
           </div>
         )}
 

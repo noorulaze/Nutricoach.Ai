@@ -787,7 +787,8 @@ export default function HumanAnatomy3D({
       {isWebGlSupported ? (
         <div 
           ref={mountRef} 
-          className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing" 
+          style={{ touchAction: 'none' }}
+          className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing select-none" 
         />
       ) : (
         /* Graceful Accessible Fallback */

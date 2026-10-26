@@ -13,7 +13,7 @@ import NutriCoachLogo from './NutriCoachLogo';
 
 export default function AuthWellnessBanner() {
   return (
-    <div className="relative w-full lg:w-[54%] xl:w-[56%] bg-gradient-to-br from-[#f2f7ef] via-[#f7faf5] to-[#ebf4e8] dark:from-[#181D19] dark:via-[#212722] dark:to-[#1A1F1B] p-6 sm:p-10 lg:p-14 flex flex-col justify-between overflow-hidden select-none transition-colors duration-200">
+    <div className="relative hidden lg:flex lg:w-[54%] xl:w-[56%] bg-gradient-to-br from-[#f2f7ef] via-[#f7faf5] to-[#ebf4e8] dark:from-[#181D19] dark:via-[#212722] dark:to-[#1A1F1B] p-6 sm:p-10 lg:p-14 flex-col justify-between overflow-hidden select-none transition-colors duration-200">
       
       {/* Decorative Botanical Foliage in background */}
       <div className="absolute -top-10 -left-10 w-48 h-48 opacity-20 pointer-events-none">

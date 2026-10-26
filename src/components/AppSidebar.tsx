@@ -49,7 +49,7 @@ export default function AppSidebar({ onCloseMobile }: AppSidebarProps) {
 
   return (
     <>
-      <aside className="w-64 xl:w-72 bg-[#f6f8f5] dark:bg-[#1C211D] border-r border-[#e8ede6] dark:border-[#394139] flex flex-col justify-between shrink-0 p-5 min-h-screen sticky top-0 select-none transition-colors duration-200">
+      <aside className="w-64 xl:w-72 bg-[#f6f8f5] dark:bg-[#1C211D] border-r border-[#e8ede6] dark:border-[#394139] flex flex-col justify-between shrink-0 p-5 min-h-screen max-h-screen overflow-y-auto touch-scroll sticky top-0 select-none transition-colors duration-200">
         {/* Brand Header */}
         <div>
           <div className="px-2 py-3 mb-6">

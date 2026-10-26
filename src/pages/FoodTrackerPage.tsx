@@ -26,6 +26,7 @@ export default function FoodTrackerPage() {
   const { showToast } = useToast();
   const [selectedDate, setSelectedDate] = useState<string>(getTodayKey());
   const [foods, setFoods] = useState<FoodItem[]>(() => getFoodLog(selectedDate));
+  const [mobileFoodTab, setMobileFoodTab] = useState<'meals' | 'nutrition' | 'history'>('meals');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -415,66 +416,498 @@ export default function FoodTrackerPage() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* HEADER & DATE SELECTOR */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#e8ede6]">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
-              AUTHENTIC FOOD DATABASE
-            </span>
-            <span className="text-xs text-[#7a8c79] font-medium">Kerala • Regional Indian • Global</span>
+      {/* ========================================================= */}
+      {/* MOBILE-SPECIFIC FOOD TRACKER VIEW (Screen 2 Reference)    */}
+      {/* ========================================================= */}
+      <div className="lg:hidden space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-1">
+          <div>
+            <h1 className="text-xl font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
+              Food Tracker
+            </h1>
+            <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] font-medium">
+              Track your meals and stay on target
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#192418] tracking-tight">
-            Food & Macronutrient Tracker
-          </h1>
-          <p className="text-xs sm:text-sm text-[#5e6f5e] mt-0.5 font-medium">
-            Log foods by precise portion size, track Kerala, regional Indian & international curries, and balance macros in real time.
-          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleOpenAddModal('lunch')}
+              className="px-3 py-1.5 rounded-xl bg-[#5ba83c] hover:bg-[#4d9630] text-white text-xs font-bold flex items-center gap-1 shadow-xs active:scale-95 transition-all"
+              aria-label="Log Food"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>Log</span>
+            </button>
+          </div>
         </div>
 
-        {/* Date Selector Pill */}
-        <div className="flex items-center gap-2 bg-white border border-[#e8ede6] p-1.5 rounded-2xl shadow-xs self-start md:self-auto">
+        {/* Date Stepper Bar: < Today, 26 Apr 2025 > */}
+        <div className="flex items-center justify-between bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-2 rounded-2xl shadow-xs">
           <button
             onClick={() => handleStepDay('prev')}
-            className="p-1.5 text-[#7a8c79] hover:text-[#192418] hover:bg-[#f6f8f5] rounded-xl transition-colors"
+            className="p-2 text-[#7a8c79] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] rounded-xl transition-colors active:scale-95"
             title="Previous Day"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <button
-            onClick={() => handleDateChange(getTodayKey())}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-              isToday
-                ? 'bg-[#5ba83c] text-white shadow-xs'
-                : 'text-[#5e6f5e] hover:text-[#192418] hover:bg-[#f6f8f5]'
-            }`}
+          <label
+            htmlFor="mobile-tracker-date"
+            className="flex items-center gap-1.5 text-xs font-bold text-[#192418] dark:text-[#E8EDE7] cursor-pointer"
           >
-            Today
-          </button>
-
-          <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-[#192418]">
             <Calendar className="w-3.5 h-3.5 text-[#5ba83c]" />
+            <span>
+              {isToday ? 'Today, ' : ''}
+              {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </span>
             <input
+              id="mobile-tracker-date"
               type="date"
               value={selectedDate}
               onChange={(e) => handleDateChange(e.target.value)}
-              className="bg-transparent text-[#192418] text-xs font-medium focus:outline-none cursor-pointer"
+              className="sr-only"
             />
-          </div>
+          </label>
 
           <button
             onClick={() => handleStepDay('next')}
-            className="p-1.5 text-[#7a8c79] hover:text-[#192418] hover:bg-[#f6f8f5] rounded-xl transition-colors"
+            className="p-2 text-[#7a8c79] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] rounded-xl transition-colors active:scale-95"
             title="Next Day"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Calorie & Macro Gauge Card (Circular gauge on left, horizontal bars on right) */}
+        <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-[24px] p-4 shadow-xs flex items-center gap-4">
+          {/* Left: Circular Calorie Gauge */}
+          <div className="relative w-28 h-28 shrink-0 flex items-center justify-center">
+            <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="8"
+                className="text-[#eef7eb] dark:text-[#272E29]"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="#5ba83c"
+                strokeWidth="8"
+                strokeDasharray={`${2 * Math.PI * 40}`}
+                strokeDashoffset={`${2 * Math.PI * 40 * (1 - Math.min(1, totals.calories / (profile.calorieTarget || 2000)))}`}
+                strokeLinecap="round"
+                className="transition-all duration-700 ease-out"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-2">
+              <span className="text-base font-black text-[#192418] dark:text-[#E8EDE7] tracking-tight leading-none">
+                {caloriesRemaining > 0 ? caloriesRemaining.toLocaleString() : 0}
+              </span>
+              <span className="text-[9px] font-bold text-[#7a8c79] dark:text-[#A2AAA1] uppercase tracking-wider mt-0.5">
+                {caloriesRemaining > 0 ? 'kcal left' : 'Goal met'}
+              </span>
+              <span className="text-[9px] text-[#7a8c79] dark:text-[#A2AAA1] mt-0.5">
+                {Math.round(totals.calories)}/{profile.calorieTarget}
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Macro Progress Bars */}
+          <div className="flex-1 space-y-2.5">
+            {/* Protein */}
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold mb-1">
+                <span className="text-rose-600 dark:text-rose-400">Protein</span>
+                <span className="text-[#192418] dark:text-[#E8EDE7]">
+                  {Math.round(totals.protein)} / {profile.proteinTargetGrams}g
+                </span>
+              </div>
+              <div className="h-2 w-full bg-rose-100/60 dark:bg-rose-950/40 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-rose-500 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.protein / (profile.proteinTargetGrams || 1)) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Carbs */}
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold mb-1">
+                <span className="text-amber-600 dark:text-amber-400">Carbs</span>
+                <span className="text-[#192418] dark:text-[#E8EDE7]">
+                  {Math.round(totals.carbs)} / {profile.carbsTargetGrams}g
+                </span>
+              </div>
+              <div className="h-2 w-full bg-amber-100/60 dark:bg-amber-950/40 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.carbs / (profile.carbsTargetGrams || 1)) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Fats */}
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold mb-1">
+                <span className="text-sky-600 dark:text-sky-400">Fats</span>
+                <span className="text-[#192418] dark:text-[#E8EDE7]">
+                  {Math.round(totals.fat)} / {profile.fatTargetGrams}g
+                </span>
+              </div>
+              <div className="h-2 w-full bg-sky-100/60 dark:bg-sky-950/40 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-sky-400 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (totals.fat / (profile.fatTargetGrams || 1)) * 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Selector Pills: Meals | Nutrition | History */}
+        <div className="flex items-center bg-[#f6f8f5] dark:bg-[#272E29] p-1 rounded-2xl border border-[#e8ede6] dark:border-[#394139]">
+          {(['meals', 'nutrition', 'history'] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setMobileFoodTab(tab)}
+              className={`flex-1 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
+                mobileFoodTab === tab
+                  ? 'bg-[#5ba83c] text-white shadow-xs'
+                  : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* TAB 1: MEALS */}
+        {mobileFoodTab === 'meals' && (
+          <div className="space-y-3.5">
+            {/* Quick Access Curry & Recipe Calculator Banner */}
+            <div className="bg-gradient-to-r from-[#eef7eb] via-[#f7fbf6] to-[#e7f4e3] dark:from-[#272E29] dark:via-[#1C211D] dark:to-[#272E29] border border-[#d6ebd0] dark:border-[#394139] rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-xs">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-[#3b7e23] dark:text-[#8BAF78] uppercase tracking-wider">
+                    DISH CALCULATOR
+                  </span>
+                </div>
+                <h4 className="text-xs font-extrabold text-[#192418] dark:text-[#E8EDE7] truncate">
+                  Kerala & Regional Curries
+                </h4>
+                <p className="text-[10px] text-[#5e6f5e] dark:text-[#A2AAA1]">
+                  Customize ingredients & recalculate nutrition live
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleOpenCalculator(COMPREHENSIVE_FOOD_DATABASE[0], 'lunch')}
+                className="px-3 py-1.5 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold shrink-0 shadow-xs active:scale-95 transition-all"
+              >
+                Customize
+              </button>
+            </div>
+
+            {/* 4 Meals List (Breakfast, Lunch, Dinner, Snack) */}
+            {meals.map((meal) => {
+              const mealFoods = foods.filter((f) => f.meal === meal.key);
+              const mealCalories = mealFoods.reduce((acc, f) => acc + f.calories, 0);
+              const mealProtein = mealFoods.reduce((acc, f) => acc + f.protein, 0);
+
+              return (
+                <div
+                  key={meal.key}
+                  className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-3"
+                >
+                  {/* Meal Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-[#f6f8f5] dark:bg-[#272E29] flex items-center justify-center">
+                        {meal.icon}
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm text-[#192418] dark:text-[#E8EDE7]">
+                          {meal.label}
+                        </h3>
+                        <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-semibold">
+                          {Math.round(mealCalories)} kcal • {mealProtein.toFixed(1)}g Protein
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenAddModal(meal.key)}
+                      className="w-8 h-8 rounded-xl bg-[#eef7eb] dark:bg-[#272E29] hover:bg-[#5ba83c] hover:text-white text-[#3b7e23] dark:text-[#8BAF78] flex items-center justify-center transition-all active:scale-95 border border-[#d6ebd0] dark:border-[#394139]"
+                      aria-label={`Add food to ${meal.label}`}
+                    >
+                      <Plus className="w-4 h-4 stroke-[2.5]" />
+                    </button>
+                  </div>
+
+                  {/* Logged Items */}
+                  {mealFoods.length === 0 ? (
+                    <div
+                      onClick={() => handleOpenAddModal(meal.key)}
+                      className="py-3 px-3 rounded-xl border border-dashed border-[#e8ede6] dark:border-[#394139] text-center cursor-pointer hover:border-[#5ba83c]/50 transition-colors"
+                    >
+                      <span className="text-[11px] text-[#7a8c79] dark:text-[#A2AAA1] flex items-center justify-center gap-1.5 font-medium">
+                        <Plus className="w-3.5 h-3.5 text-[#5ba83c]" />
+                        No {meal.label.toLowerCase()} logged yet • Tap to add
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-[#f0f4ee] dark:divide-[#394139]">
+                      {mealFoods.map((item) => (
+                        <div
+                          key={item.id}
+                          className="py-2.5 flex items-center justify-between gap-2"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7] truncate">
+                              {item.name}
+                            </h4>
+                            <div className="flex items-center gap-1.5 text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] mt-0.5">
+                              <span>{item.portion}</span>
+                              <span>•</span>
+                              <span className="font-bold text-[#192418] dark:text-[#E8EDE7]">{item.calories} kcal</span>
+                              <span>•</span>
+                              <span className="text-rose-600 dark:text-rose-400 font-semibold">{item.protein}g P</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditModal(item)}
+                              className="p-1.5 text-[#7a8c79] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7] rounded-lg"
+                              title="Edit item"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteFood(item.id, item.name)}
+                              className="p-1.5 text-[#7a8c79] dark:text-[#A2AAA1] hover:text-rose-600 rounded-lg"
+                              title="Delete item"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* TAB 2: NUTRITION */}
+        {mobileFoodTab === 'nutrition' && (
+          <div className="space-y-4">
+            {/* 5 Macro Cards */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="col-span-2 bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] p-3.5 rounded-2xl">
+                <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] uppercase font-bold flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> TOTAL CALORIES
+                </span>
+                <div className="text-2xl font-black text-[#192418] dark:text-[#E8EDE7] mt-1">
+                  {Math.round(totals.calories).toLocaleString()}
+                  <span className="text-xs text-[#7a8c79] dark:text-[#A2AAA1] font-normal"> / {profile.calorieTarget} kcal</span>
+                </div>
+                <div className="h-2 w-full bg-[#eef7eb] dark:bg-[#272E29] rounded-full overflow-hidden mt-2">
+                  <div className="h-full bg-[#5ba83c] rounded-full" style={{ width: `${caloriePercent}%` }} />
+                </div>
+              </div>
+
+              <div className="bg-[#fff9f9] dark:bg-[#272E29] border border-rose-100 dark:border-[#394139] p-3 rounded-2xl">
+                <span className="text-[10px] text-rose-500 uppercase font-bold">PROTEIN</span>
+                <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+                  {Math.round(totals.protein)}g <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-normal">/ {profile.proteinTargetGrams}g</span>
+                </div>
+              </div>
+
+              <div className="bg-[#fffcf7] dark:bg-[#272E29] border border-amber-100 dark:border-[#394139] p-3 rounded-2xl">
+                <span className="text-[10px] text-amber-600 uppercase font-bold">CARBS</span>
+                <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+                  {Math.round(totals.carbs)}g <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-normal">/ {profile.carbsTargetGrams}g</span>
+                </div>
+              </div>
+
+              <div className="bg-[#f8fcff] dark:bg-[#272E29] border border-sky-100 dark:border-[#394139] p-3 rounded-2xl">
+                <span className="text-[10px] text-sky-600 uppercase font-bold">FATS</span>
+                <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+                  {Math.round(totals.fat)}g <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-normal">/ {profile.fatTargetGrams}g</span>
+                </div>
+              </div>
+
+              <div className="bg-[#f8fdfa] dark:bg-[#272E29] border border-emerald-100 dark:border-[#394139] p-3 rounded-2xl">
+                <span className="text-[10px] text-emerald-600 uppercase font-bold">FIBER</span>
+                <div className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] mt-0.5">
+                  {Math.round(totals.fiber)}g <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] font-normal">/ {profile.fiberTargetGrams}g</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Gap Analysis / Recommendations */}
+            <div className="bg-gradient-to-br from-[#eef7eb] to-[#f7fbf6] dark:from-[#272E29] dark:to-[#1C211D] border border-[#d6ebd0] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#5ba83c]" />
+                <h4 className="text-xs font-extrabold text-[#192418] dark:text-[#E8EDE7] uppercase tracking-wider">
+                  Recommended Foods for Today
+                </h4>
+              </div>
+              <div className="space-y-2">
+                {gapAnalysis.suggestedFoods.slice(0, 3).map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1C211D] border border-[#d6ebd0] dark:border-[#394139] flex items-center justify-between gap-2"
+                  >
+                    <div>
+                      <h5 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">{item.name}</h5>
+                      <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
+                        {item.defaultPortion} • {item.calories} kcal • {item.protein}g P
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickAddSuggestion(item, 'dinner')}
+                      className="px-2.5 py-1 bg-[#eef7eb] dark:bg-[#272E29] hover:bg-[#5ba83c] hover:text-white text-[#3b7e23] dark:text-[#8BAF78] rounded-lg text-xs font-bold transition-colors shrink-0"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: HISTORY */}
+        {mobileFoodTab === 'history' && (
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-3">
+            <h3 className="font-extrabold text-sm text-[#192418] dark:text-[#E8EDE7]">
+              Recently Logged Foods
+            </h3>
+            {recentFoodsList.length === 0 ? (
+              <p className="text-xs text-[#7a8c79] dark:text-[#A2AAA1] py-4 text-center">
+                No previous food history yet. Start logging meals!
+              </p>
+            ) : (
+              <div className="divide-y divide-[#f0f4ee] dark:divide-[#394139]">
+                {recentFoodsList.slice(0, 8).map((rf, idx) => (
+                  <div key={idx} className="py-2.5 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7] truncate">{rf.name}</h4>
+                      <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
+                        {rf.calories} kcal • {rf.protein}g Protein
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const entry: Omit<FoodItem, 'id' | 'timestamp'> = {
+                          name: rf.name,
+                          meal: 'lunch',
+                          portion: '1 serving',
+                          grams: 100,
+                          calories: rf.calories,
+                          protein: rf.protein,
+                          carbs: rf.carbs,
+                          fat: rf.fat,
+                          fiber: rf.fiber,
+                          isCustom: false
+                        };
+                        addFoodEntry(selectedDate, entry);
+                        setFoods(getFoodLog(selectedDate));
+                        showToast(`Re-logged ${rf.name}!`, 'success');
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-[#eef7eb] dark:bg-[#272E29] hover:bg-[#5ba83c] hover:text-white text-[#3b7e23] dark:text-[#8BAF78] text-xs font-bold transition-all shrink-0"
+                    >
+                      + Log Again
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* DAILY NUTRITION TARGETS CARD */}
-      <div className="bg-white border border-[#e8ede6] rounded-[28px] p-6 sm:p-7 shadow-xs">
+      {/* ========================================================= */}
+      {/* DESKTOP FOOD TRACKER VIEW (FULL EXISTING INTERFACE)       */}
+      {/* ========================================================= */}
+      <div className="hidden lg:block space-y-6">
+        {/* HEADER & DATE SELECTOR */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#e8ede6]">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
+                AUTHENTIC FOOD DATABASE
+              </span>
+              <span className="text-xs text-[#7a8c79] font-medium">Kerala • Regional Indian • Global</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#192418] tracking-tight">
+              Food & Macronutrient Tracker
+            </h1>
+            <p className="text-xs sm:text-sm text-[#5e6f5e] mt-0.5 font-medium">
+              Log foods by precise portion size, track Kerala, regional Indian & international curries, and balance macros in real time.
+            </p>
+          </div>
+
+          {/* Date Selector Pill */}
+          <div className="flex items-center gap-2 bg-white border border-[#e8ede6] p-1.5 rounded-2xl shadow-xs self-start md:self-auto">
+            <button
+              onClick={() => handleStepDay('prev')}
+              className="p-1.5 text-[#7a8c79] hover:text-[#192418] hover:bg-[#f6f8f5] rounded-xl transition-colors"
+              title="Previous Day"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => handleDateChange(getTodayKey())}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                isToday
+                  ? 'bg-[#5ba83c] text-white shadow-xs'
+                  : 'text-[#5e6f5e] hover:text-[#192418] hover:bg-[#f6f8f5]'
+              }`}
+            >
+              Today
+            </button>
+
+            <div className="flex items-center gap-1.5 px-2 text-xs font-medium text-[#192418]">
+              <Calendar className="w-3.5 h-3.5 text-[#5ba83c]" />
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => handleDateChange(e.target.value)}
+                className="bg-transparent text-[#192418] text-xs font-medium focus:outline-none cursor-pointer"
+              />
+            </div>
+
+            <button
+              onClick={() => handleStepDay('next')}
+              className="p-1.5 text-[#7a8c79] hover:text-[#192418] hover:bg-[#f6f8f5] rounded-xl transition-colors"
+              title="Next Day"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* DAILY NUTRITION TARGETS CARD */}
+        <div className="bg-white border border-[#e8ede6] rounded-[28px] p-6 sm:p-7 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
           <div>
             <span className="text-[10px] uppercase tracking-wider text-[#7a8c79] font-bold block">
@@ -959,13 +1392,14 @@ export default function FoodTrackerPage() {
           ))}
         </div>
       </div>
+      </div>
 
       {/* ========================================================= */}
       {/* COMPREHENSIVE ADD / LOG FOOD MODAL                        */}
       {/* ========================================================= */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-xs overflow-y-auto">
-          <div className="relative w-full max-w-3xl bg-white border border-[#e8ede6] rounded-3xl p-5 sm:p-7 shadow-2xl my-6 animate-fade-in max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/40 backdrop-blur-xs overflow-y-auto">
+          <div className="relative w-full max-w-3xl bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-2xl my-2 sm:my-6 animate-fade-in max-h-[92vh] sm:max-h-[90vh] flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#f0f4ee]">
               <div>

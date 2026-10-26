@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Settings, User, Target, Dumbbell, Utensils, 
   Key, ShieldCheck, Save, RotateCcw, Check, Sparkles, Activity,
-  LogOut, Lock, Database, Sun, Moon
+  LogOut, Lock, Database, Sun, Moon, ChevronRight, ChevronLeft, HelpCircle
 } from 'lucide-react';
 import { 
   getProfile, saveProfile, calculateBMR, 
@@ -25,6 +25,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile>(() => getProfile());
   const [apiKeyVisible, setApiKeyVisible] = useState(false);
   const [signOutModalOpen, setSignOutModalOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState<'menu' | 'personal' | 'goals' | 'nutrition' | 'workout' | 'ai'>('menu');
 
   const handleConfirmSignOut = () => {
     setSignOutModalOpen(false);
@@ -82,12 +83,435 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Header */}
-      <div className="pb-4 border-b border-[#e8ede6]">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
-            PERSONAL CONFIGURATION
-          </span>
+      {/* ========================================================= */}
+      {/* MOBILE-SPECIFIC PROFILE VIEW (Screen 8 Reference)         */}
+      {/* ========================================================= */}
+      <div className="lg:hidden space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-1">
+          <div className="flex items-center gap-2">
+            {mobileSection !== 'menu' && (
+              <button
+                type="button"
+                onClick={() => setMobileSection('menu')}
+                className="p-1.5 rounded-xl bg-[#f6f8f5] dark:bg-[#272E29] text-[#192418] dark:text-[#E8EDE7] border border-[#e8ede6] dark:border-[#394139] active:scale-95 transition-all"
+                aria-label="Back to Profile Menu"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            )}
+            <div>
+              <h1 className="text-xl font-extrabold text-[#192418] dark:text-[#E8EDE7] tracking-tight">
+                {mobileSection === 'menu' ? 'Profile' : 
+                 mobileSection === 'personal' ? 'Personal Info' :
+                 mobileSection === 'goals' ? 'Goals & Activity' :
+                 mobileSection === 'nutrition' ? 'Nutrition & Diet' :
+                 mobileSection === 'workout' ? 'Workout Split' : 'AI Coach Settings'}
+              </h1>
+              <p className="text-xs text-[#5e6f5e] dark:text-[#A2AAA1] font-medium">
+                {mobileSection === 'menu' ? 'Settings & Preferences' : 'Update your biometric configuration'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* MENU VIEW (Screen 8 Reference) */}
+        {mobileSection === 'menu' && (
+          <div className="space-y-4">
+            {/* User Profile Card */}
+            <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs flex items-center gap-3.5">
+              <div className="w-14 h-14 rounded-full bg-[#192418] dark:bg-[#272E29] border-2 border-[#5ba83c] text-white flex items-center justify-center text-xl font-black shadow-xs shrink-0">
+                {(profile.name || user?.name || 'N').charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-extrabold text-base text-[#192418] dark:text-[#E8EDE7] truncate">
+                  {profile.name || user?.name || 'Noorul Aze'}
+                </h3>
+                <p className="text-xs text-[#7a8c79] dark:text-[#A2AAA1] truncate">
+                  {user?.email || 'user@nutricoach.ai'}
+                </p>
+                <span className="inline-block mt-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#eef7eb] dark:bg-[#272E29] text-[#3b7e23] dark:text-[#8BAF78] border border-[#d6ebd0] dark:border-[#394139]">
+                  Active Member • Personalized Plan
+                </span>
+              </div>
+            </div>
+
+            {/* Settings Grouped List */}
+            <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl overflow-hidden shadow-xs divide-y divide-[#f0f4ee] dark:divide-[#394139]">
+              {/* 1. Personal Info */}
+              <button
+                type="button"
+                onClick={() => setMobileSection('personal')}
+                className="w-full p-3.5 flex items-center justify-between text-left hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-[#eef7eb] dark:bg-[#272E29] flex items-center justify-center text-[#5ba83c]">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">Personal Info</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
+                      {profile.age} yrs • {profile.heightCm} cm • {profile.weightKg} kg
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#7a8c79] dark:text-[#A2AAA1]" />
+              </button>
+
+              {/* 2. Goals & Activity */}
+              <button
+                type="button"
+                onClick={() => setMobileSection('goals')}
+                className="w-full p-3.5 flex items-center justify-between text-left hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-[#272E29] flex items-center justify-center text-amber-500">
+                    <Target className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">Goals & Activity</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] capitalize">
+                      {profile.goal.replace('_', ' ')} • {profile.activityLevel.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#7a8c79] dark:text-[#A2AAA1]" />
+              </button>
+
+              {/* 3. Nutrition & Diet */}
+              <button
+                type="button"
+                onClick={() => setMobileSection('nutrition')}
+                className="w-full p-3.5 flex items-center justify-between text-left hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-[#272E29] flex items-center justify-center text-emerald-600">
+                    <Utensils className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">Nutrition & Macros</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] capitalize">
+                      {profile.dietType} • {profile.calorieTarget} kcal target
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#7a8c79] dark:text-[#A2AAA1]" />
+              </button>
+
+              {/* 4. Workout Settings */}
+              <button
+                type="button"
+                onClick={() => setMobileSection('workout')}
+                className="w-full p-3.5 flex items-center justify-between text-left hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-sky-50 dark:bg-[#272E29] flex items-center justify-center text-sky-500">
+                    <Dumbbell className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">Workout Routine</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] capitalize">
+                      {profile.trainingDaysPerWeek} days/wk • {profile.availableEquipment.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#7a8c79] dark:text-[#A2AAA1]" />
+              </button>
+
+              {/* 5. Dark Mode Toggle Row */}
+              <div className="p-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-[#f6f8f5] dark:bg-[#272E29] flex items-center justify-center text-[#5e6f5e] dark:text-[#A2AAA1]">
+                    <Moon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">Dark Mode</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
+                      Switch between Light and Dark theme
+                    </span>
+                  </div>
+                </div>
+                <ThemeToggle />
+              </div>
+
+              {/* 6. AI Engine */}
+              <button
+                type="button"
+                onClick={() => setMobileSection('ai')}
+                className="w-full p-3.5 flex items-center justify-between text-left hover:bg-[#f6f8f5] dark:hover:bg-[#272E29] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-[#272E29] flex items-center justify-center text-purple-600">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7]">AI Engine & API Keys</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
+                      {profile.geminiApiKey ? 'Custom Gemini API Key active' : 'Default Intelligent Engine'}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#7a8c79] dark:text-[#A2AAA1]" />
+              </button>
+
+              {/* 7. Sign Out */}
+              <button
+                type="button"
+                onClick={() => setSignOutModalOpen(true)}
+                className="w-full p-3.5 flex items-center justify-between text-left hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center text-rose-600">
+                    <LogOut className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-rose-600">Sign Out</h4>
+                    <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1]">
+                      Safely sign out on this mobile device
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-rose-400" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION DETAIL VIEWS ON MOBILE */}
+        {mobileSection === 'personal' && (
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Your Name</label>
+              <input
+                type="text"
+                value={profile.name}
+                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-bold"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Age</label>
+                <input
+                  type="number"
+                  value={profile.age}
+                  onChange={(e) => setProfile({ ...profile, age: Number(e.target.value) })}
+                  className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-bold"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Height (cm)</label>
+                <input
+                  type="number"
+                  value={profile.heightCm}
+                  onChange={(e) => setProfile({ ...profile, heightCm: Number(e.target.value) })}
+                  className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-bold"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Weight (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                value={profile.weightKg}
+                onChange={(e) => setProfile({ ...profile, weightKg: Number(e.target.value) })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-bold"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                handleSaveProfile(e);
+                setMobileSection('menu');
+              }}
+              className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs"
+            >
+              Save Personal Info
+            </button>
+          </div>
+        )}
+
+        {mobileSection === 'goals' && (
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Primary Fitness Goal</label>
+              <select
+                value={profile.goal}
+                onChange={(e) => setProfile({ ...profile, goal: e.target.value as GoalType })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs font-bold text-[#192418] dark:text-[#E8EDE7]"
+              >
+                <option value="fat_loss">Fat Loss & Leaning</option>
+                <option value="muscle_gain">Muscle Hypertrophy & Bulk</option>
+                <option value="maintenance">Maintenance & Longevity</option>
+                <option value="endurance">Endurance & Cardiovascular</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Activity Level</label>
+              <select
+                value={profile.activityLevel}
+                onChange={(e) => setProfile({ ...profile, activityLevel: e.target.value as ActivityLevel })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs font-bold text-[#192418] dark:text-[#E8EDE7]"
+              >
+                <option value="sedentary">Sedentary (Desk Job)</option>
+                <option value="light">Lightly Active (1-3 days/wk)</option>
+                <option value="moderate">Moderately Active (3-5 days/wk)</option>
+                <option value="heavy">Very Active (6-7 days/wk)</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                handleSaveProfile(e);
+                setMobileSection('menu');
+              }}
+              className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs"
+            >
+              Save Goals
+            </button>
+          </div>
+        )}
+
+        {mobileSection === 'nutrition' && (
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Diet Type</label>
+              <select
+                value={profile.dietType}
+                onChange={(e) => setProfile({ ...profile, dietType: e.target.value as DietType })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs font-bold text-[#192418] dark:text-[#E8EDE7]"
+              >
+                <option value="omnivore">Omnivore (All foods)</option>
+                <option value="non_vegetarian">Non-Vegetarian</option>
+                <option value="pescatarian">Pescatarian (Fish & Seafood)</option>
+                <option value="vegetarian">Vegetarian (Lacto-Ovo)</option>
+                <option value="vegan">Pure Vegan</option>
+                <option value="keto">Ketogenic</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Daily Target (kcal)</label>
+                <input
+                  type="number"
+                  value={profile.calorieTarget}
+                  onChange={(e) => setProfile({ ...profile, calorieTarget: Number(e.target.value) })}
+                  className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-bold"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Protein (g)</label>
+                <input
+                  type="number"
+                  value={profile.proteinTargetGrams}
+                  onChange={(e) => setProfile({ ...profile, proteinTargetGrams: Number(e.target.value) })}
+                  className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-bold"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleRecalculateTargets}
+              className="w-full py-2 bg-[#eef7eb] dark:bg-[#272E29] text-[#3b7e23] dark:text-[#8BAF78] rounded-xl text-xs font-bold border border-[#d6ebd0] dark:border-[#394139]"
+            >
+              ⚡ Auto-Recalculate Macros from BMR
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                handleSaveProfile(e);
+                setMobileSection('menu');
+              }}
+              className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs"
+            >
+              Save Nutrition Settings
+            </button>
+          </div>
+        )}
+
+        {mobileSection === 'workout' && (
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Training Days / Week</label>
+              <select
+                value={profile.trainingDaysPerWeek}
+                onChange={(e) => setProfile({ ...profile, trainingDaysPerWeek: Number(e.target.value) })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs font-bold text-[#192418] dark:text-[#E8EDE7]"
+              >
+                <option value={2}>2 Days / Week</option>
+                <option value={3}>3 Days / Week (Full Body Split)</option>
+                <option value={4}>4 Days / Week (Upper / Lower)</option>
+                <option value={5}>5 Days / Week (Push / Pull / Legs)</option>
+                <option value={6}>6 Days / Week (Advanced Hypertrophy)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Available Equipment</label>
+              <select
+                value={profile.availableEquipment}
+                onChange={(e) => setProfile({ ...profile, availableEquipment: e.target.value as EquipmentType })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs font-bold text-[#192418] dark:text-[#E8EDE7]"
+              >
+                <option value="full_gym">Full Gym (Barbells, Racks, Cables)</option>
+                <option value="dumbbells_only">Dumbbells Only (Home Free Weights)</option>
+                <option value="home_minimal">Home Minimal (Dumbbells + Pull-Up Bar)</option>
+                <option value="bodyweight_only">Bodyweight / Calisthenics Only</option>
+                <option value="resistance_bands">Resistance Bands & Bodyweight</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                handleSaveProfile(e);
+                setMobileSection('menu');
+              }}
+              className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs"
+            >
+              Save Workout Settings
+            </button>
+          </div>
+        )}
+
+        {mobileSection === 'ai' && (
+          <div className="bg-white dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-4 shadow-xs space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-[#192418] dark:text-[#E8EDE7] uppercase mb-1">Google Gemini API Key (Optional)</label>
+              <input
+                type="password"
+                placeholder="AIzaSy..."
+                value={profile.geminiApiKey || ''}
+                onChange={(e) => setProfile({ ...profile, geminiApiKey: e.target.value })}
+                className="w-full bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-xl p-2.5 text-xs text-[#192418] dark:text-[#E8EDE7] font-mono"
+              />
+              <p className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] mt-1">
+                Leave empty to use NutriCoach's built-in intelligent hybrid engine.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                handleSaveProfile(e);
+                setMobileSection('menu');
+              }}
+              className="w-full py-3 bg-[#5ba83c] hover:bg-[#4d9630] text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs"
+            >
+              Save AI Settings
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ========================================================= */}
+      {/* DESKTOP PROFILE VIEW (FULL EXISTING INTERFACE)            */}
+      {/* ========================================================= */}
+      <div className="hidden lg:block space-y-6">
+        {/* Header */}
+        <div className="pb-4 border-b border-[#e8ede6]">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2.5 py-0.5 rounded-full border border-[#d6ebd0]">
+              PERSONAL CONFIGURATION
+            </span>
           <span className="text-xs text-[#7a8c79] font-medium">BMR & Macronutrient Architecture</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#192418] tracking-tight">
@@ -612,6 +1036,7 @@ export default function ProfilePage() {
           </button>
         </div>
       </form>
+      </div>
 
       {/* Sign Out Confirmation Modal */}
       <SignOutConfirmModal
