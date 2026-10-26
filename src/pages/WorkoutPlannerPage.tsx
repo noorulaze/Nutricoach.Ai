@@ -31,7 +31,7 @@ export default function WorkoutPlannerPage() {
 
   // Anatomy 3D State
   const [selectedMuscleId, setSelectedMuscleId] = useState<string>('chest');
-  const [modelViewMode, setModelViewMode] = useState<'front' | 'back'>('front');
+  const [modelViewMode, setModelViewMode] = useState<'front' | 'back' | 'side'>('front');
   const [exerciseSearch, setExerciseSearch] = useState<string>('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All');
 

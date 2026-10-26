@@ -1,14 +1,97 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { Plus, Minus, RotateCcw } from 'lucide-react';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { Plus, Minus, RotateCcw, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
+import { MUSCLE_GROUPS } from '../data/workoutAnatomyData';
 
 interface HumanAnatomy3DProps {
   selectedMuscleId: string;
   onSelectMuscle: (muscleId: string) => void;
   className?: string;
-  viewMode?: 'front' | 'back';
-  onViewModeChange?: (mode: 'front' | 'back') => void;
+  viewMode?: 'front' | 'back' | 'side';
+  onViewModeChange?: (mode: 'front' | 'back' | 'side') => void;
 }
+
+// Comprehensive anatomical classification rules mapping 3D mesh nodes to NutriCoach AI muscle groups
+interface MuscleRule {
+  id: string;
+  name: string;
+  patterns: RegExp[];
+}
+
+const MUSCLE_RULES: MuscleRule[] = [
+  {
+    id: 'chest',
+    name: 'Chest (Pectoralis Major & Minor)',
+    patterns: [/pectoralis/i, /pectoral/i]
+  },
+  {
+    id: 'shoulders',
+    name: 'Shoulders (Deltoid & Rotator Cuff)',
+    patterns: [/deltoid/i, /supraspinatus/i, /infraspinatus/i, /subscapularis/i]
+  },
+  {
+    id: 'biceps',
+    name: 'Biceps (Biceps Brachii & Brachialis)',
+    patterns: [/biceps\s+brachii/i, /brachialis/i, /coracobrachialis/i]
+  },
+  {
+    id: 'triceps',
+    name: 'Triceps (Triceps Brachii)',
+    patterns: [/triceps\s+brachii/i, /anconeus/i]
+  },
+  {
+    id: 'forearms',
+    name: 'Forearms (Brachioradialis & Flexors/Extensors)',
+    patterns: [/brachioradialis/i, /pronator/i, /supinator/i, /flexor\s+carpi/i, /extensor\s+carpi/i, /flexor\s+digitorum/i, /extensor\s+digitorum/i, /palmaris\s+longus/i, /abductor\s+pollicis/i]
+  },
+  {
+    id: 'abs',
+    name: 'Abs (Rectus Abdominis)',
+    patterns: [/rectus\s+abdominis/i, /pyramidalis/i]
+  },
+  {
+    id: 'obliques',
+    name: 'Obliques (External & Internal Obliques)',
+    patterns: [/obliquus\s+externus/i, /obliquus\s+internus/i, /transversus\s+abdominis/i, /external\s+oblique/i, /internal\s+oblique/i]
+  },
+  {
+    id: 'upper_back',
+    name: 'Upper Back (Trapezius & Rhomboids)',
+    patterns: [/trapezius/i, /rhomboid/i, /levator\s+scapulae/i, /splenius\s+capitis/i, /splenius\s+colli/i, /splenius\s+cervicis/i]
+  },
+  {
+    id: 'lats',
+    name: 'Lats (Latissimus Dorsi & Teres Major)',
+    patterns: [/latissimus/i, /teres\s+major/i, /teres\s+minor/i]
+  },
+  {
+    id: 'lower_back',
+    name: 'Lower Back (Erector Spinae)',
+    patterns: [/iliocostalis/i, /longissimus/i, /spinalis/i, /multifidus/i, /quadratus\s+lumborum/i, /erector\s+spinae/i]
+  },
+  {
+    id: 'glutes',
+    name: 'Glutes (Gluteus Maximus & Medius)',
+    patterns: [/gluteus/i, /piriformis/i, /tensor\s+fasciae\s+latae/i, /obturator/i, /gemellus/i, /quadratus\s+femoris/i]
+  },
+  {
+    id: 'quadriceps',
+    name: 'Quadriceps (Rectus Femoris & Vasti)',
+    patterns: [/rectus\s+femoris/i, /vastus\s+lateralis/i, /vastus\s+medialis/i, /vastus\s+intermedius/i, /sartorius/i, /quadriceps/i, /pectineus/i, /gracilis/i, /adductor\s+longus/i, /adductor\s+brevis/i, /adductor\s+magnus/i]
+  },
+  {
+    id: 'hamstrings',
+    name: 'Hamstrings (Biceps Femoris & Semitendinosus)',
+    patterns: [/biceps\s+femoris/i, /semitendinosus/i, /semimembranosus/i]
+  },
+  {
+    id: 'calves',
+    name: 'Calves (Gastrocnemius & Soleus)',
+    patterns: [/gastrocnemius/i, /soleus/i, /plantaris/i, /popliteus/i, /tibialis/i, /fibularis/i, /peroneus/i, /flexor\s+hallucis/i, /extensor\s+hallucis/i]
+  }
+];
 
 export default function HumanAnatomy3D({
   selectedMuscleId,
@@ -19,8 +102,11 @@ export default function HumanAnatomy3D({
 }: HumanAnatomy3DProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [isWebGlSupported, setIsWebGlSupported] = useState(true);
-  const [internalView, setInternalView] = useState<'front' | 'back'>(viewMode);
+  const [internalView, setInternalView] = useState<'front' | 'back' | 'side'>(viewMode);
   const [hoveredMuscle, setHoveredMuscle] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // References for Three.js instances
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -38,11 +124,11 @@ export default function HumanAnatomy3D({
   const rotationVelocityXRef = useRef(0);
   const targetRotationYRef = useRef(0);
   const targetRotationXRef = useRef(0);
-  const targetCameraZRef = useRef(5.5);
+  const targetCameraZRef = useRef(2.7);
   const animationFrameIdRef = useRef<number | null>(null);
 
   // Materials
-  const baseMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
+  const boneMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const unselectedMuscleMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const selectedMuscleMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const hoveredMuscleMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
@@ -51,7 +137,9 @@ export default function HumanAnatomy3D({
   useEffect(() => {
     if (viewMode !== internalView) {
       setInternalView(viewMode);
-      targetRotationYRef.current = viewMode === 'front' ? 0 : Math.PI;
+      if (viewMode === 'front') targetRotationYRef.current = 0;
+      else if (viewMode === 'back') targetRotationYRef.current = Math.PI;
+      else if (viewMode === 'side') targetRotationYRef.current = Math.PI * 0.5;
     }
   }, [viewMode, internalView]);
 
@@ -63,7 +151,7 @@ export default function HumanAnatomy3D({
     // Normalize current rotation angle between 0 and 2*PI
     let currentNorm = targetRotationYRef.current % (Math.PI * 2);
     if (currentNorm < 0) currentNorm += Math.PI * 2;
-    const isFacingBack = currentNorm > Math.PI * 0.5 && currentNorm < Math.PI * 1.5;
+    const isFacingBack = currentNorm > Math.PI * 0.4 && currentNorm < Math.PI * 1.6;
 
     if (isBackMuscle && !isFacingBack) {
       targetRotationYRef.current = Math.PI;
@@ -101,7 +189,7 @@ export default function HumanAnatomy3D({
     updateMuscleMaterials();
   }, [selectedMuscleId, hoveredMuscle, updateMuscleMaterials]);
 
-  // Initialize Three.js scene
+  // Load and setup Three.js scene
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -112,10 +200,12 @@ export default function HumanAnatomy3D({
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       if (!gl) {
         setIsWebGlSupported(false);
+        setIsLoading(false);
         return;
       }
     } catch {
       setIsWebGlSupported(false);
+      setIsLoading(false);
       return;
     }
 
@@ -123,12 +213,12 @@ export default function HumanAnatomy3D({
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    // 2. Camera
-    const aspect = container.clientWidth / (container.clientHeight || 560);
-    const camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 100);
-    camera.position.set(0, 0.1, 5.5);
+    // 2. Camera: FOV 40 with comfortable distance for full 1.70m human body
+    const aspect = container.clientWidth / (container.clientHeight || 640);
+    const camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 50);
+    camera.position.set(0, 0, 2.7);
     cameraRef.current = camera;
-    targetCameraZRef.current = 5.5;
+    targetCameraZRef.current = 2.7;
 
     // 3. Renderer with antialiasing and transparent background
     const renderer = new THREE.WebGLRenderer({
@@ -136,10 +226,10 @@ export default function HumanAnatomy3D({
       alpha: true,
       powerPreference: 'high-performance'
     });
-    renderer.setSize(container.clientWidth, container.clientHeight || 560);
+    renderer.setSize(container.clientWidth, container.clientHeight || 640);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.1;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     rendererRef.current = renderer;
@@ -147,393 +237,166 @@ export default function HumanAnatomy3D({
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // 4. Studio Lighting Configuration (matches realistic silver/gray studio render)
-    const ambientLight = new THREE.AmbientLight(0xdde5e8, 0.95);
+    // 4. Studio Lighting Configuration (matches clean athletic reference)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
     // Front-Right Key Light
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.85);
-    keyLight.position.set(3.5, 6.0, 5.0);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    keyLight.position.set(3.0, 4.5, 4.0);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
+    keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
     // Front-Left Fill Light
-    const fillLight = new THREE.DirectionalLight(0xd4e2e6, 1.2);
-    fillLight.position.set(-4.0, 3.5, 4.0);
+    const fillLight = new THREE.DirectionalLight(0xd9e5ea, 1.0);
+    fillLight.position.set(-3.5, 3.0, 3.5);
     scene.add(fillLight);
 
-    // Rim / Backlight for sculpted muscle silhouette definition
-    const rimLight = new THREE.DirectionalLight(0xd9ecd6, 1.6);
-    rimLight.position.set(0, 5.5, -6.0);
+    // Rim / Back Light (Crucial for trapezius, lats, glutes, hamstrings)
+    const rimLight = new THREE.DirectionalLight(0xe4f3e0, 1.4);
+    rimLight.position.set(0, 4.0, -4.5);
     scene.add(rimLight);
 
     // Soft Bottom Bounce Light
-    const groundBounce = new THREE.DirectionalLight(0xb0bfc2, 0.6);
-    groundBounce.position.set(0, -4.0, 2.0);
+    const groundBounce = new THREE.DirectionalLight(0xbac6c9, 0.5);
+    groundBounce.position.set(0, -3.0, 1.5);
     scene.add(groundBounce);
 
     // 5. Materials
-    // Base bone/joint gray
-    baseMaterialRef.current = new THREE.MeshStandardMaterial({
-      color: 0x828b90,
-      roughness: 0.50,
-      metalness: 0.20
+    // Skeletal bones material
+    boneMaterialRef.current = new THREE.MeshStandardMaterial({
+      color: 0x828d92,
+      roughness: 0.55,
+      metalness: 0.12,
+      side: THREE.DoubleSide
     });
 
     // Default Gray/Silver Muscular Material
     unselectedMuscleMaterialRef.current = new THREE.MeshStandardMaterial({
-      color: 0x9da6ab,
-      roughness: 0.44,
-      metalness: 0.22
+      color: 0x9ba6ab,
+      roughness: 0.45,
+      metalness: 0.18,
+      side: THREE.DoubleSide
     });
 
-    // Sage Green Highlight for Selected Muscle (matches reference image #7cb342)
+    // Sage Green Highlight for Selected Muscle (matches NutriCoach AI theme #7cb342)
     selectedMuscleMaterialRef.current = new THREE.MeshStandardMaterial({
       color: 0x7cb342,
-      roughness: 0.32,
-      metalness: 0.12,
+      roughness: 0.30,
+      metalness: 0.10,
       emissive: 0x243e18,
-      emissiveIntensity: 0.42
+      emissiveIntensity: 0.65,
+      side: THREE.DoubleSide
     });
 
-    // Subtle hover material
+    // Hover Material
     hoveredMuscleMaterialRef.current = new THREE.MeshStandardMaterial({
       color: 0x8faf78,
-      roughness: 0.36,
-      metalness: 0.16,
+      roughness: 0.35,
+      metalness: 0.12,
       emissive: 0x1c3314,
-      emissiveIntensity: 0.25
+      emissiveIntensity: 0.35,
+      side: THREE.DoubleSide
     });
 
     // 6. Build the 3D Muscular Anatomy Model Group
     const bodyGroup = new THREE.Group();
-    bodyGroup.position.set(0, -0.15, 0);
+    // Center model at origin: model vertical midpoint is around 0.858m
+    bodyGroup.position.set(0, -0.858, 0);
     scene.add(bodyGroup);
     bodyGroupRef.current = bodyGroup;
 
-    // Contact Shadow Disk on the floor
-    const shadowGeo = new THREE.RingGeometry(0.01, 1.4, 32);
+    // Contact Floor Shadow
+    const shadowGeo = new THREE.RingGeometry(0.01, 0.75, 32);
     const shadowMat = new THREE.MeshBasicMaterial({
-      color: 0x1a241b,
+      color: 0x141f15,
       transparent: true,
-      opacity: 0.08,
+      opacity: 0.14,
       side: THREE.DoubleSide
     });
     const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
     shadowMesh.rotation.x = -Math.PI / 2;
-    shadowMesh.position.y = -2.15;
-    scene.add(shadowMesh);
+    shadowMesh.position.y = -0.01;
+    bodyGroup.add(shadowMesh);
 
-    // Inner shadow circle
-    const shadowInnerGeo = new THREE.CircleGeometry(0.75, 32);
-    const shadowInnerMat = new THREE.MeshBasicMaterial({
-      color: 0x141d14,
-      transparent: true,
-      opacity: 0.12
-    });
-    const shadowInner = new THREE.Mesh(shadowInnerGeo, shadowInnerMat);
-    shadowInner.rotation.x = -Math.PI / 2;
-    shadowInner.position.y = -2.14;
-    scene.add(shadowInner);
+    // 7. Load Connected Realistic 3D Anatomy Model Asset (GLB + DRACO)
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
 
-    // Helper: Register a muscle mesh for raycasting and selection
-    const registerMuscleMesh = (mesh: THREE.Mesh, muscleId: string) => {
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      mesh.userData = { muscleId };
-      allClickableMeshesRef.current.push(mesh);
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
 
-      const existing = muscleMeshesMapRef.current.get(muscleId) || [];
-      existing.push(mesh);
-      muscleMeshesMapRef.current.set(muscleId, existing);
-    };
+    allClickableMeshesRef.current = [];
+    muscleMeshesMapRef.current.clear();
+    setIsLoading(true);
+    setLoadError(null);
 
-    // Helper: Construct smooth curved muscle geometry
-    const createMuscleMesh = (
-      geo: THREE.BufferGeometry,
-      muscleId: string,
-      pos: [number, number, number],
-      rot?: [number, number, number],
-      scale?: [number, number, number]
-    ): THREE.Mesh => {
-      const mesh = new THREE.Mesh(geo, unselectedMuscleMaterialRef.current!);
-      mesh.position.set(...pos);
-      if (rot) mesh.rotation.set(...rot);
-      if (scale) mesh.scale.set(...scale);
-      bodyGroup.add(mesh);
-      registerMuscleMesh(mesh, muscleId);
-      return mesh;
-    };
+    gltfLoader.load(
+      '/models/body.glb',
+      (gltf) => {
+        const model = gltf.scene;
+        
+        // Traverse model to map every anatomical muscle node to the corresponding muscle group
+        model.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
 
-    // Helper: Construct non-clickable armature bone/joint
-    const createArmature = (
-      geo: THREE.BufferGeometry,
-      pos: [number, number, number],
-      rot?: [number, number, number],
-      scale?: [number, number, number]
-    ): THREE.Mesh => {
-      const mesh = new THREE.Mesh(geo, baseMaterialRef.current!);
-      mesh.position.set(...pos);
-      if (rot) mesh.rotation.set(...rot);
-      if (scale) mesh.scale.set(...scale);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      bodyGroup.add(mesh);
-      return mesh;
-    };
+            const nodeName = mesh.name || '';
+            const extraName = (mesh.userData?.name as string) || '';
+            const extraDetail = (mesh.userData?.nameDetail as string) || '';
+            const nodeType = (mesh.userData?.type as string) || '';
+            const fullText = `${nodeName} ${extraName} ${extraDetail}`;
 
-    // =========================================================================
-    // ANATOMICAL CONSTRUCTION OF 3D HUMAN PHYSIQUE
-    // =========================================================================
+            // Check if mesh belongs to one of the 14 muscle groups
+            let matchedGroupId: string | null = null;
+            for (const rule of MUSCLE_RULES) {
+              if (rule.patterns.some((p) => p.test(fullText))) {
+                matchedGroupId = rule.id;
+                break;
+              }
+            }
 
-    // --- 1. HEAD & NECK ---
-    // Cranium
-    const headGeo = new THREE.SphereGeometry(0.24, 32, 24);
-    headGeo.scale(0.85, 1.15, 0.95);
-    createArmature(headGeo, [0, 1.76, 0]);
+            if (matchedGroupId) {
+              mesh.userData.muscleId = matchedGroupId;
+              mesh.material = unselectedMuscleMaterialRef.current!;
+              allClickableMeshesRef.current.push(mesh);
 
-    // Jaw / Chin
-    const jawGeo = new THREE.ConeGeometry(0.18, 0.22, 16);
-    jawGeo.scale(0.9, 1.0, 0.85);
-    createArmature(jawGeo, [0, 1.58, 0.05], [Math.PI, 0, 0]);
+              const existing = muscleMeshesMapRef.current.get(matchedGroupId) || [];
+              existing.push(mesh);
+              muscleMeshesMapRef.current.set(matchedGroupId, existing);
+            } else if (nodeType === 'bone') {
+              mesh.userData.isBone = true;
+              mesh.material = boneMaterialRef.current!;
+            } else {
+              // Connective fascia / other anatomical structure
+              mesh.material = boneMaterialRef.current!;
+            }
+          }
+        });
 
-    // Neck (Sternocleidomastoid armature)
-    const neckGeo = new THREE.CylinderGeometry(0.13, 0.16, 0.26, 20);
-    createArmature(neckGeo, [0, 1.45, -0.01]);
+        bodyGroup.add(model);
+        setIsLoading(false);
+        updateMuscleMaterials();
+      },
+      (progress) => {
+        if (progress.total > 0) {
+          const percent = Math.round((progress.loaded / progress.total) * 100);
+          setLoadingProgress(percent);
+        }
+      },
+      (error) => {
+        console.error('Error loading 3D human anatomy model:', error);
+        setLoadError('Failed to load anatomical 3D model.');
+        setIsLoading(false);
+      }
+    );
 
-    // --- 2. CHEST (Pectoralis Major) ---
-    // Left Pectoral plate
-    const chestLeftGeo = new THREE.SphereGeometry(0.23, 28, 20);
-    chestLeftGeo.scale(1.25, 0.75, 0.58);
-    createMuscleMesh(chestLeftGeo, 'chest', [-0.22, 1.14, 0.18], [0.08, -0.15, 0.12]);
-
-    // Right Pectoral plate
-    const chestRightGeo = new THREE.SphereGeometry(0.23, 28, 20);
-    chestRightGeo.scale(1.25, 0.75, 0.58);
-    createMuscleMesh(chestRightGeo, 'chest', [0.22, 1.14, 0.18], [0.08, 0.15, -0.12]);
-
-    // Upper Clavicular Chest Left
-    const chestUpperLeftGeo = new THREE.SphereGeometry(0.16, 20, 16);
-    chestUpperLeftGeo.scale(1.3, 0.6, 0.5);
-    createMuscleMesh(chestUpperLeftGeo, 'chest', [-0.20, 1.26, 0.15], [0.05, -0.1, 0.18]);
-
-    // Upper Clavicular Chest Right
-    const chestUpperRightGeo = new THREE.SphereGeometry(0.16, 20, 16);
-    chestUpperRightGeo.scale(1.3, 0.6, 0.5);
-    createMuscleMesh(chestUpperRightGeo, 'chest', [0.20, 1.26, 0.15], [0.05, 0.1, -0.18]);
-
-    // Clavicles bone armature
-    const clavicleGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.84, 16);
-    clavicleGeo.rotateZ(Math.PI / 2);
-    createArmature(clavicleGeo, [0, 1.34, 0.08]);
-
-    // Sternum center strip
-    const sternumGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.42, 12);
-    createArmature(sternumGeo, [0, 1.12, 0.17]);
-
-    // --- 3. SHOULDERS (Deltoids) ---
-    // Left Deltoid (Anterior + Lateral Cap)
-    const deltLeftGeo = new THREE.SphereGeometry(0.19, 24, 20);
-    deltLeftGeo.scale(0.85, 1.35, 1.05);
-    createMuscleMesh(deltLeftGeo, 'shoulders', [-0.55, 1.25, 0.02], [0, 0, 0.28]);
-
-    // Right Deltoid (Anterior + Lateral Cap)
-    const deltRightGeo = new THREE.SphereGeometry(0.19, 24, 20);
-    deltRightGeo.scale(0.85, 1.35, 1.05);
-    createMuscleMesh(deltRightGeo, 'shoulders', [0.55, 1.25, 0.02], [0, 0, -0.28]);
-
-    // Left Rear Deltoid
-    const rearDeltLeftGeo = new THREE.SphereGeometry(0.14, 18, 16);
-    rearDeltLeftGeo.scale(0.8, 1.1, 0.9);
-    createMuscleMesh(rearDeltLeftGeo, 'shoulders', [-0.51, 1.24, -0.10], [-0.15, 0.1, 0.25]);
-
-    // Right Rear Deltoid
-    const rearDeltRightGeo = new THREE.SphereGeometry(0.14, 18, 16);
-    rearDeltRightGeo.scale(0.8, 1.1, 0.9);
-    createMuscleMesh(rearDeltRightGeo, 'shoulders', [0.51, 1.24, -0.10], [-0.15, -0.1, -0.25]);
-
-    // --- 4. BICEPS (Biceps Brachii) ---
-    // Left Bicep
-    const bicepLeftGeo = new THREE.CapsuleGeometry(0.11, 0.22, 16, 20);
-    createMuscleMesh(bicepLeftGeo, 'biceps', [-0.58, 0.92, 0.06], [0.1, 0, 0.2]);
-
-    // Right Bicep
-    const bicepRightGeo = new THREE.CapsuleGeometry(0.11, 0.22, 16, 20);
-    createMuscleMesh(bicepRightGeo, 'biceps', [0.58, 0.92, 0.06], [0.1, 0, -0.2]);
-
-    // --- 5. TRICEPS (Triceps Brachii) ---
-    // Left Tricep
-    const tricepLeftGeo = new THREE.CapsuleGeometry(0.12, 0.26, 16, 20);
-    createMuscleMesh(tricepLeftGeo, 'triceps', [-0.58, 0.91, -0.07], [-0.1, 0, 0.2]);
-
-    // Right Tricep
-    const tricepRightGeo = new THREE.CapsuleGeometry(0.12, 0.26, 16, 20);
-    createMuscleMesh(tricepRightGeo, 'triceps', [0.58, 0.91, -0.07], [-0.1, 0, -0.2]);
-
-    // Elbow Joints armature
-    const elbowGeo = new THREE.SphereGeometry(0.08, 14, 12);
-    createArmature(elbowGeo, [-0.64, 0.72, 0]);
-    createArmature(elbowGeo, [0.64, 0.72, 0]);
-
-    // --- 6. FOREARMS (Brachioradialis & Flexors) ---
-    // Left Forearm
-    const forearmLeftGeo = new THREE.CylinderGeometry(0.075, 0.055, 0.44, 18);
-    createMuscleMesh(forearmLeftGeo, 'forearms', [-0.73, 0.48, 0.02], [0, 0, 0.24]);
-
-    // Right Forearm
-    const forearmRightGeo = new THREE.CylinderGeometry(0.075, 0.055, 0.44, 18);
-    createMuscleMesh(forearmRightGeo, 'forearms', [0.73, 0.48, 0.02], [0, 0, -0.24]);
-
-    // Hands armature
-    const handGeo = new THREE.BoxGeometry(0.07, 0.18, 0.11);
-    createArmature(handGeo, [-0.80, 0.18, 0.02], [0, 0, 0.15]);
-    createArmature(handGeo, [0.80, 0.18, 0.02], [0, 0, -0.15]);
-
-    // --- 7. ABS (Rectus Abdominis 6-Pack) ---
-    // Upper Abs
-    const absUpperLeft = new THREE.BoxGeometry(0.14, 0.11, 0.09);
-    createMuscleMesh(absUpperLeft, 'abs', [-0.085, 0.94, 0.16]);
-    const absUpperRight = new THREE.BoxGeometry(0.14, 0.11, 0.09);
-    createMuscleMesh(absUpperRight, 'abs', [0.085, 0.94, 0.16]);
-
-    // Mid Abs
-    const absMidLeft = new THREE.BoxGeometry(0.135, 0.11, 0.09);
-    createMuscleMesh(absMidLeft, 'abs', [-0.080, 0.81, 0.15]);
-    const absMidRight = new THREE.BoxGeometry(0.135, 0.11, 0.09);
-    createMuscleMesh(absMidRight, 'abs', [0.080, 0.81, 0.15]);
-
-    // Lower Abs
-    const absLowerLeft = new THREE.BoxGeometry(0.13, 0.13, 0.09);
-    createMuscleMesh(absLowerLeft, 'abs', [-0.075, 0.67, 0.14]);
-    const absLowerRight = new THREE.BoxGeometry(0.13, 0.13, 0.09);
-    createMuscleMesh(absLowerRight, 'abs', [0.075, 0.67, 0.14]);
-
-    // --- 8. OBLIQUES (External & Internal) ---
-    // Left Oblique column
-    const obliqueLeftGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.38, 16);
-    obliqueLeftGeo.scale(0.8, 1.0, 1.2);
-    createMuscleMesh(obliqueLeftGeo, 'obliques', [-0.27, 0.80, 0.08], [0, 0, 0.18]);
-
-    // Right Oblique column
-    const obliqueRightGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.38, 16);
-    obliqueRightGeo.scale(0.8, 1.0, 1.2);
-    createMuscleMesh(obliqueRightGeo, 'obliques', [0.27, 0.80, 0.08], [0, 0, -0.18]);
-
-    // Midsection core base core armature
-    const coreBaseGeo = new THREE.CylinderGeometry(0.30, 0.28, 0.55, 20);
-    createArmature(coreBaseGeo, [0, 0.82, 0]);
-
-    // --- 9. UPPER BACK (Trapezius & Rhomboids) ---
-    // Diamond-shaped Upper/Mid Trapezius
-    const trapsCenterGeo = new THREE.ConeGeometry(0.36, 0.48, 18);
-    trapsCenterGeo.scale(1.2, 1.0, 0.55);
-    createMuscleMesh(trapsCenterGeo, 'upper_back', [0, 1.25, -0.11], [Math.PI, 0, 0]);
-
-    // Upper Trap Left Neck band
-    const trapNeckLeft = new THREE.BoxGeometry(0.16, 0.22, 0.14);
-    createMuscleMesh(trapNeckLeft, 'upper_back', [-0.20, 1.36, -0.06], [0.1, 0.15, -0.3]);
-
-    // Upper Trap Right Neck band
-    const trapNeckRight = new THREE.BoxGeometry(0.16, 0.22, 0.14);
-    createMuscleMesh(trapNeckRight, 'upper_back', [0.20, 1.36, -0.06], [0.1, -0.15, 0.3]);
-
-    // --- 10. LATS (Latissimus Dorsi) ---
-    // Left Lat V-Wing
-    const latLeftGeo = new THREE.BoxGeometry(0.18, 0.44, 0.22);
-    latLeftGeo.rotateY(0.35);
-    createMuscleMesh(latLeftGeo, 'lats', [-0.34, 1.00, -0.10], [0, 0, -0.22]);
-
-    // Right Lat V-Wing
-    const latRightGeo = new THREE.BoxGeometry(0.18, 0.44, 0.22);
-    latRightGeo.rotateY(-0.35);
-    createMuscleMesh(latRightGeo, 'lats', [0.34, 1.00, -0.10], [0, 0, 0.22]);
-
-    // --- 11. LOWER BACK (Erector Spinae) ---
-    const lowerBackLeftGeo = new THREE.CapsuleGeometry(0.08, 0.34, 14, 16);
-    createMuscleMesh(lowerBackLeftGeo, 'lower_back', [-0.10, 0.74, -0.12]);
-
-    const lowerBackRightGeo = new THREE.CapsuleGeometry(0.08, 0.34, 14, 16);
-    createMuscleMesh(lowerBackRightGeo, 'lower_back', [0.10, 0.74, -0.12]);
-
-    // --- 12. GLUTES (Gluteus Maximus) ---
-    // Left Glute
-    const gluteLeftGeo = new THREE.SphereGeometry(0.23, 24, 20);
-    gluteLeftGeo.scale(1.0, 1.15, 1.05);
-    createMuscleMesh(gluteLeftGeo, 'glutes', [-0.19, 0.42, -0.12], [0.1, 0.1, -0.05]);
-
-    // Right Glute
-    const gluteRightGeo = new THREE.SphereGeometry(0.23, 24, 20);
-    gluteRightGeo.scale(1.0, 1.15, 1.05);
-    createMuscleMesh(gluteRightGeo, 'glutes', [0.19, 0.42, -0.12], [0.1, -0.1, 0.05]);
-
-    // Pelvis base armature
-    const pelvisGeo = new THREE.CylinderGeometry(0.28, 0.24, 0.26, 20);
-    createArmature(pelvisGeo, [0, 0.44, 0]);
-
-    // --- 13. QUADRICEPS (Front Thighs) ---
-    // Left Quadriceps (Rectus Femoris + Vastus Lateralis/Medialis sweep)
-    const quadLeftGeo = new THREE.CylinderGeometry(0.18, 0.13, 0.74, 24);
-    quadLeftGeo.scale(1.05, 1.0, 1.15);
-    createMuscleMesh(quadLeftGeo, 'quadriceps', [-0.22, -0.12, 0.06], [0.06, 0, -0.06]);
-
-    // Left Vastus Medialis (Teardrop)
-    const teardropLeftGeo = new THREE.SphereGeometry(0.12, 16, 14);
-    teardropLeftGeo.scale(0.85, 1.25, 0.9);
-    createMuscleMesh(teardropLeftGeo, 'quadriceps', [-0.14, -0.38, 0.11], [0, 0, -0.15]);
-
-    // Right Quadriceps
-    const quadRightGeo = new THREE.CylinderGeometry(0.18, 0.13, 0.74, 24);
-    quadRightGeo.scale(1.05, 1.0, 1.15);
-    createMuscleMesh(quadRightGeo, 'quadriceps', [0.22, -0.12, 0.06], [0.06, 0, 0.06]);
-
-    // Right Vastus Medialis (Teardrop)
-    const teardropRightGeo = new THREE.SphereGeometry(0.12, 16, 14);
-    teardropRightGeo.scale(0.85, 1.25, 0.9);
-    createMuscleMesh(teardropRightGeo, 'quadriceps', [0.14, -0.38, 0.11], [0, 0, 0.15]);
-
-    // Knee Joints (Patella) armature
-    const patellaGeo = new THREE.SphereGeometry(0.09, 16, 14);
-    createArmature(patellaGeo, [-0.23, -0.54, 0.04]);
-    createArmature(patellaGeo, [0.23, -0.54, 0.04]);
-
-    // --- 14. HAMSTRINGS (Back Thighs) ---
-    // Left Hamstrings
-    const hamLeftGeo = new THREE.CylinderGeometry(0.16, 0.12, 0.68, 20);
-    hamLeftGeo.scale(1.0, 1.0, 1.1);
-    createMuscleMesh(hamLeftGeo, 'hamstrings', [-0.22, -0.12, -0.08], [-0.04, 0, -0.05]);
-
-    // Right Hamstrings
-    const hamRightGeo = new THREE.CylinderGeometry(0.16, 0.12, 0.68, 20);
-    hamRightGeo.scale(1.0, 1.1, 1.1);
-    createMuscleMesh(hamRightGeo, 'hamstrings', [0.22, -0.12, -0.08], [-0.04, 0, 0.05]);
-
-    // --- 15. CALVES (Gastrocnemius & Soleus) ---
-    // Left Calf
-    const calfLeftGeo = new THREE.SphereGeometry(0.14, 22, 18);
-    calfLeftGeo.scale(0.95, 1.65, 1.15);
-    createMuscleMesh(calfLeftGeo, 'calves', [-0.23, -1.02, -0.04], [0.08, 0, -0.02]);
-
-    // Right Calf
-    const calfRightGeo = new THREE.SphereGeometry(0.14, 22, 18);
-    calfRightGeo.scale(0.95, 1.65, 1.15);
-    createMuscleMesh(calfRightGeo, 'calves', [0.23, -1.02, -0.04], [0.08, 0, 0.02]);
-
-    // Shinbone (Tibia/Fibula) armature
-    const shinGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.72, 16);
-    createArmature(shinGeo, [-0.23, -1.14, 0.03]);
-    createArmature(shinGeo, [0.23, -1.14, 0.03]);
-
-    // Feet armature
-    const footGeo = new THREE.BoxGeometry(0.13, 0.08, 0.32);
-    createArmature(footGeo, [-0.23, -1.54, 0.08], [0.05, 0.12, 0]);
-    createArmature(footGeo, [0.23, -1.54, 0.08], [0.05, -0.12, 0]);
-
-    // Trigger initial materials
-    updateMuscleMaterials();
-
-    // 7. Raycaster for Hover & Click Selection
+    // 8. Raycaster for Hover & Click Selection
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
@@ -561,7 +424,6 @@ export default function HumanAnatomy3D({
 
     // Pointer Click
     const onPointerClick = (e: MouseEvent) => {
-      // Don't trigger click if it was a significant drag
       if (Math.abs(rotationVelocityYRef.current) > 0.005) return;
       const hitMuscle = getIntersectedMuscle(e);
       if (hitMuscle) {
@@ -593,7 +455,7 @@ export default function HumanAnatomy3D({
       rotationVelocityXRef.current = deltaY * 0.005;
 
       targetRotationYRef.current += rotationVelocityYRef.current;
-      targetRotationXRef.current = Math.max(-0.25, Math.min(0.25, targetRotationXRef.current + rotationVelocityXRef.current));
+      targetRotationXRef.current = Math.max(-0.35, Math.min(0.35, targetRotationXRef.current + rotationVelocityXRef.current));
     };
 
     const onMouseUp = () => {
@@ -603,7 +465,7 @@ export default function HumanAnatomy3D({
       }
     };
 
-    // Touch Support
+    // Mobile Touch Drag Support
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) {
         isDraggingRef.current = true;
@@ -622,7 +484,7 @@ export default function HumanAnatomy3D({
 
       rotationVelocityYRef.current = deltaX * 0.010;
       targetRotationYRef.current += rotationVelocityYRef.current;
-      targetRotationXRef.current = Math.max(-0.25, Math.min(0.25, targetRotationXRef.current + deltaY * 0.006));
+      targetRotationXRef.current = Math.max(-0.35, Math.min(0.35, targetRotationXRef.current + deltaY * 0.006));
     };
 
     const onTouchEnd = (e: TouchEvent) => {
@@ -648,14 +510,14 @@ export default function HumanAnatomy3D({
     const resizeObserver = new ResizeObserver(() => {
       if (!container || !rendererRef.current || !cameraRef.current) return;
       const width = container.clientWidth;
-      const height = container.clientHeight || 560;
+      const height = container.clientHeight || 640;
       cameraRef.current.aspect = width / height;
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(width, height);
     });
     resizeObserver.observe(container);
 
-    // 8. Main Animation Render Loop
+    // 9. Main Animation Loop
     const animate = () => {
       animationFrameIdRef.current = requestAnimationFrame(animate);
 
@@ -664,7 +526,7 @@ export default function HumanAnatomy3D({
         bodyGroupRef.current.rotation.y += (targetRotationYRef.current - bodyGroupRef.current.rotation.y) * 0.12;
         bodyGroupRef.current.rotation.x += (targetRotationXRef.current - bodyGroupRef.current.rotation.x) * 0.12;
 
-        // Inertial damping when user releases drag
+        // Inertial damping when drag released
         if (!isDraggingRef.current && Math.abs(rotationVelocityYRef.current) > 0.0001) {
           targetRotationYRef.current += rotationVelocityYRef.current;
           rotationVelocityYRef.current *= 0.91;
@@ -694,6 +556,7 @@ export default function HumanAnatomy3D({
       domElement.removeEventListener('touchmove', onTouchMove);
       domElement.removeEventListener('touchend', onTouchEnd);
       renderer.dispose();
+      dracoLoader.dispose();
       if (container.contains(domElement)) {
         container.removeChild(domElement);
       }
@@ -701,39 +564,57 @@ export default function HumanAnatomy3D({
   }, [onSelectMuscle, updateMuscleMaterials]);
 
   // Button Handlers
-  const handleViewToggle = (mode: 'front' | 'back') => {
+  const handleViewToggle = (mode: 'front' | 'back' | 'side') => {
     setInternalView(mode);
-    targetRotationYRef.current = mode === 'front' ? 0 : Math.PI;
+    if (mode === 'front') {
+      targetRotationYRef.current = 0;
+    } else if (mode === 'back') {
+      targetRotationYRef.current = Math.PI;
+    } else if (mode === 'side') {
+      targetRotationYRef.current = Math.PI * 0.5;
+    }
     targetRotationXRef.current = 0;
     if (onViewModeChange) onViewModeChange(mode);
   };
 
   const handleZoomIn = () => {
-    targetCameraZRef.current = Math.max(3.8, targetCameraZRef.current - 0.6);
+    targetCameraZRef.current = Math.max(1.8, targetCameraZRef.current - 0.4);
   };
 
   const handleZoomOut = () => {
-    targetCameraZRef.current = Math.min(7.5, targetCameraZRef.current + 0.6);
+    targetCameraZRef.current = Math.min(4.5, targetCameraZRef.current + 0.4);
   };
 
   const handleReset = () => {
     targetRotationYRef.current = 0;
     targetRotationXRef.current = 0;
-    targetCameraZRef.current = 5.5;
+    targetCameraZRef.current = 2.7;
     setInternalView('front');
     if (onViewModeChange) onViewModeChange('front');
   };
 
+  const activeMuscleInfo = MUSCLE_GROUPS.find((m) => m.id === selectedMuscleId);
+  const hoveredMuscleInfo = hoveredMuscle ? MUSCLE_GROUPS.find((m) => m.id === hoveredMuscle) : null;
+
   return (
     <div className={`relative w-full h-[540px] sm:h-[620px] lg:h-[680px] flex items-center justify-center select-none overflow-hidden ${className}`}>
-      {/* Front / Back Toggle Pill (Top Right, matching reference image) */}
+      
+      {/* Top Left Anatomy Status Pill */}
+      <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-white/90 dark:bg-[#272E29]/90 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-[#e2e8df] dark:border-[#394139] shadow-xs">
+        <span className="w-2 h-2 rounded-full bg-[#5ba83c] animate-pulse" />
+        <span className="text-[11px] font-bold text-[#192418] dark:text-[#E8EDE7]">
+          3D Human Anatomy
+        </span>
+      </div>
+
+      {/* Front / Back / Side View Switcher (Top Right, matching reference image) */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-1 bg-white/90 dark:bg-[#272E29]/90 backdrop-blur-md p-1 rounded-2xl border border-[#e2e8df] dark:border-[#394139] shadow-xs">
         <button
           type="button"
           onClick={() => handleViewToggle('front')}
-          className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
             internalView === 'front'
-              ? 'bg-[#2b3a2a] text-white shadow-xs'
+              ? 'bg-[#2b3a2a] dark:bg-[#8BAF78] text-white dark:text-[#192418] shadow-xs'
               : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
           }`}
         >
@@ -742,17 +623,28 @@ export default function HumanAnatomy3D({
         <button
           type="button"
           onClick={() => handleViewToggle('back')}
-          className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
             internalView === 'back'
-              ? 'bg-[#2b3a2a] text-white shadow-xs'
+              ? 'bg-[#2b3a2a] dark:bg-[#8BAF78] text-white dark:text-[#192418] shadow-xs'
               : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
           }`}
         >
           Back
         </button>
+        <button
+          type="button"
+          onClick={() => handleViewToggle('side')}
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            internalView === 'side'
+              ? 'bg-[#2b3a2a] dark:bg-[#8BAF78] text-white dark:text-[#192418] shadow-xs'
+              : 'text-[#5e6f5e] dark:text-[#A2AAA1] hover:text-[#192418] dark:hover:text-[#E8EDE7]'
+          }`}
+        >
+          Side
+        </button>
       </div>
 
-      {/* Zoom In, Zoom Out, Reset Controls (Stacked Right below Front/Back, matching reference) */}
+      {/* Zoom In, Zoom Out, Reset Controls (Stacked below View Switcher) */}
       <div className="absolute top-18 right-4 z-20 flex flex-col gap-1.5 bg-white/90 dark:bg-[#272E29]/90 backdrop-blur-md p-1.5 rounded-2xl border border-[#e2e8df] dark:border-[#394139] shadow-xs">
         <button
           type="button"
@@ -783,7 +675,71 @@ export default function HumanAnatomy3D({
         </button>
       </div>
 
-      {/* Real Three.js Canvas Container */}
+      {/* Hovered / Active Muscle Floating Badge */}
+      {(hoveredMuscleInfo || activeMuscleInfo) && (
+        <div className="absolute top-18 left-4 z-20 pointer-events-none transition-all duration-200">
+          <div className="bg-white/95 dark:bg-[#272E29]/95 backdrop-blur-md border border-[#e2e8df] dark:border-[#394139] px-3 py-1.5 rounded-2xl shadow-xs">
+            <span className="text-[10px] font-bold text-[#5ba83c] dark:text-[#8BAF78] uppercase tracking-wider block">
+              {hoveredMuscleInfo ? 'Hovering' : 'Selected'}
+            </span>
+            <span className="text-xs font-black text-[#192418] dark:text-[#E8EDE7]">
+              {(hoveredMuscleInfo || activeMuscleInfo)?.name}
+            </span>
+            <span className="text-[10px] text-[#7a8c79] dark:text-[#A2AAA1] block italic">
+              {(hoveredMuscleInfo || activeMuscleInfo)?.scientificName}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Asynchronous Loading Overlay */}
+      {isLoading && isWebGlSupported && (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-white/80 dark:bg-[#1C211D]/85 backdrop-blur-sm space-y-4 p-6 transition-all duration-300">
+          <div className="relative w-14 h-14">
+            <div className="w-14 h-14 rounded-full border-3 border-[#e2e8df] dark:border-[#394139] border-t-[#5ba83c] animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center text-[#5ba83c]">
+              <Sparkles className="w-5 h-5 animate-pulse" />
+            </div>
+          </div>
+          <div className="text-center space-y-1">
+            <h4 className="text-xs font-black text-[#192418] dark:text-[#E8EDE7] uppercase tracking-wider">
+              Loading 3D Anatomy Model
+            </h4>
+            <p className="text-[11px] text-[#7a8c79] dark:text-[#A2AAA1]">
+              Connecting muscular system... {loadingProgress}%
+            </p>
+          </div>
+          <div className="w-48 h-1.5 bg-[#e8ede6] dark:bg-[#323d33] rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-[#5ba83c] transition-all duration-200 rounded-full"
+              style={{ width: `${Math.max(loadingProgress, 12)}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Error Fallback */}
+      {loadError && (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center p-6 bg-white/95 dark:bg-[#272E29]/95 text-center space-y-3">
+          <AlertCircle className="w-10 h-10 text-[#d9534f]" />
+          <h4 className="text-sm font-bold text-[#192418] dark:text-[#E8EDE7]">
+            Unable to load 3D Model
+          </h4>
+          <p className="text-xs text-[#7a8c79] dark:text-[#A2AAA1] max-w-xs">
+            {loadError} You can still select any muscle group from the sidebar to inspect exercises.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5ba83c] text-white text-xs font-bold shadow-xs hover:bg-[#4d9630]"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Retry</span>
+          </button>
+        </div>
+      )}
+
+      {/* WebGL Canvas Mount Container */}
       {isWebGlSupported ? (
         <div 
           ref={mountRef} 
@@ -806,7 +762,6 @@ export default function HumanAnatomy3D({
       {/* "Drag to rotate" Interactive Curved Indicator (Bottom Center, matching reference image) */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 pointer-events-none">
         <svg className="w-48 sm:w-60 h-8 text-[#98a497] dark:text-[#7a8878]" viewBox="0 0 240 32" fill="none">
-          {/* Curved rotation arc */}
           <path 
             d="M 15,16 Q 120,30 225,16" 
             stroke="currentColor" 
@@ -814,9 +769,7 @@ export default function HumanAnatomy3D({
             strokeDasharray="4 3" 
             strokeLinecap="round" 
           />
-          {/* Left arrow head */}
           <path d="M 24,12 L 15,16 L 24,20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          {/* Right arrow head */}
           <path d="M 216,12 L 225,16 L 216,20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span className="absolute left-1/2 -translate-x-1/2 -top-1 text-[11px] font-semibold text-[#6d7e6c] dark:text-[#A2AAA1] bg-white/70 dark:bg-[#1C211D]/80 px-2 py-0.5 rounded-full backdrop-blur-xs">
