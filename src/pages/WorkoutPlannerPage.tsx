@@ -21,6 +21,7 @@ import MuscleGroupIcon from '../components/MuscleGroupIcon';
 import AnatomyExerciseCard from '../components/AnatomyExerciseCard';
 import AddToWorkoutPlanModal from '../components/AddToWorkoutPlanModal';
 import ExerciseDetailModal from '../components/ExerciseDetailModal';
+import ExerciseDemonstration from '../components/common/ExerciseDemonstration';
 
 export default function WorkoutPlannerPage() {
   const { showToast } = useToast();
@@ -557,18 +558,29 @@ export default function WorkoutPlannerPage() {
                       className="p-4 rounded-2xl bg-[#f9fbf8] dark:bg-[#1F2620] border border-[#e8ede6] dark:border-[#394139] space-y-3"
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <h4 className="text-sm font-bold text-[#192418] dark:text-[#E8EDE7]">
-                            {ex.name}
-                          </h4>
-                          <span className="text-[11px] text-[#5e6f5e] dark:text-[#A2AAA1] font-medium">
-                            {ex.targetMuscle} • {ex.sets} Sets × {ex.reps} {ex.weightKg ? `• ${ex.weightKg}kg` : ''} • Rest: {ex.restSeconds}s
-                          </span>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] dark:border-[#394139] shadow-2xs bg-white dark:bg-[#272E29]">
+                            <ExerciseDemonstration
+                              exerciseId={ex.exerciseId}
+                              exerciseName={ex.name}
+                              mode="card"
+                              className="w-full h-full"
+                              hideBadge
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-sm font-bold text-[#192418] dark:text-[#E8EDE7] truncate">
+                              {ex.name}
+                            </h4>
+                            <span className="text-[11px] text-[#5e6f5e] dark:text-[#A2AAA1] font-medium block truncate">
+                              {ex.targetMuscle} • {ex.sets} Sets × {ex.reps} {ex.weightKg ? `• ${ex.weightKg}kg` : ''} • Rest: {ex.restSeconds}s
+                            </span>
+                          </div>
                         </div>
                         <button
                           type="button"
                           onClick={() => handleDeleteExercise(ex.id)}
-                          className="p-1.5 text-[#8e9f8e] hover:text-rose-600 transition-colors"
+                          className="p-1.5 text-[#8e9f8e] hover:text-rose-600 transition-colors shrink-0"
                           title="Remove from routine"
                         >
                           <Trash2 className="w-4 h-4" />
