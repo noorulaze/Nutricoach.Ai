@@ -4,6 +4,7 @@ import { AnatomyExercise } from '../data/workoutAnatomyData';
 import { getWorkoutPlan, saveWorkoutPlan } from '../utils/storage';
 import { useToast } from '../context/ToastContext';
 import { WorkoutExercise } from '../types';
+import ExerciseDemonstration from './common/ExerciseDemonstration';
 
 interface AddToWorkoutPlanModalProps {
   isOpen: boolean;
@@ -82,8 +83,14 @@ export default function AddToWorkoutPlanModal({
         {/* Header */}
         <div className="flex items-start justify-between gap-3 border-b border-[#e8ede6] dark:border-[#394139] pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#eef7eb] dark:bg-[#1f2920] text-[#5ba83c] dark:text-[#8BAF78] flex items-center justify-center font-bold">
-              <Dumbbell className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 border border-[#e8ede6] dark:border-[#394139] shadow-xs bg-[#f4f7f3] dark:bg-[#1C211D]">
+              <ExerciseDemonstration
+                exerciseId={exercise.id}
+                exerciseName={exercise.name}
+                mode="card"
+                className="w-full h-full"
+                hideBadge
+              />
             </div>
             <div>
               <h3 className="text-lg font-black text-[#192418] dark:text-[#E8EDE7] tracking-tight">

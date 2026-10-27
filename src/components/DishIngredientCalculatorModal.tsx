@@ -20,13 +20,8 @@ import {
 import { saveUserCustomRecipe, addFoodEntry, isFoodFavorite, toggleFavoriteFood } from '../utils/storage';
 import { MealType, FoodItem } from '../types';
 import { useToast } from '../context/ToastContext';
-
-// Meal images for rich visual headers
-import breakfastImg from '../assets/food/breakfast.jpg';
-import lunchImg from '../assets/food/lunch.jpg';
-import dinnerImg from '../assets/food/dinner.jpg';
-import snackImg from '../assets/food/snack.jpg';
-import grainBowlImg from '../assets/food/grain-bowl.jpg';
+import { getFoodImageUrl } from '../utils/foodImageDatabase';
+import FoodImage from './common/FoodImage';
 
 interface DishIngredientCalculatorModalProps {
   food: ComprehensiveFood | null;
@@ -121,11 +116,7 @@ export default function DishIngredientCalculatorModal({
 
   // Dish Banner Image resolution
   const heroImage = useMemo(() => {
-    if (food.category === 'breakfast') return breakfastImg;
-    if (food.category === 'snacks_streetfood') return snackImg;
-    if (food.category === 'curries_gravies' || food.cuisine === 'kerala') return lunchImg;
-    if (food.category === 'meat_poultry' || food.category === 'seafood') return dinnerImg;
-    return grainBowlImg;
+    return food.imageUrl || getFoodImageUrl(food);
   }, [food]);
 
   // --- INGREDIENT HANDLERS ---
@@ -317,6 +308,7 @@ export default function DishIngredientCalculatorModal({
       category: food.category,
       budgetFriendly: food.budgetFriendly,
       cuisine: food.cuisine,
+      imageUrl: food.imageUrl || heroImage,
       verificationStatus: liveResult.accuracyMetadata.isEstimate ? 'estimated' : 'verified'
     };
 
@@ -353,12 +345,14 @@ export default function DishIngredientCalculatorModal({
         {/* MODAL HEADER WITH DISH BANNER & ACCURACY BADGE            */}
         {/* ========================================================= */}
         <div className="relative h-40 sm:h-44 w-full shrink-0 overflow-hidden bg-[#192418]">
-          <img 
-            src={heroImage} 
-            alt={food.name} 
-            className="w-full h-full object-cover opacity-50 mix-blend-overlay"
+          <FoodImage 
+            name={food.name}
+            category={food.category}
+            imageUrl={food.imageUrl || heroImage} 
+            className="w-full h-full object-cover"
+            alt={food.name}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#192418] via-[#192418]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#192418] via-[#192418]/65 to-black/30" />
 
           {/* Mobile Back Button */}
           <button

@@ -7,6 +7,7 @@ import { EXERCISE_LIBRARY } from '../data/nutritionAndExerciseData';
 import { ExerciseDefinition } from '../types';
 import { getWorkoutPlan, saveWorkoutPlan } from '../utils/storage';
 import { useToast } from '../context/ToastContext';
+import ExerciseDemonstration from '../components/common/ExerciseDemonstration';
 
 export default function ExerciseLibraryPage() {
   const { showToast } = useToast();
@@ -146,13 +147,23 @@ export default function ExerciseLibraryPage() {
             className="bg-white border border-[#e8ede6] rounded-3xl p-5 cursor-pointer transition-all duration-300 hover:border-[#5ba83c] hover:shadow-md flex flex-col justify-between group shadow-xs"
           >
             <div>
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex justify-between items-start mb-2.5">
                 <span className="text-[10px] font-bold uppercase text-[#3b7e23] bg-[#eef7eb] px-2 py-0.5 rounded-full border border-[#d6ebd0]">
                   {exercise.category}
                 </span>
                 <span className="text-[10px] text-[#7a8c79] font-bold uppercase bg-[#f6f8f5] px-2 py-0.5 rounded-md border border-[#e8ede6]">
                   {exercise.difficulty}
                 </span>
+              </div>
+
+              {/* Real Motion Demonstration Guide */}
+              <div className="mb-3">
+                <ExerciseDemonstration
+                  exerciseId={exercise.id}
+                  exerciseName={exercise.name}
+                  mode="card"
+                  className="h-44 w-full"
+                />
               </div>
 
               <h3 className="text-base font-extrabold text-[#192418] group-hover:text-[#5ba83c] transition-colors mb-2">
@@ -210,6 +221,13 @@ export default function ExerciseLibraryPage() {
                 {activeExerciseModal.name}
               </h3>
             </div>
+
+            {/* Expanded Dual-Frame Movement Guide */}
+            <ExerciseDemonstration
+              exerciseId={activeExerciseModal.id}
+              exerciseName={activeExerciseModal.name}
+              mode="expanded"
+            />
 
             {/* Target muscle details */}
             <div className="grid grid-cols-2 gap-3 bg-[#f6f8f5] p-3.5 rounded-2xl border border-[#e8ede6] text-xs">

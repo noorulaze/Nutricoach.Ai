@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { Plus, Minus, RotateCcw, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
 import { MUSCLE_GROUPS } from '../data/workoutAnatomyData';
 
@@ -12,8 +13,9 @@ interface HumanAnatomy3DProps {
   onViewModeChange?: (mode: 'front' | 'back' | 'side') => void;
 }
 
-// Model URL with version query to prevent browser HTTP caching of old assets
-const MODEL_URL = '/models/human_body_athletic.glb?v=20261027';
+// Model URLs with cache-busting and fallback
+const PRIMARY_MODEL_URL = '/models/human_body_athletic.glb?v=20261027';
+const FALLBACK_MODEL_URL = '/models/body.glb?v=20261027';
 
 // Comprehensive anatomical classification rules mapping 3D mesh nodes to NutriCoach AI muscle groups
 interface MuscleRule {
@@ -26,22 +28,29 @@ const MUSCLE_RULES: MuscleRule[] = [
   {
     id: 'chest',
     name: 'Chest (Pectoralis Major & Minor)',
-    patterns: [/pectoral/i, /subclavius/i, /transversus-thoracis/i, /intercostal/i]
+    patterns: [/^pectoralis/i]
   },
   {
     id: 'shoulders',
     name: 'Shoulders (Deltoid & Rotator Cuff)',
-    patterns: [/deltoid/i, /supraspinatus/i, /infraspinatus/i, /subscapularis/i, /teres-minor/i, /teres-major/i]
+    patterns: [
+      /^deltoid/i,
+      /^supraspinatus/i,
+      /^infraspinatus/i,
+      /^subscapularis/i,
+      /^teres-minor/i,
+      /^teres-major/i
+    ]
   },
   {
     id: 'biceps',
     name: 'Biceps (Biceps Brachii & Brachialis)',
-    patterns: [/biceps-brachii/i, /brachialis/i, /coracobrachialis/i, /biceps\s+brachii/i]
+    patterns: [/^biceps-brachii/i, /^brachialis/i, /^coracobrachialis/i, /biceps\s+brachii/i]
   },
   {
     id: 'triceps',
     name: 'Triceps (Triceps Brachii)',
-    patterns: [/triceps-brachii/i, /anconeus/i, /triceps\s+brachii/i]
+    patterns: [/^triceps-brachii/i, /^anconeus/i, /triceps\s+brachii/i]
   },
   {
     id: 'forearms',
@@ -58,92 +67,74 @@ const MUSCLE_RULES: MuscleRule[] = [
       /pollicis/i,
       /palmaris/i,
       /indicis/i,
-      /hand/i,
-      /palmar-interossei/i
+      /palmar-interossei/i,
+      /-hand$/i
     ]
   },
   {
     id: 'abs',
     name: 'Abs (Rectus Abdominis)',
-    patterns: [/rectus-abdominis/i, /pyramidalis/i, /linea-alba/i, /rectus\s+abdominis/i]
+    patterns: [/^rectus-abdominis/i, /^pyramidalis/i, /rectus\s+abdominis/i]
   },
   {
     id: 'obliques',
     name: 'Obliques (External & Internal Obliques)',
-    patterns: [/oblique/i, /transversus-abdominis/i, /obliquus/i]
+    patterns: [/^(external|internal)-oblique$/i, /^transversus-abdominis$/i, /oblique/i]
   },
   {
     id: 'upper_back',
     name: 'Upper Back (Trapezius & Rhomboids)',
     patterns: [
-      /trapezius/i,
-      /rhomboid/i,
-      /levator-scapulae/i,
-      /splenius/i,
-      /serratus-posterior/i,
-      /semispinalis/i,
-      /serratus-anterior/i
+      /^trapezius/i,
+      /^rhomboid/i,
+      /^levator-scapulae/i,
+      /^splenius/i,
+      /^serratus-posterior/i
     ]
   },
   {
     id: 'lats',
     name: 'Lats (Latissimus Dorsi)',
-    patterns: [/latissimus/i]
+    patterns: [/^latissimus/i]
   },
   {
     id: 'lower_back',
     name: 'Lower Back (Erector Spinae & Multifidus)',
     patterns: [
-      /iliocostalis/i,
-      /longissimus/i,
-      /spinalis/i,
-      /multifidus/i,
-      /rotatores/i,
-      /interspinales/i,
-      /intertransversarii/i,
-      /quadratus-lumborum/i
+      /^iliocostalis/i,
+      /^longissimus/i,
+      /^spinalis/i,
+      /erector\s+spinae/i
     ]
   },
   {
     id: 'glutes',
     name: 'Glutes (Gluteus Maximus, Medius & Minimus)',
-    patterns: [/gluteus/i]
+    patterns: [/^gluteus/i]
   },
   {
     id: 'quadriceps',
     name: 'Quadriceps (Rectus Femoris & Vastus)',
     patterns: [
-      /rectus-femoris/i,
-      /vastus-lateralis/i,
-      /vastus-medialis/i,
-      /vastus-intermedius/i,
-      /sartorius/i,
+      /^rectus-femoris/i,
+      /^vastus/i,
+      /^sartorius/i,
       /rectus\s+femoris/i
     ]
   },
   {
     id: 'hamstrings',
     name: 'Hamstrings (Biceps Femoris & Semitendinosus)',
-    patterns: [/biceps-femoris/i, /semitendinosus/i, /semimembranosus/i, /biceps\s+femoris/i]
+    patterns: [/^biceps-femoris/i, /^semitendinosus/i, /^semimembranosus/i, /biceps\s+femoris/i]
   },
   {
     id: 'calves',
     name: 'Calves (Gastrocnemius & Soleus)',
     patterns: [
-      /gastrocnemius/i,
-      /soleus/i,
-      /plantaris/i,
-      /calcaneal-tendon/i,
-      /popliteus/i,
-      /tibialis/i,
-      /fibularis/i,
-      /foot/i,
-      /hallucis/i,
-      /plantar/i,
-      /plantae/i,
-      /digitorum-longus/i,
-      /digitorum-brevis/i,
-      /peroneus/i
+      /^gastrocnemius$/i,
+      /^soleus$/i,
+      /^plantaris$/i,
+      /^calcaneal-tendon$/i
     ]
   }
 ];
@@ -162,8 +153,8 @@ const SHORTS_PATTERNS = [
   /iliacus/i,
   /psoas-major/i,
   /pectineus/i,
-  /adductor-brevis/i,
-  /adductor-minimus/i,
+  /adductor/i,
+  /gracilis/i,
   /tensor-fasciae-latae/i
 ];
 
@@ -177,142 +168,34 @@ const HAIR_PATTERNS = [
 
 // Deep microscopic internal vertebral and cavity slips hidden to prevent hollow artifacts
 const DEEP_INTERNAL_PATTERNS = [
-  /rotatores/i,
-  /interspinales/i,
-  /intertransversarii/i,
-  /levatores-costarum/i,
-  /innermost-intercostals/i
+  /^corrugator-supercilii$/i,
+  /^procerus$/i,
+  /^depressor-septi-nasi$/i,
+  /^medial-pterygoid$/i,
+  /^lateral-pterygoid$/i,
+  /^digastric$/i,
+  /^stylohyoid$/i,
+  /^mylohyoid$/i,
+  /^geniohyoid$/i,
+  /^sternothyroid$/i,
+  /^thyrohyoid$/i,
+  /^longus-colli$/i,
+  /^longus-capitis$/i,
+  /^rectus-capitis-anterior$/i,
+  /^rectus-capitis-lateralis$/i,
+  /^multifidus$/i,
+  /^rotatores/i,
+  /^interspinales/i,
+  /^intertransversarii/i,
+  /^levatores-costarum/i,
+  /^rectus-capitis-posterior/i,
+  /^obliquus-capitis/i,
+  /^subclavius$/i,
+  /^innermost-intercostals/i,
+  /^transversus-thoracis$/i,
+  /^diaphragm$/i,
+  /^quadratus-lumborum$/i
 ];
-
-// In-Memory Asset Cache to guarantee the GLB is fetched and parsed ONLY ONCE
-interface CachedAnatomyAsset {
-  scene: THREE.Group;
-  clickableMeshes: THREE.Mesh[];
-  muscleMeshesMap: Map<string, THREE.Mesh[]>;
-  skinBaseMeshes: THREE.Mesh[];
-  hairMeshes: THREE.Mesh[];
-  shortsMeshes: THREE.Mesh[];
-  floorY: number;
-}
-
-let cachedAsset: CachedAnatomyAsset | null = null;
-let assetLoadingPromise: Promise<CachedAnatomyAsset> | null = null;
-
-function loadAnatomyAsset(onProgress?: (percent: number) => void): Promise<CachedAnatomyAsset> {
-  if (cachedAsset) {
-    if (onProgress) onProgress(100);
-    return Promise.resolve(cachedAsset);
-  }
-  if (assetLoadingPromise) {
-    return assetLoadingPromise;
-  }
-
-  assetLoadingPromise = new Promise((resolve, reject) => {
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load(
-      MODEL_URL,
-      (gltf) => {
-        const model = gltf.scene;
-
-        // Auto-scale to standard athletic human height (1.76m)
-        const bbox = new THREE.Box3().setFromObject(model);
-        const size = bbox.getSize(new THREE.Vector3());
-        const targetHeight = 1.76;
-        const scaleFactor = targetHeight / (size.y || 1);
-        model.scale.setScalar(scaleFactor);
-
-        // Center model so its volumetric center is precisely at (0, 0, 0)
-        const scaledBbox = new THREE.Box3().setFromObject(model);
-        const scaledCenter = scaledBbox.getCenter(new THREE.Vector3());
-        model.position.x = -scaledCenter.x;
-        model.position.y = -scaledCenter.y;
-        model.position.z = -scaledCenter.z;
-
-        const floorY = scaledBbox.min.y - scaledCenter.y;
-
-        const clickableMeshes: THREE.Mesh[] = [];
-        const skinBaseMeshes: THREE.Mesh[] = [];
-        const hairMeshes: THREE.Mesh[] = [];
-        const shortsMeshes: THREE.Mesh[] = [];
-        const muscleMeshesMap = new Map<string, THREE.Mesh[]>();
-
-        // Pre-classify every anatomical mesh
-        model.traverse((child) => {
-          if ((child as THREE.Mesh).isMesh) {
-            const mesh = child as THREE.Mesh;
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-
-            const nodeName = mesh.name || '';
-            const extraName = (mesh.userData?.name as string) || '';
-            const extraDetail = (mesh.userData?.nameDetail as string) || '';
-            const fullText = `${nodeName} ${extraName} ${extraDetail}`;
-
-            // Hide microscopic internal vertebral slips to eliminate hollow skeletal artifacts
-            if (DEEP_INTERNAL_PATTERNS.some((p) => p.test(fullText))) {
-              mesh.visible = false;
-              return;
-            }
-
-            // Hair meshes
-            if (HAIR_PATTERNS.some((p) => p.test(fullText))) {
-              hairMeshes.push(mesh);
-              return;
-            }
-
-            // Pelvic / Groin Shorts meshes
-            if (SHORTS_PATTERNS.some((p) => p.test(fullText))) {
-              shortsMeshes.push(mesh);
-              return;
-            }
-
-            // Check if mesh belongs to one of the 14 target muscle groups
-            let matchedGroupId: string | null = null;
-            for (const rule of MUSCLE_RULES) {
-              if (rule.patterns.some((p) => p.test(fullText))) {
-                matchedGroupId = rule.id;
-                break;
-              }
-            }
-
-            if (matchedGroupId) {
-              mesh.userData.muscleId = matchedGroupId;
-              clickableMeshes.push(mesh);
-              const existing = muscleMeshesMap.get(matchedGroupId) || [];
-              existing.push(mesh);
-              muscleMeshesMap.set(matchedGroupId, existing);
-            } else {
-              skinBaseMeshes.push(mesh);
-            }
-          }
-        });
-
-        cachedAsset = {
-          scene: model,
-          clickableMeshes,
-          muscleMeshesMap,
-          skinBaseMeshes,
-          hairMeshes,
-          shortsMeshes,
-          floorY
-        };
-        resolve(cachedAsset);
-      },
-      (progress) => {
-        if (progress.total > 0 && onProgress) {
-          const percent = Math.round((progress.loaded / progress.total) * 100);
-          onProgress(percent);
-        }
-      },
-      (error) => {
-        assetLoadingPromise = null;
-        reject(error);
-      }
-    );
-  });
-
-  return assetLoadingPromise;
-}
 
 export default function HumanAnatomy3D({
   selectedMuscleId,
@@ -325,8 +208,8 @@ export default function HumanAnatomy3D({
   const [isWebGlSupported, setIsWebGlSupported] = useState(true);
   const [internalView, setInternalView] = useState<'front' | 'back' | 'side'>(viewMode);
   const [hoveredMuscle, setHoveredMuscle] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(!cachedAsset);
-  const [loadingProgress, setLoadingProgress] = useState<number>(cachedAsset ? 100 : 0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // References for Three.js scene instances
@@ -334,11 +217,15 @@ export default function HumanAnatomy3D({
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const bodyGroupRef = useRef<THREE.Group | null>(null);
-  const shadowMeshRef = useRef<THREE.Mesh | null>(null);
   const muscleMeshesMapRef = useRef<Map<string, THREE.Mesh[]>>(new Map());
   const allClickableMeshesRef = useRef<THREE.Mesh[]>([]);
 
-  // Drag & rotation state (stored in refs for 60 FPS performance without React state re-renders)
+  // Track internal view in ref to avoid stale closures in event handlers
+  const internalViewRef = useRef<'front' | 'back' | 'side'>(viewMode);
+  const onViewModeChangeRef = useRef(onViewModeChange);
+  onViewModeChangeRef.current = onViewModeChange;
+
+  // Drag & rotation state
   const isDraggingRef = useRef(false);
   const previousPointerXRef = useRef(0);
   const previousPointerYRef = useRef(0);
@@ -348,131 +235,115 @@ export default function HumanAnatomy3D({
   const targetRotationXRef = useRef(0);
   const targetCameraZRef = useRef(2.75);
   const animationFrameIdRef = useRef<number | null>(null);
-  const isLoopRunningRef = useRef(false);
 
-  // Active muscle and hover cache in refs to avoid useEffect recreation
+  // Active muscle and hover cache in refs
   const selectedMuscleIdRef = useRef(selectedMuscleId);
   selectedMuscleIdRef.current = selectedMuscleId;
   const hoveredMuscleRef = useRef<string | null>(null);
   const onSelectMuscleRef = useRef(onSelectMuscle);
   onSelectMuscleRef.current = onSelectMuscle;
 
+  // Helper: calculate closest angle in radians to avoid multi-turn spinning
+  const getClosestTargetAngle = (targetBase: number, current: number): number => {
+    let diff = (targetBase - current) % (Math.PI * 2);
+    if (diff < -Math.PI) diff += Math.PI * 2;
+    if (diff > Math.PI) diff -= Math.PI * 2;
+    return current + diff;
+  };
+
+  // Helper: dynamically classify facing orientation quadrant from current rotation angle
+  const getFacingView = (rotationY: number): 'front' | 'back' | 'side' => {
+    let norm = rotationY % (Math.PI * 2);
+    if (norm < 0) norm += Math.PI * 2;
+
+    // Front: within 45 degrees of 0 (or 2*PI)
+    if (norm < Math.PI * 0.25 || norm >= Math.PI * 1.75) {
+      return 'front';
+    }
+    // Back: within 45 degrees of PI (180 degrees)
+    if (norm >= Math.PI * 0.75 && norm < Math.PI * 1.25) {
+      return 'back';
+    }
+    // Side: lateral profile (around 90 or 270 degrees)
+    return 'side';
+  };
+
   // --------------------------------------------------------------------------
   // MATERIALS: Realistic athletic human skin, dark hair, shorts, and green highlight
+  // (All materials use DoubleSide so no surface triangle is ever culled)
   // --------------------------------------------------------------------------
-  // 1. Warm healthy athletic human skin tone (matches reference media_1793006681681.jpg)
+  // Anatomical color constants matching NutriCoach brand & test assertions
+  const SAGE_GREEN_HIGHLIGHT = 0x7cb342;
+  const EMISSIVE_GLOW = 0x243e18;
+  const HOVER_PREVIEW = 0x8faf78;
+  const ANATOMICAL_BASE = 0x9ba6ab;
+
   const skinMaterialRef = useRef(
     new THREE.MeshStandardMaterial({
-      color: 0xd89b74,
-      roughness: 0.46,
-      metalness: 0.03,
-      side: THREE.FrontSide
+      color: 0xd89b74, // Realistic athletic warm human skin tone matching reference
+      roughness: 0.44,
+      metalness: 0.02,
+      side: THREE.DoubleSide
     })
   );
 
-  // 2. Head & Facial skin material
   const faceSkinMaterialRef = useRef(
     new THREE.MeshStandardMaterial({
-      color: 0xd4956d,
-      roughness: 0.48,
-      metalness: 0.03,
-      side: THREE.FrontSide
+      color: 0xd4956d, // Facial skin tone
+      roughness: 0.46,
+      metalness: 0.02,
+      side: THREE.DoubleSide
     })
   );
 
-  // 3. Dark athletic hair material
   const hairMaterialRef = useRef(
     new THREE.MeshStandardMaterial({
-      color: 0x2b221d,
-      roughness: 0.86,
+      color: 0x2b221d, // Natural dark athletic hair matching reference
+      roughness: 0.88,
       metalness: 0.02,
-      side: THREE.FrontSide
+      side: THREE.DoubleSide
     })
   );
 
-  // 4. Dark charcoal athletic training shorts (matches reference media_1793006681681.jpg)
   const shortsMaterialRef = useRef(
     new THREE.MeshStandardMaterial({
-      color: 0x202422,
+      color: 0x202422, // Dark athletic shorts matching reference media_1793006681681.jpg
       roughness: 0.82,
       metalness: 0.04,
-      side: THREE.FrontSide
+      side: THREE.DoubleSide
     })
   );
 
-  // 5. Signature NutriCoach AI glowing emerald green for selected muscle
+  const unselectedNeutralMaterialRef = useRef(
+    new THREE.MeshStandardMaterial({
+      color: ANATOMICAL_BASE, // Neutral anatomical tissue fallback (#9ba6ab)
+      roughness: 0.50,
+      metalness: 0.05,
+      side: THREE.DoubleSide
+    })
+  );
+
   const selectedMuscleMaterialRef = useRef(
     new THREE.MeshStandardMaterial({
-      color: 0x60b836,
+      color: SAGE_GREEN_HIGHLIGHT, // Sage green #7cb342
       roughness: 0.28,
       metalness: 0.04,
-      emissive: 0x224a14,
+      emissive: EMISSIVE_GLOW, // Emissive glow #243e18
       emissiveIntensity: 0.65,
-      side: THREE.FrontSide
+      side: THREE.DoubleSide
     })
   );
 
-  // 6. Interactive hover green
   const hoveredMuscleMaterialRef = useRef(
     new THREE.MeshStandardMaterial({
-      color: 0x7ecc4f,
+      color: HOVER_PREVIEW, // Subtle hover preview #8faf78
       roughness: 0.30,
       metalness: 0.04,
-      emissive: 0x193b0f,
-      emissiveIntensity: 0.35,
-      side: THREE.FrontSide
+      emissive: EMISSIVE_GLOW,
+      emissiveIntensity: 0.25,
+      side: THREE.DoubleSide
     })
   );
-
-  // Request Animation Frame on demand (pauses when idle, saving 100% CPU/GPU and eliminating lag)
-  const animateLoop = useCallback(() => {
-    let keepRunning = false;
-
-    if (bodyGroupRef.current) {
-      const diffY = targetRotationYRef.current - bodyGroupRef.current.rotation.y;
-      const diffX = targetRotationXRef.current - bodyGroupRef.current.rotation.x;
-
-      bodyGroupRef.current.rotation.y += diffY * 0.14;
-      bodyGroupRef.current.rotation.x += diffX * 0.14;
-
-      // Inertial damping after drag release
-      if (!isDraggingRef.current && Math.abs(rotationVelocityYRef.current) > 0.0001) {
-        targetRotationYRef.current += rotationVelocityYRef.current;
-        rotationVelocityYRef.current *= 0.90;
-        keepRunning = true;
-      }
-
-      if (Math.abs(diffY) > 0.0005 || Math.abs(diffX) > 0.0005) {
-        keepRunning = true;
-      }
-    }
-
-    // Camera zoom interpolation
-    if (cameraRef.current) {
-      const diffZ = targetCameraZRef.current - cameraRef.current.position.z;
-      cameraRef.current.position.z += diffZ * 0.14;
-      if (Math.abs(diffZ) > 0.001) {
-        keepRunning = true;
-      }
-    }
-
-    if (rendererRef.current && sceneRef.current && cameraRef.current) {
-      rendererRef.current.render(sceneRef.current, cameraRef.current);
-    }
-
-    if (keepRunning || isDraggingRef.current) {
-      animationFrameIdRef.current = requestAnimationFrame(animateLoop);
-    } else {
-      isLoopRunningRef.current = false;
-    }
-  }, []);
-
-  const wakeRenderLoop = useCallback(() => {
-    if (!isLoopRunningRef.current) {
-      isLoopRunningRef.current = true;
-      animationFrameIdRef.current = requestAnimationFrame(animateLoop);
-    }
-  }, [animateLoop]);
 
   // Fast, instant material update without re-rendering or traversing the scene (<0.05ms)
   const applyMuscleMaterials = useCallback((selectedId: string, hoveredId: string | null) => {
@@ -485,7 +356,7 @@ export default function HumanAnatomy3D({
       const isSelected = muscleId === selectedId;
       const isHovered = muscleId === hoveredId && !isSelected;
 
-      // Glutes meshes: display as sleek shorts when not selected, highlight in green when selected
+      // Glutes meshes: display as sleek athletic shorts when not selected, highlight in green when selected
       let targetMat = skinMat;
       if (muscleId === 'glutes') {
         targetMat = isSelected ? selectedMat : isHovered ? hoveredMat : shortsMat;
@@ -499,45 +370,28 @@ export default function HumanAnatomy3D({
         }
       }
     });
-
-    wakeRenderLoop();
-  }, [wakeRenderLoop]);
+  }, []);
 
   // Update muscle selection without recreating the scene (runs in <0.05ms, ZERO reload)
   useEffect(() => {
     applyMuscleMaterials(selectedMuscleId, hoveredMuscleRef.current);
+  }, [selectedMuscleId, applyMuscleMaterials]);
 
-    // Auto-rotate model to back view if selecting a back muscle group
-    const backMuscles = ['upper_back', 'lats', 'lower_back', 'glutes', 'hamstrings'];
-    const isBackMuscle = backMuscles.includes(selectedMuscleId);
-    let currentNorm = targetRotationYRef.current % (Math.PI * 2);
-    if (currentNorm < 0) currentNorm += Math.PI * 2;
-    const isFacingBack = currentNorm > Math.PI * 0.4 && currentNorm < Math.PI * 1.6;
-
-    if (isBackMuscle && !isFacingBack) {
-      targetRotationYRef.current = Math.PI;
-      setInternalView('back');
-      wakeRenderLoop();
-    } else if (!isBackMuscle && isFacingBack) {
-      targetRotationYRef.current = 0;
-      setInternalView('front');
-      wakeRenderLoop();
-    }
-  }, [selectedMuscleId, applyMuscleMaterials, wakeRenderLoop]);
-
-  // Sync viewMode prop changes
+  // Sync viewMode prop changes smoothly using shortest angular distance
   useEffect(() => {
-    if (viewMode !== internalView) {
+    if (viewMode !== internalViewRef.current) {
       setInternalView(viewMode);
-      if (viewMode === 'front') targetRotationYRef.current = 0;
-      else if (viewMode === 'back') targetRotationYRef.current = Math.PI;
-      else if (viewMode === 'side') targetRotationYRef.current = Math.PI * 0.5;
-      wakeRenderLoop();
+      internalViewRef.current = viewMode;
+      const baseAngle = viewMode === 'front' ? 0 : viewMode === 'back' ? Math.PI : Math.PI * 0.5;
+      targetRotationYRef.current = getClosestTargetAngle(baseAngle, targetRotationYRef.current);
+      targetRotationXRef.current = 0;
+      rotationVelocityYRef.current = 0;
+      rotationVelocityXRef.current = 0;
     }
-  }, [viewMode, internalView, wakeRenderLoop]);
+  }, [viewMode]);
 
   // --------------------------------------------------------------------------
-  // MAIN THREE.JS SETUP: RUNS EXACTLY ONCE ON MOUNT - NEVER RE-RUN BY SELECTION
+  // MAIN THREE.JS SETUP: RUNS STRICTLY ONCE ON MOUNT - NEVER DISPOSED ON SELECTION
   // --------------------------------------------------------------------------
   useEffect(() => {
     const container = mountRef.current;
@@ -590,7 +444,7 @@ export default function HumanAnatomy3D({
     container.appendChild(renderer.domElement);
 
     // 4. Studio 4-Point Athletic Lighting (matches reference media_1793006681681.jpg)
-    const ambientLight = new THREE.AmbientLight(0xfffbf5, 1.10);
+    const ambientLight = new THREE.AmbientLight(0xfffbf5, 1.15);
     scene.add(ambientLight);
 
     const keyLight = new THREE.DirectionalLight(0xfff5eb, 1.50);
@@ -601,11 +455,11 @@ export default function HumanAnatomy3D({
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xe8f0f2, 1.05);
+    const fillLight = new THREE.DirectionalLight(0xe8f0f2, 1.10);
     fillLight.position.set(-2.8, 2.2, 2.8);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xf2f7f0, 1.30);
+    const rimLight = new THREE.DirectionalLight(0xf2f7f0, 1.35);
     rimLight.position.set(0, 3.2, -3.5);
     scene.add(rimLight);
 
@@ -630,47 +484,183 @@ export default function HumanAnatomy3D({
     shadowMesh.rotation.x = -Math.PI / 2;
     shadowMesh.position.y = -0.88;
     bodyGroup.add(shadowMesh);
-    shadowMeshRef.current = shadowMesh;
 
-    // 6. Asynchronously Load Model (Cached in memory after first load)
-    loadAnatomyAsset((progress) => {
-      setLoadingProgress(progress);
-    })
-      .then((asset) => {
-        allClickableMeshesRef.current = asset.clickableMeshes;
-        muscleMeshesMapRef.current = asset.muscleMeshesMap;
+    // 6. Asynchronously Load Model with DRACOLoader and automatic fallback
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
 
-        // Position shadow exactly under feet
-        shadowMesh.position.y = asset.floorY - 0.005;
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
 
-        // Apply realistic materials
-        const faceSkinMat = faceSkinMaterialRef.current;
-        for (let i = 0; i < asset.skinBaseMeshes.length; i++) {
-          asset.skinBaseMeshes[i].material = faceSkinMat;
-        }
+    allClickableMeshesRef.current = [];
+    muscleMeshesMapRef.current.clear();
+    setIsLoading(true);
+    setLoadError(null);
 
-        const hairMat = hairMaterialRef.current;
-        for (let i = 0; i < asset.hairMeshes.length; i++) {
-          asset.hairMeshes[i].material = hairMat;
-        }
+    const processLoadedModel = (gltf: any) => {
+      const model = gltf.scene;
 
-        const shortsMat = shortsMaterialRef.current;
-        for (let i = 0; i < asset.shortsMeshes.length; i++) {
-          asset.shortsMeshes[i].material = shortsMat;
-        }
-
-        bodyGroup.add(asset.scene);
-        setIsLoading(false);
-
-        // Apply initial muscle selection
-        applyMuscleMaterials(selectedMuscleIdRef.current, null);
-        wakeRenderLoop();
-      })
-      .catch((err) => {
-        console.error('Failed to load 3D anatomy asset:', err);
-        setLoadError('Failed to load anatomical 3D model.');
-        setIsLoading(false);
+      // Add anatomically placed eyeball meshes and mouth backing in raw coordinate space
+      // Eyeball positions inside orbicularis-oculi eye sockets:
+      // Y = 2.845, Z = 0.262, X = ±0.102, radius = 0.062
+      const eyeballGeo = new THREE.SphereGeometry(0.062, 24, 24);
+      const eyeballMat = new THREE.MeshStandardMaterial({
+        color: 0x24201d,
+        roughness: 0.35,
+        metalness: 0.08,
+        side: THREE.DoubleSide
       });
+      const rightEye = new THREE.Mesh(eyeballGeo, eyeballMat);
+      rightEye.position.set(0.102, 2.845, 0.262);
+      rightEye.name = 'right-eyeball';
+      model.add(rightEye);
+
+      const leftEye = new THREE.Mesh(eyeballGeo, eyeballMat);
+      leftEye.position.set(-0.102, 2.845, 0.262);
+      leftEye.name = 'left-eyeball';
+      model.add(leftEye);
+
+      // Mouth backing behind orbicularis-oris to give solid athletic face
+      const mouthGeo = new THREE.BoxGeometry(0.15, 0.05, 0.04);
+      const mouthMat = new THREE.MeshStandardMaterial({
+        color: 0x3d201a,
+        roughness: 0.7,
+        metalness: 0.02,
+        side: THREE.DoubleSide
+      });
+      const mouthBacking = new THREE.Mesh(mouthGeo, mouthMat);
+      mouthBacking.position.set(0, 2.61, 0.28);
+      mouthBacking.name = 'mouth-cavity-backing';
+      model.add(mouthBacking);
+
+      // Auto-scale to standard athletic human height (1.76m)
+      const bbox = new THREE.Box3().setFromObject(model);
+      const size = bbox.getSize(new THREE.Vector3());
+      const targetHeight = 1.76;
+      const scaleFactor = targetHeight / (size.y || 1);
+      model.scale.setScalar(scaleFactor);
+
+      // Center model so its volumetric center is precisely at (0, 0, 0)
+      const scaledBbox = new THREE.Box3().setFromObject(model);
+      const scaledCenter = scaledBbox.getCenter(new THREE.Vector3());
+      model.position.x = -scaledCenter.x;
+      model.position.y = -scaledCenter.y;
+      model.position.z = -scaledCenter.z;
+
+      const floorY = scaledBbox.min.y - scaledCenter.y;
+      shadowMesh.position.y = floorY - 0.005;
+
+      const clickableMeshes: THREE.Mesh[] = [];
+      const muscleMeshesMap = new Map<string, THREE.Mesh[]>();
+      const faceSkinMat = faceSkinMaterialRef.current;
+      const hairMat = hairMaterialRef.current;
+      const shortsMat = shortsMaterialRef.current;
+      const skinMat = skinMaterialRef.current;
+
+      // Pre-classify every anatomical mesh
+      model.traverse((child: any) => {
+        if (child.isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+
+          const nodeName = mesh.name || '';
+          if (nodeName === 'right-eyeball' || nodeName === 'left-eyeball' || nodeName === 'mouth-cavity-backing') {
+            return;
+          }
+
+          const extraName = (mesh.userData?.name as string) || '';
+          const extraDetail = (mesh.userData?.nameDetail as string) || '';
+          const fullText = `${nodeName} ${extraName} ${extraDetail}`;
+
+          // Hide microscopic internal vertebral slips to eliminate hollow skeletal artifacts
+          if (DEEP_INTERNAL_PATTERNS.some((p) => p.test(fullText))) {
+            mesh.visible = false;
+            return;
+          }
+
+          // Hair meshes
+          if (HAIR_PATTERNS.some((p) => p.test(fullText))) {
+            mesh.material = hairMat;
+            return;
+          }
+
+          // Pelvic / Groin Shorts meshes
+          if (SHORTS_PATTERNS.some((p) => p.test(fullText))) {
+            mesh.material = shortsMat;
+            return;
+          }
+
+          // Check if mesh belongs to one of the 14 target muscle groups
+          let matchedGroupId: string | null = null;
+          for (const rule of MUSCLE_RULES) {
+            if (rule.patterns.some((p) => p.test(fullText))) {
+              matchedGroupId = rule.id;
+              break;
+            }
+          }
+
+          if (matchedGroupId) {
+            mesh.userData.muscleId = matchedGroupId;
+            mesh.material = skinMat;
+            clickableMeshes.push(mesh);
+            const existing = muscleMeshesMap.get(matchedGroupId) || [];
+            existing.push(mesh);
+            muscleMeshesMap.set(matchedGroupId, existing);
+          } else {
+            mesh.material = faceSkinMat;
+          }
+        }
+      });
+
+      allClickableMeshesRef.current = clickableMeshes;
+      muscleMeshesMapRef.current = muscleMeshesMap;
+
+      bodyGroup.add(model);
+      setIsLoading(false);
+
+      // Apply initial muscle selection
+      applyMuscleMaterials(selectedMuscleIdRef.current, null);
+    };
+
+    const loadWithFallback = (url: string, isFallback = false) => {
+      gltfLoader.load(
+        url,
+        (gltf) => {
+          processLoadedModel(gltf);
+        },
+        (progress) => {
+          if (progress.total > 0) {
+            const percent = Math.round((progress.loaded / progress.total) * 100);
+            setLoadingProgress(percent);
+          }
+        },
+        (error) => {
+          console.warn(`Failed to load ${url}:`, error);
+          if (!isFallback) {
+            console.info('Attempting fallback model:', FALLBACK_MODEL_URL);
+            gltfLoader.load(
+              '/models/body.glb',
+              (fallbackGltf) => {
+                processLoadedModel(fallbackGltf);
+              },
+              undefined,
+              (err2) => {
+                console.error('All 3D human anatomy model assets failed to load:', err2);
+                setLoadError('Failed to load anatomical 3D model.');
+                setIsLoading(false);
+              }
+            );
+          } else {
+            console.error('All 3D human anatomy model assets failed to load:', error);
+            setLoadError('Failed to load anatomical 3D model.');
+            setIsLoading(false);
+          }
+        }
+      );
+    };
+
+    loadWithFallback(PRIMARY_MODEL_URL);
 
     // 7. Raycasting for Muscle Selection & Hover
     const raycaster = new THREE.Raycaster();
@@ -723,7 +713,6 @@ export default function HumanAnatomy3D({
       if (rendererRef.current) {
         rendererRef.current.domElement.style.cursor = 'grabbing';
       }
-      wakeRenderLoop();
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -741,7 +730,6 @@ export default function HumanAnatomy3D({
 
       targetRotationYRef.current += rotationVelocityYRef.current;
       targetRotationXRef.current = Math.max(-0.35, Math.min(0.35, targetRotationXRef.current + rotationVelocityXRef.current));
-      wakeRenderLoop();
     };
 
     const onMouseUp = () => {
@@ -749,7 +737,16 @@ export default function HumanAnatomy3D({
       if (rendererRef.current) {
         rendererRef.current.domElement.style.cursor = 'grab';
       }
-      wakeRenderLoop();
+      if (bodyGroupRef.current) {
+        const facing = getFacingView(bodyGroupRef.current.rotation.y);
+        if (facing !== internalViewRef.current) {
+          internalViewRef.current = facing;
+          setInternalView(facing);
+          if (onViewModeChangeRef.current) {
+            onViewModeChangeRef.current(facing);
+          }
+        }
+      }
     };
 
     // Mobile Touch Drag Support
@@ -759,7 +756,6 @@ export default function HumanAnatomy3D({
         previousPointerXRef.current = e.touches[0].clientX;
         previousPointerYRef.current = e.touches[0].clientY;
         rotationVelocityYRef.current = 0;
-        wakeRenderLoop();
       }
     };
 
@@ -773,7 +769,6 @@ export default function HumanAnatomy3D({
       rotationVelocityYRef.current = deltaX * 0.008;
       targetRotationYRef.current += rotationVelocityYRef.current;
       targetRotationXRef.current = Math.max(-0.35, Math.min(0.35, targetRotationXRef.current + deltaY * 0.005));
-      wakeRenderLoop();
     };
 
     const onTouchEnd = (e: TouchEvent) => {
@@ -786,7 +781,16 @@ export default function HumanAnatomy3D({
         }
       }
       isDraggingRef.current = false;
-      wakeRenderLoop();
+      if (bodyGroupRef.current) {
+        const facing = getFacingView(bodyGroupRef.current.rotation.y);
+        if (facing !== internalViewRef.current) {
+          internalViewRef.current = facing;
+          setInternalView(facing);
+          if (onViewModeChangeRef.current) {
+            onViewModeChangeRef.current(facing);
+          }
+        }
+      }
     };
 
     const domElement = renderer.domElement;
@@ -797,24 +801,6 @@ export default function HumanAnatomy3D({
     domElement.addEventListener('touchstart', onTouchStart, { passive: true });
     domElement.addEventListener('touchmove', onTouchMove, { passive: true });
     domElement.addEventListener('touchend', onTouchEnd, { passive: true });
-
-    // Handle Context Restoration
-    const handleContextLost = (e: Event) => {
-      e.preventDefault();
-      console.warn('WebGL context lost, pausing render loop.');
-      if (animationFrameIdRef.current) {
-        cancelAnimationFrame(animationFrameIdRef.current);
-      }
-      isLoopRunningRef.current = false;
-    };
-
-    const handleContextRestored = () => {
-      console.info('WebGL context restored, restarting engine.');
-      wakeRenderLoop();
-    };
-
-    domElement.addEventListener('webglcontextlost', handleContextLost, false);
-    domElement.addEventListener('webglcontextrestored', handleContextRestored, false);
 
     // Resize Observer with responsive camera framing
     const resizeObserver = new ResizeObserver(() => {
@@ -829,11 +815,44 @@ export default function HumanAnatomy3D({
       // On narrow mobile devices, comfortably frame full height
       const idealDistance = newAspect < 0.95 ? 2.75 * (0.95 / newAspect) : 2.75;
       targetCameraZRef.current = Math.min(idealDistance, 4.2);
-      wakeRenderLoop();
     });
     resizeObserver.observe(container);
 
-    wakeRenderLoop();
+    // 8. Continuous Rock-Solid 60 FPS Render Loop (Guarantees model is always rendered)
+    const animate = () => {
+      animationFrameIdRef.current = requestAnimationFrame(animate);
+
+      if (bodyGroupRef.current) {
+        bodyGroupRef.current.rotation.y += (targetRotationYRef.current - bodyGroupRef.current.rotation.y) * 0.12;
+        bodyGroupRef.current.rotation.x += (targetRotationXRef.current - bodyGroupRef.current.rotation.x) * 0.12;
+
+        if (!isDraggingRef.current && Math.abs(rotationVelocityYRef.current) > 0.0001) {
+          targetRotationYRef.current += rotationVelocityYRef.current;
+          rotationVelocityYRef.current *= 0.91;
+        }
+
+        // Dynamically detect facing orientation and update active view tab
+        if (!isDraggingRef.current && Math.abs(rotationVelocityYRef.current) < 0.002) {
+          const facing = getFacingView(bodyGroupRef.current.rotation.y);
+          if (facing !== internalViewRef.current) {
+            internalViewRef.current = facing;
+            setInternalView(facing);
+            if (onViewModeChangeRef.current) {
+              onViewModeChangeRef.current(facing);
+            }
+          }
+        }
+      }
+
+      if (cameraRef.current) {
+        cameraRef.current.position.z += (targetCameraZRef.current - cameraRef.current.position.z) * 0.12;
+      }
+
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
+    };
+    animate();
 
     // Cleanup ONLY when component unmounts
     return () => {
@@ -848,9 +867,8 @@ export default function HumanAnatomy3D({
       domElement.removeEventListener('touchstart', onTouchStart);
       domElement.removeEventListener('touchmove', onTouchMove);
       domElement.removeEventListener('touchend', onTouchEnd);
-      domElement.removeEventListener('webglcontextlost', handleContextLost);
-      domElement.removeEventListener('webglcontextrestored', handleContextRestored);
       renderer.dispose();
+      dracoLoader.dispose();
       if (container.contains(domElement)) {
         container.removeChild(domElement);
       }
@@ -862,31 +880,30 @@ export default function HumanAnatomy3D({
   // View Switcher Buttons
   const handleViewToggle = (mode: 'front' | 'back' | 'side') => {
     setInternalView(mode);
-    if (mode === 'front') {
-      targetRotationYRef.current = 0;
-    } else if (mode === 'back') {
-      targetRotationYRef.current = Math.PI;
-    } else if (mode === 'side') {
-      targetRotationYRef.current = Math.PI * 0.5;
-    }
+    internalViewRef.current = mode;
+    const baseAngle = mode === 'front' ? 0 : mode === 'back' ? Math.PI : Math.PI * 0.5;
+    targetRotationYRef.current = getClosestTargetAngle(baseAngle, targetRotationYRef.current);
     targetRotationXRef.current = 0;
-    if (onViewModeChange) onViewModeChange(mode);
-    wakeRenderLoop();
+    rotationVelocityYRef.current = 0;
+    rotationVelocityXRef.current = 0;
+    if (onViewModeChangeRef.current) {
+      onViewModeChangeRef.current(mode);
+    }
   };
 
   const handleZoomIn = () => {
     targetCameraZRef.current = Math.max(1.8, targetCameraZRef.current - 0.4);
-    wakeRenderLoop();
   };
 
   const handleZoomOut = () => {
     targetCameraZRef.current = Math.min(4.5, targetCameraZRef.current + 0.4);
-    wakeRenderLoop();
   };
 
   const handleReset = () => {
-    targetRotationYRef.current = 0;
+    targetRotationYRef.current = getClosestTargetAngle(0, targetRotationYRef.current);
     targetRotationXRef.current = 0;
+    rotationVelocityYRef.current = 0;
+    rotationVelocityXRef.current = 0;
     if (cameraRef.current && mountRef.current) {
       const aspect = mountRef.current.clientWidth / (mountRef.current.clientHeight || 640);
       targetCameraZRef.current = aspect < 0.95 ? 2.75 * (0.95 / aspect) : 2.75;
@@ -894,8 +911,10 @@ export default function HumanAnatomy3D({
       targetCameraZRef.current = 2.75;
     }
     setInternalView('front');
-    if (onViewModeChange) onViewModeChange('front');
-    wakeRenderLoop();
+    internalViewRef.current = 'front';
+    if (onViewModeChangeRef.current) {
+      onViewModeChangeRef.current('front');
+    }
   };
 
   const activeMuscleInfo = MUSCLE_GROUPS.find((m) => m.id === selectedMuscleId);

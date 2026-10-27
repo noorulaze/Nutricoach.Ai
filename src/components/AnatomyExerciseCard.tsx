@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight, Clock, Repeat, Layers } from 'lucide-react';
 import { AnatomyExercise } from '../data/workoutAnatomyData';
+import ExerciseDemonstration from './common/ExerciseDemonstration';
 
 interface AnatomyExerciseCardProps {
   exercise: AnatomyExercise;
@@ -118,8 +119,13 @@ export default function AnatomyExerciseCard({
       className="group w-full bg-white dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] hover:border-[#cbd7c8] dark:hover:border-[#536153] rounded-3xl p-3.5 sm:p-4 transition-all duration-200 hover:shadow-md cursor-pointer flex items-center justify-between gap-3 relative"
     >
       <div className="flex items-center gap-3.5 min-w-0">
-        {/* Demonstration Media Thumbnail */}
-        {renderExerciseGraphic(exercise.demoGraphic)}
+        {/* Real Movement Demonstration Photo */}
+        <ExerciseDemonstration
+          exerciseName={exercise.name}
+          exerciseId={exercise.id}
+          mode="card"
+          className="w-16 h-16 sm:w-20 sm:h-20"
+        />
 
         {/* Text Information */}
         <div className="min-w-0">

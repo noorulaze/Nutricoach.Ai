@@ -59,6 +59,7 @@ export interface FoodItem {
   malayalamName?: string;
   cuisine?: string;
   verificationStatus?: 'verified' | 'estimated' | 'user_provided';
+  imageUrl?: string;
 }
 
 export * from '../data/foodDatabase/types';
@@ -76,6 +77,7 @@ export interface PresetFood {
   budgetFriendly: boolean;
   suitableDiets: DietType[];
   allergens: string[];
+  imageUrl?: string;
 }
 
 export interface WorkoutExercise {
@@ -89,6 +91,8 @@ export interface WorkoutExercise {
   restSeconds: number;
   instructions: string;
   completedSets: boolean[];
+  imageUrl?: string;
+  demoImages?: string[];
 }
 
 export interface DayWorkout {
@@ -115,6 +119,8 @@ export interface ExerciseDefinition {
   instructions: string[];
   formTips: string[];
   avoidMistakes: string[];
+  imageUrl?: string;
+  demoImages?: string[];
 }
 
 export interface ProgressEntry {
@@ -168,6 +174,7 @@ export interface ChatMessage {
   contextSummary?: string;
   actionSuggestions?: { label: string; action: string }[];
   foodCard?: ChatFoodCard;
+  suggestedPrompts?: string[];
   isError?: boolean;
 }
 

@@ -10,6 +10,8 @@ import { PlannedMeal } from '../../types/mealPlanner';
 import { addFoodEntry, getTodayKey } from '../../utils/storage';
 import { useToast } from '../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
+import { getFoodImageUrl } from '../../utils/foodImageDatabase';
+import FoodImage from '../common/FoodImage';
 
 interface LogMealToTrackerModalProps {
   meal: PlannedMeal | null;
@@ -55,6 +57,7 @@ export default function LogMealToTrackerModal({
       carbs: scaledCarbs,
       fat: scaledFat,
       fiber: scaledFiber,
+      imageUrl: meal.imageUrl || getFoodImageUrl(meal.name, mealCategory),
       isCustom: true,
       cuisine: meal.cuisine
     });
@@ -92,18 +95,28 @@ export default function LogMealToTrackerModal({
         </div>
 
         {/* Meal Preview Card */}
-        <div className="bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3.5 space-y-1">
-          <h4 className="font-extrabold text-sm text-[#192418] dark:text-[#E8EDE7]">
-            {meal.name}
-          </h4>
-          <span className="text-[11px] text-[#7a8c79] dark:text-[#A2AAA1] block">
-            {meal.servingSize}
-          </span>
-          <div className="flex items-center gap-3 font-bold text-xs pt-1">
-            <span className="text-[#192418] dark:text-[#E8EDE7]">{scaledCalories} kcal</span>
-            <span className="text-[#5ba83c] dark:text-[#8BAF78]">{scaledProtein}g P</span>
-            <span className="text-amber-600 dark:text-amber-400">{scaledCarbs}g C</span>
-            <span className="text-sky-600 dark:text-sky-400">{scaledFat}g F</span>
+        <div className="bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3.5 flex items-center gap-3">
+          <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] dark:border-[#394139] shadow-2xs bg-white dark:bg-[#1C211D]">
+            <FoodImage
+              name={meal.name}
+              imageUrl={meal.imageUrl}
+              className="w-full h-full object-cover"
+              alt={meal.name}
+            />
+          </div>
+          <div className="min-w-0 flex-1 space-y-0.5">
+            <h4 className="font-extrabold text-sm text-[#192418] dark:text-[#E8EDE7] truncate">
+              {meal.name}
+            </h4>
+            <span className="text-[11px] text-[#7a8c79] dark:text-[#A2AAA1] block truncate">
+              {meal.servingSize}
+            </span>
+            <div className="flex items-center gap-2.5 font-bold text-xs pt-0.5">
+              <span className="text-[#192418] dark:text-[#E8EDE7]">{scaledCalories} kcal</span>
+              <span className="text-[#5ba83c] dark:text-[#8BAF78]">{scaledProtein}g P</span>
+              <span className="text-amber-600 dark:text-amber-400">{scaledCarbs}g C</span>
+              <span className="text-sky-600 dark:text-sky-400">{scaledFat}g F</span>
+            </div>
           </div>
         </div>
 

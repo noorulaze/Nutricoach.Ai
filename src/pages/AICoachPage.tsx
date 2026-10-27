@@ -137,11 +137,14 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    // Build conversation context
-    const conversationHistory: ConversationTurn[] = messages.slice(-8).map((m) => ({
-      role: m.sender === 'user' ? 'user' : 'model',
-      text: m.text
-    }));
+    // Build conversation context (excluding welcome greeting, error fallbacks, and stopped generation)
+    const conversationHistory: ConversationTurn[] = messages
+      .filter((m) => m.id !== 'msg_welcome' && !m.isError && !m.text.startsWith('_Generation stopped') && !m.text.toLowerCase().includes('i am your nutricoach ai companion'))
+      .slice(-8)
+      .map((m) => ({
+        role: m.sender === 'user' ? 'user' : 'model',
+        text: m.text
+      }));
 
     try {
       const reply = await generateCoachReply(
@@ -159,7 +162,8 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
         sender: 'ai',
         text: reply.text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        foodCard: reply.foodCard
+        foodCard: reply.foodCard,
+        suggestedPrompts: reply.suggestedPrompts
       };
 
       setMessages((prev) => [...prev, aiMsg]);
@@ -382,6 +386,37 @@ Ask me anything — from reviewing your meals today or fitting a curry into your
                       )}
                     </div>
                   </div>
+
+                  {/* Dynamic Follow-up Suggestions under latest AI response */}
+                  {!isUser && isLastMessage && !isTyping && msg.suggestedPrompts && msg.suggestedPrompts.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1.5 px-0.5">
+                      {msg.suggestedPrompts.slice(0, 3).map((prompt, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => handleSendMessage(prompt)}
+                          className="text-[11px] px-2.5 py-1 bg-white hover:bg-[#eef7eb] hover:text-[#3b7e23] border border-[#e8ede6] text-[#5e6f5e] rounded-xl font-medium transition-colors shadow-xs flex items-center gap-1"
+                        >
+                          <Sparkles className="w-2.5 h-2.5 text-[#5ba83c]" />
+                          <span>{prompt}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Quick Config Button if API key error detected */}
+                  {!isUser && msg.text.includes('Invalid Gemini API Key') && (
+                    <div className="pt-1.5 px-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setIsApiKeyModalOpen(true)}
+                        className="text-xs px-3 py-1.5 bg-[#192418] hover:bg-[#2b3d29] text-white rounded-xl font-semibold transition-all inline-flex items-center gap-1.5 shadow-xs"
+                      >
+                        <Key className="w-3.5 h-3.5 text-[#8BAF78]" />
+                        <span>Configure Gemini API Key</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );

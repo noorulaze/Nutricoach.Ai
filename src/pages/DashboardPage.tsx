@@ -39,6 +39,8 @@ import breakfastImg from '../assets/food/breakfast.jpg';
 import lunchImg from '../assets/food/lunch.jpg';
 import dinnerImg from '../assets/food/dinner.jpg';
 import snackImg from '../assets/food/snack.jpg';
+import { getFoodImageUrl } from '../utils/foodImageDatabase';
+import FoodImage from '../components/common/FoodImage';
 
 // Cute friendly AI Robot mascot matching the reference image
 function AIRobotAvatar({ className = "w-12 h-12" }: { className?: string }) {
@@ -197,6 +199,7 @@ export default function DashboardPage() {
     {
       type: 'breakfast',
       name: 'Breakfast',
+      firstItemName: breakfastEntries[0]?.name,
       icon: Sun,
       iconColor: 'text-amber-500 fill-amber-500',
       hasLogged: breakfastEntries.length > 0,
@@ -209,12 +212,13 @@ export default function DashboardPage() {
       protein: breakfastEntries.length > 0 
         ? breakfastEntries.reduce((s, f) => s + f.protein, 0) 
         : 21,
-      image: breakfastImg,
+      image: breakfastEntries[0]?.imageUrl || (breakfastEntries[0]?.name ? getFoodImageUrl(breakfastEntries[0].name, 'breakfast') : getFoodImageUrl('Oatmeal with Almonds and Fruits', 'breakfast')),
       logPath: '/food?meal=breakfast'
     },
     {
       type: 'lunch',
       name: 'Lunch',
+      firstItemName: lunchEntries[0]?.name,
       icon: Sun,
       iconColor: 'text-orange-500 fill-orange-500',
       hasLogged: lunchEntries.length > 0,
@@ -227,12 +231,13 @@ export default function DashboardPage() {
       protein: lunchEntries.length > 0 
         ? lunchEntries.reduce((s, f) => s + f.protein, 0) 
         : 35,
-      image: lunchImg,
+      image: lunchEntries[0]?.imageUrl || (lunchEntries[0]?.name ? getFoodImageUrl(lunchEntries[0].name, 'lunch') : getFoodImageUrl('Nadan Chicken Curry', 'curries_gravies')),
       logPath: '/food?meal=lunch'
     },
     {
       type: 'dinner',
       name: 'Dinner',
+      firstItemName: dinnerEntries[0]?.name,
       icon: Moon,
       iconColor: 'text-sky-500 fill-sky-500',
       hasLogged: dinnerEntries.length > 0,
@@ -245,12 +250,13 @@ export default function DashboardPage() {
       protein: dinnerEntries.length > 0 
         ? dinnerEntries.reduce((s, f) => s + f.protein, 0) 
         : 42,
-      image: dinnerImg,
+      image: dinnerEntries[0]?.imageUrl || (dinnerEntries[0]?.name ? getFoodImageUrl(dinnerEntries[0].name, 'dinner') : getFoodImageUrl('Kerala Fish Curry', 'seafood')),
       logPath: '/food?meal=dinner'
     },
     {
       type: 'snack',
       name: 'Snacks',
+      firstItemName: snackEntries[0]?.name,
       icon: Apple,
       iconColor: 'text-rose-500 fill-rose-500',
       hasLogged: snackEntries.length > 0,
@@ -263,7 +269,7 @@ export default function DashboardPage() {
       protein: snackEntries.length > 0 
         ? snackEntries.reduce((s, f) => s + f.protein, 0) 
         : 12,
-      image: snackImg,
+      image: snackEntries[0]?.imageUrl || (snackEntries[0]?.name ? getFoodImageUrl(snackEntries[0].name, 'snack') : getFoodImageUrl('Kerala Banana Chips', 'snacks_streetfood')),
       logPath: '/food?meal=snack'
     }
   ];
@@ -1023,11 +1029,14 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center justify-between pt-4 mt-2">
-                      <img
-                        src={meal.image}
-                        alt={meal.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-white dark:border-[#394139] shadow-xs group-hover:scale-105 transition-transform"
-                      />
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white dark:border-[#394139] shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#f4f7f3] dark:bg-[#1C211D]">
+                        <FoodImage
+                          name={meal.firstItemName || meal.name}
+                          imageUrl={meal.image}
+                          className="w-full h-full object-cover"
+                          alt={meal.name}
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => navigate(meal.logPath)}

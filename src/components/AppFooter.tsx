@@ -44,6 +44,16 @@ export default function AppFooter() {
             <Heart className="w-3 h-3 text-[#5ba83c] dark:text-[#8BAF78] fill-[#5ba83c] dark:fill-[#8BAF78]" />
           </div>
         </div>
+
+        {/* Creator Credits */}
+        <div className="mt-6 pt-5 border-t border-[#e8ede6]/70 dark:border-[#394139]/70 text-center space-y-1">
+          <p className="text-xs sm:text-[13px] font-medium text-[#5e6f5e] dark:text-[#A2AAA1] tracking-wide">
+            Created by <span className="font-semibold text-[#192418] dark:text-[#E8EDE7]">Noorul Aze</span>
+          </p>
+          <p className="text-[11px] sm:text-xs text-[#7a8c79] dark:text-[#8B988A] tracking-wider">
+            Made by <span className="font-medium text-[#3b7e23] dark:text-[#8BAF78]">Team Creaftiq</span>
+          </p>
+        </div>
       </div>
     </footer>
   );

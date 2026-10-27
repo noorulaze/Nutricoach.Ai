@@ -449,7 +449,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Press upward with power while maintaining arch and foot pressure until arms lock out.'
     ],
     formTips: ['Keep wrists neutral', 'Tuck elbows at roughly 45–60 degrees to protect shoulders', 'Maintain constant upper back tightness'],
-    avoidMistakes: ['Bouncing the barbell off your sternum', 'Flaring elbows directly out at 90 degrees', 'Lifting feet off the floor']
+    avoidMistakes: ['Bouncing the barbell off your sternum', 'Flaring elbows directly out at 90 degrees', 'Lifting feet off the floor'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Bench_Press_-_Medium_Grip/1.jpg'
+    ]
   },
   {
     id: 'dumbbell_bench_press',
@@ -466,7 +471,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Drive upward bringing the weights together without clanging.'
     ],
     formTips: ['Full range of motion allows deeper stretch than a straight barbell', 'Inhale on the descent, exhale on the press'],
-    avoidMistakes: ['Dropping elbows below bench height excessively if shoulder pain occurs', 'Rushing the negative eccentric portion']
+    avoidMistakes: ['Dropping elbows below bench height excessively if shoulder pain occurs', 'Rushing the negative eccentric portion'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/1.jpg'
+    ]
   },
   {
     id: 'pushups_standard',
@@ -483,7 +493,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Push the ground away to return to top plank position.'
     ],
     formTips: ['Screw your hands into the floor to engage lats', 'Look slightly forward of your fingertips'],
-    avoidMistakes: ['Sagging lower back or piking hips high into the air', 'Flaring elbows wide']
+    avoidMistakes: ['Sagging lower back or piking hips high into the air', 'Flaring elbows wide'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+    ]
   },
 
   // BACK
@@ -502,7 +517,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Drive feet through the floor, extending hips and knees simultaneously to stand tall.'
     ],
     formTips: ['Keep barbell dragging against shins and thighs throughout', 'Think of pushing the earth away, not pulling with the lower back'],
-    avoidMistakes: ['Rounding the lumbar spine under load', 'Hyperextending back at lockout']
+    avoidMistakes: ['Rounding the lumbar spine under load', 'Hyperextending back at lockout'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Deadlift/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Deadlift/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Deadlift/1.jpg'
+    ]
   },
   {
     id: 'single_arm_dumbbell_row',
@@ -519,7 +539,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Lower under control to a full stretch.'
     ],
     formTips: ['Pull with your elbow, not your wrist or bicep', 'Keep torso parallel to bench without rotating'],
-    avoidMistakes: ['Using momentum to jerk the weight up', 'Twisting torso excessively']
+    avoidMistakes: ['Using momentum to jerk the weight up', 'Twisting torso excessively'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/One-Arm_Dumbbell_Row/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/One-Arm_Dumbbell_Row/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/One-Arm_Dumbbell_Row/1.jpg'
+    ]
   },
   {
     id: 'pullups_bodyweight',
@@ -536,7 +561,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Lower under steady control back to full arm extension.'
     ],
     formTips: ['Drive elbows down toward your back pockets', 'Avoid swinging legs for momentum'],
-    avoidMistakes: ['Cutting range of motion short at top or bottom', 'Kicking legs frantically']
+    avoidMistakes: ['Cutting range of motion short at top or bottom', 'Kicking legs frantically'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pullups/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pullups/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pullups/1.jpg'
+    ]
   },
 
   // LEGS
@@ -555,7 +585,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Squat until hips drop below parallel with knees, then drive up through midfoot.'
     ],
     formTips: ['Keep chest up and knees tracking in line with toes', 'Maintain neutral spine throughout'],
-    avoidMistakes: ['Knees caving inward (valgus collapse)', 'Heels rising off the floor']
+    avoidMistakes: ['Knees caving inward (valgus collapse)', 'Heels rising off the floor'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Full_Squat/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Full_Squat/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Barbell_Full_Squat/1.jpg'
+    ]
   },
   {
     id: 'dumbbell_goblet_squat',
@@ -572,7 +607,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Drive back up through midfoot to a full stand.'
     ],
     formTips: ['Great for building deep hip mobility and squat posture', 'Elbows can track inside knees at the bottom'],
-    avoidMistakes: ['Letting dumbbell drift away from your chest', 'Rounding upper back']
+    avoidMistakes: ['Letting dumbbell drift away from your chest', 'Rounding upper back'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Goblet_Squat/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Goblet_Squat/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Goblet_Squat/1.jpg'
+    ]
   },
   {
     id: 'romanian_deadlift_db',
@@ -589,7 +629,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Squeeze glutes and drive hips forward to return to standing.'
     ],
     formTips: ['Knees stay at constant slight bend; the movement is purely a hip hinge', 'Keep dumbbells glued close to legs'],
-    avoidMistakes: ['Squatting instead of hinging', 'Letting lower back round at bottom']
+    avoidMistakes: ['Squatting instead of hinging', 'Letting lower back round at bottom'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Romanian_Deadlift/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Romanian_Deadlift/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Romanian_Deadlift/1.jpg'
+    ]
   },
   {
     id: 'bodyweight_lunges',
@@ -606,7 +651,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Push off front heel to return or step into the next stride.'
     ],
     formTips: ['Keep hips level throughout the movement', 'Lightly graze or hover rear knee above floor'],
-    avoidMistakes: ['Front knee collapsing inward', 'Taking steps too short causing front knee to push forward past toes']
+    avoidMistakes: ['Front knee collapsing inward', 'Taking steps too short causing front knee to push forward past toes'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Lunges/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Lunges/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Lunges/1.jpg'
+    ]
   },
 
   // SHOULDERS
@@ -624,7 +674,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Lower under control back to shoulder level.'
     ],
     formTips: ['Avoid overarching your lower back by keeping ribs pulled down', 'Press in a slight natural arc'],
-    avoidMistakes: ['Flaring elbows completely backward', 'Using excessive leg drive during strict presses']
+    avoidMistakes: ['Flaring elbows completely backward', 'Using excessive leg drive during strict presses'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Shoulder_Press/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Shoulder_Press/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Shoulder_Press/1.jpg'
+    ]
   },
   {
     id: 'dumbbell_lateral_raises',
@@ -640,7 +695,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Pause for a split second, then lower under 2-second tempo.'
     ],
     formTips: ['Think of pouring water from a pitcher at the top', 'Use moderate weights for high reps with zero swinging'],
-    avoidMistakes: ['Shrugging shoulders into ears with traps', 'Swinging hips to launch heavy dumbbells']
+    avoidMistakes: ['Shrugging shoulders into ears with traps', 'Swinging hips to launch heavy dumbbells'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Side_Lateral_Raise/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Side_Lateral_Raise/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Side_Lateral_Raise/1.jpg'
+    ]
   },
 
   // ARMS
@@ -659,7 +719,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Alternate arms or perform together.'
     ],
     formTips: ['Keep elbows pinned firmly against ribcage', 'Do not lean back to assist lift'],
-    avoidMistakes: ['Swinging upper arms forward to turn curl into a shoulder movement', 'Dropping weights rapidly']
+    avoidMistakes: ['Swinging upper arms forward to turn curl into a shoulder movement', 'Dropping weights rapidly'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bicep_Curl/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bicep_Curl/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bicep_Curl/1.jpg'
+    ]
   },
   {
     id: 'tricep_dips_bench',
@@ -676,7 +741,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Push through palms to fully extend arms and squeeze triceps.'
     ],
     formTips: ['Keep back close to the bench as you descend', 'Bend knees to make it easier; elevate feet to make it harder'],
-    avoidMistakes: ['Shrugging shoulders upward during descent', 'Going too deep straining anterior shoulder capsule']
+    avoidMistakes: ['Shrugging shoulders upward during descent', 'Going too deep straining anterior shoulder capsule'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Bench_Dips/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Bench_Dips/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Bench_Dips/1.jpg'
+    ]
   },
 
   // CORE
@@ -695,7 +765,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Breathe steadily while maintaining tension.'
     ],
     formTips: ['Actively pull elbows toward toes to double core tension', 'Never let lower back sag'],
-    avoidMistakes: ['Holding breath', 'Piking hips into the air to relieve core']
+    avoidMistakes: ['Holding breath', 'Piking hips into the air to relieve core'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Plank/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Plank/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Plank/1.jpg'
+    ]
   },
   {
     id: 'deadbug',
@@ -712,7 +787,12 @@ export const EXERCISE_LIBRARY: ExerciseDefinition[] = [
       'Return to center and switch sides under control.'
     ],
     formTips: ['If lower back arches off floor, do not extend leg as low', 'Move slowly with full breath control'],
-    avoidMistakes: ['Arching lower back', 'Rushing through repetitions']
+    avoidMistakes: ['Arching lower back', 'Rushing through repetitions'],
+    imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dead_Bug/0.jpg',
+    demoImages: [
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dead_Bug/0.jpg',
+      'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dead_Bug/1.jpg'
+    ]
   }
 ];
 

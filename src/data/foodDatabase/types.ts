@@ -59,6 +59,7 @@ export interface ComprehensiveFood {
   verificationStatus: VerificationStatus;
   dataSource: string;
   cookingMethod?: string;
+  imageUrl?: string;
 }
 
 export interface RecipeIngredient {

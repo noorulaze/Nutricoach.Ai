@@ -1,6 +1,7 @@
 import { UserProfile, FoodItem, DayWorkout, ProgressEntry, ChatFoodCard } from '../types';
 import { analyzeNutritionGaps } from './storage';
 import { COMPREHENSIVE_FOOD_DATABASE, ComprehensiveFood } from '../data/foodDatabase';
+import { generateIntelligentAnswer } from './chatKnowledgeEngine';
 
 export interface ConversationTurn {
   role: 'user' | 'model';
@@ -134,12 +135,53 @@ export const generateCoachReply = async (
   const matchedFood = findMatchingFood(userMessage);
   const foodCard = matchedFood ? formatFoodCard(matchedFood) : undefined;
 
-  // 2. CHECK: Live Gemini API (from Profile Key or Environment Variable)
+  // 2. CHECK: Backend /api/chat Endpoint First (Secure server-side API key & model execution)
+  try {
+    const apiPayload = {
+      message: userMessage,
+      conversationHistory: conversationHistory.filter(
+        (turn) => !turn.text.toLowerCase().includes('i am your nutricoach ai companion')
+      ),
+      profile,
+      todayFoods,
+      weeklyWorkouts,
+      progressHistory,
+      apiKey: (profile.geminiApiKey && profile.geminiApiKey.trim().length > 10) ? profile.geminiApiKey.trim() : undefined
+    };
+
+    const serverRes = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(apiPayload),
+      signal
+    });
+
+    if (serverRes.ok) {
+      const data: any = await serverRes.json();
+      if (data && data.text) {
+        return {
+          text: data.text,
+          isLiveApi: Boolean(data.isLiveApi),
+          suggestedPrompts: (data.suggestedPrompts && data.suggestedPrompts.length > 0)
+            ? data.suggestedPrompts
+            : getAdaptivePrompts(userMessage, matchedFood?.name),
+          foodCard: data.foodCard || foodCard
+        };
+      }
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      throw err; // User requested Stop Generating
+    }
+    // Backend fetch failed (e.g., running client-only static build or test environment)
+  }
+
+  // 3. CHECK: Client-side Direct Gemini API (Fallback if running client-only)
   const apiKey = (profile.geminiApiKey && profile.geminiApiKey.trim().length > 10)
     ? profile.geminiApiKey.trim()
     : ((import.meta as any).env?.VITE_GEMINI_API_KEY || '');
 
-  if (apiKey) {
+  if (apiKey && !apiKey.includes('invalid') && apiKey.length >= 20) {
     try {
       const systemInstruction = `
 You are NutriCoach AI, a friendly, brilliant, and versatile AI assistant and personal nutrition/fitness coach.
@@ -164,8 +206,10 @@ CAPABILITIES AND BEHAVIOR:
       // Format multi-turn conversation history for Gemini API
       const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
 
-      // Add previous turns (up to last 10 messages for context)
-      const recentTurns = conversationHistory.slice(-10);
+      // Add previous turns (up to last 10 messages for context, excluding welcome message)
+      const recentTurns = conversationHistory
+        .filter((t) => !t.text.toLowerCase().includes('i am your nutricoach ai companion'))
+        .slice(-10);
       for (const turn of recentTurns) {
         contents.push({
           role: turn.role,
@@ -179,8 +223,9 @@ CAPABILITIES AND BEHAVIOR:
         parts: [{ text: `[System Context: ${systemInstruction}]\n\nUser Question: ${userMessage}` }]
       });
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      // Try primary model: gemini-2.0-flash
+      let response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -189,11 +234,23 @@ CAPABILITIES AND BEHAVIOR:
         }
       );
 
+      // Fallback model if 404: gemini-1.5-flash
+      if (response.status === 404) {
+        response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents }),
+            signal
+          }
+        );
+      }
+
       if (response.ok) {
-        const data = await response.json();
+        const data: any = await response.json();
         const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (replyText) {
-          // Dynamic suggested prompts based on topic
           const suggestedPrompts = getAdaptivePrompts(userMessage, matchedFood?.name);
           return {
             text: replyText,
@@ -207,11 +264,38 @@ CAPABILITIES AND BEHAVIOR:
       if (err.name === 'AbortError') {
         throw err; // User requested Stop Generating
       }
-      console.warn('Gemini API call failed or timed out. Falling back to local intelligence engine.', err);
+      console.warn('Gemini direct API call failed. Falling back to local intelligence engine.', err);
     }
   }
 
-  // 3. ROBUST GENERAL-PURPOSE INTELLIGENCE ENGINE (Deterministic Local Intelligence)
+  // 4. ROBUST DETERMINISTIC INTELLIGENCE ENGINE (Guaranteed answers, NEVER welcome message)
+  // Check Knowledge Engine first for mathematics, science, geography, nutrition explanations, debugging, or Kerala Sadya
+  const knowledgeAnswer = generateIntelligentAnswer({
+    query,
+    userMessage,
+    profile,
+    totals,
+    remainingCalories,
+    remainingProtein,
+    remainingCarbs,
+    remainingFat,
+    remainingFiber,
+    todayWorkout,
+    matchedFood,
+    conversationHistory
+  });
+
+  // If knowledge engine handled the query (math, geography, science, nutrition explanation, debugging, sadya, etc.), return it
+  if (knowledgeAnswer && knowledgeAnswer.text) {
+    return {
+      text: knowledgeAnswer.text,
+      isLiveApi: false,
+      suggestedPrompts: knowledgeAnswer.suggestedPrompts,
+      foodCard: knowledgeAnswer.foodCard || foodCard
+    };
+  }
+
+  // Local fallback engine (which also delegates to generateIntelligentAnswer instead of welcome)
   const localReply = runLocalIntelligenceEngine({
     query,
     userMessage,
@@ -764,7 +848,8 @@ Sardines and Mackerel provide world-class cardioprotective EPA/DHA omega-3 fatty
   // =========================================================================
   // 5. NUTRITION REVIEW & GAP ANALYSIS
   // =========================================================================
-  if (query.includes('nutrition') || query.includes('calorie') || query.includes('macro') || query.includes('protein') || query.includes('diet') || query.includes('gap')) {
+  const isEducationalNutrition = query.includes('explain') || query.includes('simple') || query.includes('what is') || query.includes('meaning') || query.includes('function') || query.includes('terms');
+  if (!isEducationalNutrition && (query.includes('nutrition') || query.includes('calorie') || query.includes('macro') || query.includes('protein') || query.includes('diet') || query.includes('gap'))) {
     return {
       text: `### Today's Nutritional Review for ${profile.name}
 
@@ -813,22 +898,11 @@ Sardines and Mackerel provide world-class cardioprotective EPA/DHA omega-3 fatty
   }
 
   // =========================================================================
-  // 7. DEFAULT GENERAL-PURPOSE ASSISTANT GREETING & RESPONSE
+  // 7. DEFAULT GENERAL-PURPOSE ASSISTANT RESPONSE (NEVER WELCOME MESSAGE)
   // =========================================================================
+  const fallbackAnswer = generateIntelligentAnswer(ctx);
   return {
-    text: `Hello ${profile.name}! I am your **NutriCoach AI** companion.
-
-I can assist you with:
-- **Nutrition & Diet:** Macro breakdowns, personalized meal feedback, calorie budgets, and our complete **70+ Kerala & Indian curries database**.
-- **Fitness & Training:** Workout plans, progressive overload, injury modifications, and recovery science.
-- **General Knowledge & Problem-Solving:** Coding (Python, JavaScript, TypeScript, SQL), mathematics, science, writing, essay outlines, and productivity.
-
-How can I help you today? You can ask me anything!`,
-    suggestedPrompts: [
-      'What Kerala foods will give me 30g protein?',
-      'How to fit Puttu and Kadala curry into my macros?',
-      'Write a Python script to sort and filter a dictionary',
-      'Analyze my nutrition gaps today'
-    ]
+    text: fallbackAnswer.text,
+    suggestedPrompts: fallbackAnswer.suggestedPrompts
   };
 };

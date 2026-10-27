@@ -28,6 +28,8 @@ export interface AnatomyExercise {
   instructions: string[];
   formTips: string[];
   avoidMistakes: string[];
+  imageUrl?: string;
+  demoImages?: string[];
 }
 
 export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
@@ -70,6 +72,11 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
         avoidMistakes: [
           'Bouncing the bar forcefully off your sternum.',
           'Allowing your butt to lift off the bench.'
+        ],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/1.jpg'
         ]
       },
       {
@@ -97,6 +104,11 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
         avoidMistakes: [
           'Dropping elbows excessively below bench height if shoulder discomfort occurs.',
           'Rushing through the bottom stretch.'
+        ],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Dumbbell_Bench_Press/1.jpg'
         ]
       },
       {
@@ -124,6 +136,11 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
         avoidMistakes: [
           'Setting the incline too steep (45°+ shifts load to front delts).',
           'Flaring elbows out to 90 degrees.'
+        ],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Incline_Dumbbell_Press/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Incline_Dumbbell_Press/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Incline_Dumbbell_Press/1.jpg'
         ]
       },
       {
@@ -151,6 +168,11 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
         avoidMistakes: [
           'Sagging lower back or piking your hips up.',
           'Performing half reps without chest depth.'
+        ],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
         ]
       },
       {
@@ -178,6 +200,11 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
         avoidMistakes: [
           'Turning the fly into a press by excessively bending and extending elbows.',
           'Leaning excessively forward with rounded upper back.'
+        ],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Flat_Bench_Cable_Flyes/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Flat_Bench_Cable_Flyes/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Flat_Bench_Cable_Flyes/1.jpg'
         ]
       }
     ]
@@ -215,7 +242,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'As the bar clears your forehead, move your head slightly forward so the bar locks out directly over your midfoot.'
         ],
         formTips: ['Keep forearms vertical when viewed from front and side', 'Engage abs to prevent excessive lumbar arching.'],
-        avoidMistakes: ['Bending the knees to bounce the weight (push press)', 'Leaning back excessively.']
+        avoidMistakes: ['Bending the knees to bounce the weight (push press)', 'Leaning back excessively.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Standing_Barbell_Press_Behind_Neck/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Standing_Barbell_Press_Behind_Neck/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Standing_Barbell_Press_Behind_Neck/1.jpg'
+        ]
       },
       {
         id: 'dumbbell_lateral_raise',
@@ -235,7 +267,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Pause momentarily at the top, then lower with control over 2 seconds.'
         ],
         formTips: ['Think of pouring water from a pitcher at top position', 'Keep shoulders pressed down away from your ears.'],
-        avoidMistakes: ['Swinging your hips and torso to heave the weight up', 'Lifting hands above elbow height.']
+        avoidMistakes: ['Swinging your hips and torso to heave the weight up', 'Lifting hands above elbow height.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Side_Lateral_Raise/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Side_Lateral_Raise/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Side_Lateral_Raise/1.jpg'
+        ]
       },
       {
         id: 'face_pull_cable',
@@ -255,7 +292,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Externally rotate shoulders as you pull so your hands end beside your ears.'
         ],
         formTips: ['Essential movement for shoulder health and correcting rounded posture.'],
-        avoidMistakes: ['Using too much weight and leaning backward', 'Pulling down toward your chest instead of your face.']
+        avoidMistakes: ['Using too much weight and leaning backward', 'Pulling down toward your chest instead of your face.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Face_Pull/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Face_Pull/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Face_Pull/1.jpg'
+        ]
       }
     ]
   },
@@ -292,7 +334,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Contract biceps at the top, then lower smoothly through the full range.'
         ],
         formTips: ['Avoid swinging elbows forward during the curl.'],
-        avoidMistakes: ['Using momentum from your hips', 'Dropping the bar quickly without tension.']
+        avoidMistakes: ['Using momentum from your hips', 'Dropping the bar quickly without tension.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'incline_dumbbell_curl',
@@ -312,7 +359,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Supinate wrists (turn pinky up) as you reach the top of the curl.'
         ],
         formTips: ['Creates maximum stretch on the long head of the biceps.'],
-        avoidMistakes: ['Lifting shoulders off the bench pad to finish the rep.']
+        avoidMistakes: ['Lifting shoulders off the bench pad to finish the rep.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Incline_Dumbbell_Curl/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Incline_Dumbbell_Curl/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Incline_Dumbbell_Curl/1.jpg'
+        ]
       }
     ]
   },
@@ -349,7 +401,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Lock elbows out and spread the rope slightly at the bottom for peak contraction.'
         ],
         formTips: ['Keep elbows glued in place as a stationary pivot point.'],
-        avoidMistakes: ['Letting elbows flare forward and upward during the eccentric return.']
+        avoidMistakes: ['Letting elbows flare forward and upward during the eccentric return.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'skull_crushers_ez',
@@ -370,7 +427,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Press the bar back to starting position using triceps extension.'
         ],
         formTips: ['Tilting upper arms 10° backward maintains continuous tension at lockout.'],
-        avoidMistakes: ['Flaring elbows out sideways; keep them parallel.']
+        avoidMistakes: ['Flaring elbows out sideways; keep them parallel.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/EZ-Bar_Skullcrusher/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/EZ-Bar_Skullcrusher/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/EZ-Bar_Skullcrusher/1.jpg'
+        ]
       }
     ]
   },
@@ -407,7 +469,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Walk forward in smooth, controlled strides while keeping weights steady at your sides.'
         ],
         formTips: ['Breathe diaphragmatically and keep core tight.'],
-        avoidMistakes: ['Slouching shoulders forward or taking erratic strides.']
+        avoidMistakes: ['Slouching shoulders forward or taking erratic strides.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'reverse_barbell_curl',
@@ -427,7 +494,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Lower under control to heavily load the brachioradialis.'
         ],
         formTips: ['Keep wrists locked straight; do not let them hyperextend backward.'],
-        avoidMistakes: ['Using excessive weight that bends your wrists backwards.']
+        avoidMistakes: ['Using excessive weight that bends your wrists backwards.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Reverse_Barbell_Curl/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Reverse_Barbell_Curl/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Reverse_Barbell_Curl/1.jpg'
+        ]
       }
     ]
   },
@@ -465,7 +537,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Lower legs smoothly without swinging.'
         ],
         formTips: ['Focus on posterior pelvic tilt (curling hips) rather than just lifting thighs.'],
-        avoidMistakes: ['Swinging your whole body to use momentum.']
+        avoidMistakes: ['Swinging your whole body to use momentum.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'ab_wheel_rollout',
@@ -486,7 +563,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Pull from your abs to roll back to the starting kneeling position.'
         ],
         formTips: ['Never let your lower back sag into hyperextension.'],
-        avoidMistakes: ['Rolling out further than your core strength can control safely.']
+        avoidMistakes: ['Rolling out further than your core strength can control safely.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Ab_Roller/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Ab_Roller/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Ab_Roller/1.jpg'
+        ]
       }
     ]
   },
@@ -524,7 +606,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Control the return back to the high starting point.'
         ],
         formTips: ['Rotate through your thoracic spine and hips, not your knees.'],
-        avoidMistakes: ['Bending your elbows to pull with arms instead of rotating with core.']
+        avoidMistakes: ['Bending your elbows to pull with arms instead of rotating with core.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'side_plank_reach',
@@ -545,7 +632,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Return to tall side plank with hips held high.'
         ],
         formTips: ['Keep bottom hip elevated away from the floor.'],
-        avoidMistakes: ['Letting hips drop downward or sagging forward.']
+        avoidMistakes: ['Letting hips drop downward or sagging forward.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Plank/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Plank/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Plank/1.jpg'
+        ]
       }
     ]
   },
@@ -582,7 +674,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Hold at peak contraction for 1.5 seconds, then lower smoothly.'
         ],
         formTips: ['Shrug straight up and down; never roll your shoulders in circles.'],
-        avoidMistakes: ['Rolling shoulders backward or forward (damages rotator cuff joints).']
+        avoidMistakes: ['Rolling shoulders backward or forward (damages rotator cuff joints).'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'chest_supported_db_row',
@@ -602,7 +699,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Squeeze shoulder blades hard at the top, then lower with control.'
         ],
         formTips: ['Takes 100% of the strain off your lumbar spine.'],
-        avoidMistakes: ['Lifting chest off the pad to heave the weights.']
+        avoidMistakes: ['Lifting chest off the pad to heave the weights.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Bent_Over_Two-Dumbbell_Row/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Bent_Over_Two-Dumbbell_Row/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Bent_Over_Two-Dumbbell_Row/1.jpg'
+        ]
       }
     ]
   },
@@ -640,7 +742,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Slowly control the ascent to feel a complete lat stretch.'
         ],
         formTips: ['Focus on driving your elbows down, rather than curling with your hands.'],
-        avoidMistakes: ['Yanking the bar down using aggressive momentum and swinging backward.']
+        avoidMistakes: ['Yanking the bar down using aggressive momentum and swinging backward.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'pull_up_bodyweight',
@@ -660,7 +767,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Lower smoothly over 2–3 seconds to a full dead hang.'
         ],
         formTips: ['A dead hang at the bottom maximizes lat stretch and hypertrophy.'],
-        avoidMistakes: ['Kipping or swinging legs to cheat the rep.']
+        avoidMistakes: ['Kipping or swinging legs to cheat the rep.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pullups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pullups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pullups/1.jpg'
+        ]
       }
     ]
   },
@@ -697,7 +809,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Engage erectors and glutes to raise torso back into a straight line.'
         ],
         formTips: ['Raise until body is straight; do not over-hyperextend the spine.'],
-        avoidMistakes: ['Jerking up quickly at the top of the range.']
+        avoidMistakes: ['Jerking up quickly at the top of the range.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'bird_dog_core',
@@ -718,7 +835,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Return with control and alternate sides.'
         ],
         formTips: ['Gold-standard physical therapy exercise for spinal stability.'],
-        avoidMistakes: ['Arching the lower back or rotating the pelvis sideways.']
+        avoidMistakes: ['Arching the lower back or rotating the pelvis sideways.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Superman/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Superman/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Superman/1.jpg'
+        ]
       }
     ]
   },
@@ -756,7 +878,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Squeeze glutes hard at the top for 1 full second, then lower under control.'
         ],
         formTips: ['Keep chin tucked to chest throughout the entire motion to keep spine neutral.'],
-        avoidMistakes: ['Hyperextending lower back instead of finishing with glute contraction.']
+        avoidMistakes: ['Hyperextending lower back instead of finishing with glute contraction.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'bulgarian_split_squat',
@@ -777,7 +904,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Push through front heel to return to top.'
         ],
         formTips: ['Leaning torso forward at 15–20° shifts maximum load onto the lead glute.'],
-        avoidMistakes: ['Placing front foot too close to the bench, jamming the front knee.']
+        avoidMistakes: ['Placing front foot too close to the bench, jamming the front knee.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Split_Squat_with_Dumbbells/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Split_Squat_with_Dumbbells/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Split_Squat_with_Dumbbells/1.jpg'
+        ]
       }
     ]
   },
@@ -815,7 +947,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Reach depth below parallel, then drive upward through whole foot.'
         ],
         formTips: ['Keep chest up and push knees in line with your toes throughout the descent.'],
-        avoidMistakes: ['Allowing knees to cave inward (valgus collapse)', 'Rising onto toes.']
+        avoidMistakes: ['Allowing knees to cave inward (valgus collapse)', 'Rising onto toes.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'goblet_squat',
@@ -835,7 +972,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Drive through feet to stand tall, keeping dumbbell pinned against your chest.'
         ],
         formTips: ['Superb movement to master deep squat mechanics safely.'],
-        avoidMistakes: ['Letting weight drift away from your chest.']
+        avoidMistakes: ['Letting weight drift away from your chest.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Goblet_Squat/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Goblet_Squat/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Goblet_Squat/1.jpg'
+        ]
       },
       {
         id: 'leg_extension',
@@ -856,7 +998,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Pause for 1 second at top squeeze, then lower with continuous control.'
         ],
         formTips: ['Isolates the rectus femoris and vastus medialis with zero spinal compression.'],
-        avoidMistakes: ['Kicking weights up rapidly using joint momentum.']
+        avoidMistakes: ['Kicking weights up rapidly using joint momentum.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Leg_Extensions/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Leg_Extensions/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Leg_Extensions/1.jpg'
+        ]
       }
     ]
   },
@@ -894,7 +1041,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Drive hips forward and squeeze glutes to return to standing.'
         ],
         formTips: ['Keep the bend in your knees fixed; this is a pure hip hinge, not a squat.'],
-        avoidMistakes: ['Rounding the lumbar spine or allowing dumbbells to drift away from legs.']
+        avoidMistakes: ['Rounding the lumbar spine or allowing dumbbells to drift away from legs.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'lying_leg_curl',
@@ -915,7 +1067,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Lower the weight smoothly over 3 seconds to full extension.'
         ],
         formTips: ['Do not allow your hips to lift off the bench during the curl.'],
-        avoidMistakes: ['Arching lower back violently to complete the rep.']
+        avoidMistakes: ['Arching lower back violently to complete the rep.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Lying_Leg_Curls/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Lying_Leg_Curls/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Lying_Leg_Curls/1.jpg'
+        ]
       }
     ]
   },
@@ -953,7 +1110,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Pause at peak height for 1 second before descending.'
         ],
         formTips: ['The 2-second pause at the bottom stretch eliminates elastic tendon bounce.'],
-        avoidMistakes: ['Bouncing rapidly without controlled pauses.']
+        avoidMistakes: ['Bouncing rapidly without controlled pauses.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Pushups/1.jpg'
+        ]
       },
       {
         id: 'seated_calf_raise',
@@ -973,7 +1135,12 @@ export const MUSCLE_GROUPS: MuscleGroupInfo[] = [
           'Press through balls of feet to raise knees upward to peak contraction.'
         ],
         formTips: ['Knees bent at 90° isolates the soleus muscle underneath the gastrocnemius.'],
-        avoidMistakes: ['Rushing the negative eccentric portion.']
+        avoidMistakes: ['Rushing the negative eccentric portion.'],
+        imageUrl: 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Seated_Calf_Raise/0.jpg',
+        demoImages: [
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Seated_Calf_Raise/0.jpg',
+          'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/Seated_Calf_Raise/1.jpg'
+        ]
       }
     ]
   }

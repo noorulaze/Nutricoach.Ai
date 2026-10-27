@@ -8,6 +8,7 @@ import {
   Utensils 
 } from 'lucide-react';
 import { PlannedMeal } from '../../types/mealPlanner';
+import FoodImage from '../common/FoodImage';
 
 interface MealSwapModalProps {
   meal: PlannedMeal | null;
@@ -71,19 +72,29 @@ export default function MealSwapModal({
         </div>
 
         {/* Current Meal Summary Card */}
-        <div className="bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3.5 space-y-1">
-          <span className="text-[10px] font-black uppercase text-[#7a8c79] dark:text-[#A2AAA1]">
-            CURRENT SELECTION • {meal.dayName} ({meal.mealType})
-          </span>
-          <h4 className="font-extrabold text-sm text-[#192418] dark:text-[#E8EDE7]">
-            {meal.name}
-          </h4>
-          <div className="flex items-center gap-3 text-xs font-bold text-[#5ba83c] dark:text-[#8BAF78]">
-            <span>{meal.calories} kcal</span>
-            <span>•</span>
-            <span>{meal.protein}g protein</span>
-            <span>•</span>
-            <span>{meal.prepTimeMin} min</span>
+        <div className="bg-[#f6f8f5] dark:bg-[#272E29] border border-[#e8ede6] dark:border-[#394139] rounded-2xl p-3.5 flex items-center gap-3">
+          <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] dark:border-[#394139] shadow-2xs bg-white dark:bg-[#1C211D]">
+            <FoodImage
+              name={meal.name}
+              imageUrl={meal.imageUrl}
+              className="w-full h-full object-cover"
+              alt={meal.name}
+            />
+          </div>
+          <div className="min-w-0 flex-1 space-y-0.5">
+            <span className="text-[10px] font-black uppercase text-[#7a8c79] dark:text-[#A2AAA1] block">
+              CURRENT SELECTION • {meal.dayName} ({meal.mealType})
+            </span>
+            <h4 className="font-extrabold text-sm text-[#192418] dark:text-[#E8EDE7] truncate">
+              {meal.name}
+            </h4>
+            <div className="flex items-center gap-2 text-xs font-bold text-[#5ba83c] dark:text-[#8BAF78]">
+              <span>{meal.calories} kcal</span>
+              <span>•</span>
+              <span>{meal.protein}g P</span>
+              <span>•</span>
+              <span>{meal.prepTimeMin} min</span>
+            </div>
           </div>
         </div>
 

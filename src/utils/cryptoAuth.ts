@@ -8,7 +8,9 @@ const STORAGE_CURRENT_USER_ID_KEY = 'nutricoach_current_user_id';
  * Generate a cryptographically secure random salt hex string
  */
 export const generateSalt = (): string => {
-  const cryptoObj = typeof window !== 'undefined' && window.crypto ? window.crypto : globalThis.crypto;
+  const cryptoObj = (typeof globalThis !== 'undefined' && globalThis.crypto)
+    ? globalThis.crypto
+    : (globalThis as any).crypto;
   const array = new Uint8Array(16);
   cryptoObj.getRandomValues(array);
   return Array.from(array)
@@ -21,7 +23,9 @@ export const generateSalt = (): string => {
  * Passwords are NEVER stored or transmitted in plaintext.
  */
 export const hashPassword = async (password: string, salt: string): Promise<string> => {
-  const cryptoObj = typeof window !== 'undefined' && window.crypto ? window.crypto : globalThis.crypto;
+  const cryptoObj = (typeof globalThis !== 'undefined' && globalThis.crypto)
+    ? globalThis.crypto
+    : (globalThis as any).crypto;
   const encoder = new TextEncoder();
   const data = encoder.encode(password + '::nutricoach_salt::' + salt);
   const hashBuffer = await cryptoObj.subtle.digest('SHA-256', data);

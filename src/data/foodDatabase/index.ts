@@ -4,6 +4,7 @@ import { INDIAN_REGIONAL_FOODS } from './indianRegionalFoods';
 import { INTERNATIONAL_FOODS } from './internationalFoods';
 import { CURRIES_AND_SIDES } from './curriesAndSides';
 import { PresetFood, FoodItem, MealType } from '../../types';
+import { getFoodImageUrl } from '../../utils/foodImageDatabase';
 
 export * from './types';
 export * from './keralaFoods';
@@ -158,7 +159,8 @@ export const toPresetFood = (
       : food.dietaryType === 'pescatarian'
       ? ['omnivore', 'pescatarian']
       : ['omnivore'],
-    allergens: food.allergens
+    allergens: food.allergens,
+    imageUrl: food.imageUrl || getFoodImageUrl(food)
   };
 };
 
@@ -193,6 +195,7 @@ export const toFoodItem = (
     budgetFriendly: food.budgetFriendly,
     malayalamName: undefined,
     cuisine: food.cuisine,
+    imageUrl: food.imageUrl || getFoodImageUrl(food),
     verificationStatus: food.verificationStatus
   };
 };

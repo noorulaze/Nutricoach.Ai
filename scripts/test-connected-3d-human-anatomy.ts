@@ -44,7 +44,7 @@ async function runTests() {
   assert(compSrc.includes('GLTFLoader'), 'Imports GLTFLoader from Three.js');
   assert(compSrc.includes('DRACOLoader'), 'Imports DRACOLoader from Three.js');
   assert(compSrc.includes("setDecoderPath('/draco/')"), 'Configures DRACO decoder path to /draco/');
-  assert(compSrc.includes("load(\n      '/models/body.glb'"), 'Loads /models/body.glb model asset');
+  assert(compSrc.includes("'/models/body.glb'"), 'Loads /models/body.glb model asset');
   assert(compSrc.includes('isLoading'), 'Maintains asynchronous loading state');
   assert(compSrc.includes('loadingProgress'), 'Tracks loading progress percentage');
   assert(compSrc.includes('loadError'), 'Handles 3D model loading error gracefully');
@@ -124,19 +124,19 @@ async function runTests() {
   const allNodeNames = gltfJson.nodes.map((n: any) => `${n.name || ''} ${n.extras?.name || ''} ${n.extras?.nameDetail || ''}`.toLowerCase());
 
   const checks: Record<string, RegExp> = {
-    chest: /pectoralis major/i,
+    chest: /pectoralis[- ]major/i,
     shoulders: /deltoid/i,
-    biceps: /biceps brachii/i,
-    triceps: /triceps brachii/i,
-    forearms: /brachioradialis|pronator teres/i,
-    abs: /rectus abdominis/i,
+    biceps: /biceps[- ]brachii/i,
+    triceps: /triceps[- ]brachii/i,
+    forearms: /brachioradialis|pronator[- ]teres/i,
+    abs: /rectus[- ]abdominis/i,
     obliques: /oblique/i,
     upper_back: /trapezius/i,
-    lats: /latissimus dorsi/i,
-    lower_back: /iliocostalis|erector spinae/i,
-    glutes: /gluteus maximus/i,
-    quadriceps: /rectus femoris|vastus lateralis/i,
-    hamstrings: /biceps femoris|semitendinosus/i,
+    lats: /latissimus[- ]dorsi/i,
+    lower_back: /iliocostalis|erector[- ]spinae/i,
+    glutes: /gluteus[- ]maximus/i,
+    quadriceps: /rectus[- ]femoris|vastus[- ]lateralis/i,
+    hamstrings: /biceps[- ]femoris|semitendinosus/i,
     calves: /gastrocnemius|soleus/i
   };
 

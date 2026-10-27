@@ -331,9 +331,9 @@ export const deleteUserCustomRecipe = (recipeId: string): void => {
 };
 
 // --- RECENT LOGGED FOODS ---
-export const getRecentLoggedFoods = (limit: number = 8): { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; category?: string }[] => {
+export const getRecentLoggedFoods = (limit: number = 8): { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; category?: string; imageUrl?: string }[] => {
   try {
-    const results: Map<string, { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; category?: string }> = new Map();
+    const results: Map<string, { name: string; portion: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; category?: string; imageUrl?: string }> = new Map();
     const today = new Date();
     for (let i = 0; i < 7; i++) {
       const d = new Date(today);
@@ -350,7 +350,8 @@ export const getRecentLoggedFoods = (limit: number = 8): { name: string; portion
             carbs: item.carbs,
             fat: item.fat,
             fiber: item.fiber,
-            category: item.category
+            category: item.category,
+            imageUrl: item.imageUrl
           });
         }
         if (results.size >= limit) break;

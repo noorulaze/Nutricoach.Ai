@@ -59,6 +59,7 @@ export interface PlannedMeal {
   allergens: string[];
   isEstimate: boolean;
   isFavorite?: boolean;
+  imageUrl?: string;
 }
 
 export interface DayPlan {

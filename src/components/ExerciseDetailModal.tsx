@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Plus, AlertTriangle, CheckCircle2, Dumbbell, ShieldAlert, Sparkles, Clock } from 'lucide-react';
 import { AnatomyExercise } from '../data/workoutAnatomyData';
+import ExerciseDemonstration from './common/ExerciseDemonstration';
 
 interface ExerciseDetailModalProps {
   exercise: AnatomyExercise | null;
@@ -43,6 +44,13 @@ export default function ExerciseDetailModal({
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Real Instructional Movement Demonstration (Dual-Frame & Motion Guide) */}
+        <ExerciseDemonstration
+          exerciseName={exercise.name}
+          exerciseId={exercise.id}
+          mode="expanded"
+        />
 
         {/* Prescription Quick Stats */}
         <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-[#f6f8f5] dark:bg-[#1C211D] border border-[#e8ede6] dark:border-[#394139] text-center">

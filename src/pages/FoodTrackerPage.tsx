@@ -22,6 +22,8 @@ import {
 import DishIngredientCalculatorModal from '../components/DishIngredientCalculatorModal';
 import { FoodItem, MealType, PresetFood } from '../types';
 import { useToast } from '../context/ToastContext';
+import { getFoodImageUrl } from '../utils/foodImageDatabase';
+import FoodImage from '../components/common/FoodImage';
 
 export default function FoodTrackerPage() {
   const { showToast } = useToast();
@@ -291,6 +293,7 @@ export default function FoodTrackerPage() {
       isCustom: false,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       category: preset.category,
+      imageUrl: preset.imageUrl || getFoodImageUrl(preset.name, preset.category),
       budgetFriendly: preset.budgetFriendly
     };
     addFoodEntry(selectedDate, newEntry);
@@ -694,8 +697,16 @@ export default function FoodTrackerPage() {
                       {mealFoods.map((item) => (
                         <div
                           key={item.id}
-                          className="py-2.5 flex items-center justify-between gap-2"
+                          className="py-2.5 flex items-center justify-between gap-2.5"
                         >
+                          <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] dark:border-[#394139] shadow-2xs bg-[#f4f7f3] dark:bg-[#272E29]">
+                            <FoodImage
+                              name={item.name}
+                              imageUrl={item.imageUrl}
+                              className="w-full h-full object-cover"
+                              alt={item.name}
+                            />
+                          </div>
                           <div className="min-w-0 flex-1">
                             <h4 className="font-bold text-xs text-[#192418] dark:text-[#E8EDE7] truncate">
                               {item.name}
@@ -1161,22 +1172,35 @@ export default function FoodTrackerPage() {
             <div
               key={curry.id}
               onClick={() => handleOpenCalculator(curry, 'lunch')}
-              className="p-4 rounded-2xl border border-[#e8ede6] dark:border-[#394139] bg-[#fcfdfc] dark:bg-[#272E29] hover:border-[#5ba83c] hover:bg-white dark:hover:bg-[#1C211D] transition-all flex flex-col justify-between shadow-xs group cursor-pointer"
+              className="p-4 rounded-2xl border border-[#e8ede6] dark:border-[#394139] bg-[#fcfdfc] dark:bg-[#272E29] hover:border-[#5ba83c] hover:bg-white dark:hover:bg-[#1C211D] transition-all flex flex-col justify-between shadow-xs group cursor-pointer overflow-hidden"
             >
               <div>
-                <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#3b7e23] dark:text-[#8BAF78] bg-[#eef7eb] dark:bg-[#1C211D] px-2 py-0.5 rounded-md border border-[#d6ebd0] dark:border-[#394139]">
-                    {curry.region}
-                  </span>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
-                    curry.dietaryType === 'non_vegetarian'
-                      ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40'
-                      : curry.dietaryType === 'pescatarian'
-                      ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/40 dark:text-sky-400 border border-sky-200 dark:border-sky-900/40'
-                      : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40'
-                  }`}>
-                    {curry.dietaryType === 'non_vegetarian' ? 'Non-Veg' : curry.dietaryType === 'pescatarian' ? 'Seafood' : 'Vegetarian'}
-                  </span>
+                {/* Real Dish Photo Banner */}
+                <div className="relative w-full h-36 -mx-4 -mt-4 mb-3 rounded-t-2xl overflow-hidden bg-[#eef7eb] dark:bg-[#192418]">
+                  <FoodImage
+                    name={curry.name}
+                    category={curry.category}
+                    imageUrl={curry.imageUrl}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    alt={curry.name}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/15 pointer-events-none" />
+                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-white bg-black/45 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/20">
+                      {curry.region}
+                    </span>
+                  </div>
+                  <div className="absolute top-2.5 right-2.5">
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md shadow-xs ${
+                      curry.dietaryType === 'non_vegetarian'
+                        ? 'bg-rose-500/90 text-white'
+                        : curry.dietaryType === 'pescatarian'
+                        ? 'bg-sky-500/90 text-white'
+                        : 'bg-emerald-500/90 text-white'
+                    }`}>
+                      {curry.dietaryType === 'non_vegetarian' ? 'Non-Veg' : curry.dietaryType === 'pescatarian' ? 'Seafood' : 'Vegetarian'}
+                    </span>
+                  </div>
                 </div>
 
                 <h3 className="text-xs font-bold text-[#192418] dark:text-[#E8EDE7] group-hover:text-[#5ba83c] transition-colors leading-snug">
@@ -1291,30 +1315,40 @@ export default function FoodTrackerPage() {
                     {mealFoods.map((item) => (
                       <div
                         key={item.id}
-                        className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2.5 rounded-xl hover:bg-[#f6f8f5] transition-colors group"
+                        className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 rounded-2xl hover:bg-[#f6f8f5] transition-colors group"
                       >
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="font-bold text-sm text-[#192418]">{item.name}</h4>
-                            <span className="text-[11px] text-[#7a8c79]">
-                              ({item.portion})
-                            </span>
-                            {item.cuisine && (
-                              <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f6f8f5] border border-[#e8ede6] text-[#5e6f5e]">
-                                {item.cuisine}
-                              </span>
-                            )}
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] shadow-2xs bg-[#f4f7f3]">
+                            <FoodImage
+                              name={item.name}
+                              imageUrl={item.imageUrl}
+                              className="w-full h-full object-cover"
+                              alt={item.name}
+                            />
                           </div>
-                          <div className="text-xs text-[#5e6f5e] mt-0.5 flex flex-wrap items-center gap-2.5">
-                            <span className="text-[#192418] font-bold">{item.calories} kcal</span>
-                            <span className="text-[#cbd7c8]">•</span>
-                            <span className="font-medium text-rose-600">{item.protein}g Protein</span>
-                            <span className="text-[#cbd7c8]">•</span>
-                            <span className="font-medium text-amber-600">{item.carbs}g Carbs</span>
-                            <span className="text-[#cbd7c8]">•</span>
-                            <span className="font-medium text-sky-600">{item.fat}g Fat</span>
-                            <span className="text-[#cbd7c8]">•</span>
-                            <span className="font-medium text-emerald-600">{item.fiber}g Fiber</span>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h4 className="font-bold text-sm text-[#192418]">{item.name}</h4>
+                              <span className="text-[11px] text-[#7a8c79]">
+                                ({item.portion})
+                              </span>
+                              {item.cuisine && (
+                                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f6f8f5] border border-[#e8ede6] text-[#5e6f5e]">
+                                  {item.cuisine}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-[#5e6f5e] mt-0.5 flex flex-wrap items-center gap-2.5">
+                              <span className="text-[#192418] font-bold">{item.calories} kcal</span>
+                              <span className="text-[#cbd7c8]">•</span>
+                              <span className="font-medium text-rose-600">{item.protein}g Protein</span>
+                              <span className="text-[#cbd7c8]">•</span>
+                              <span className="font-medium text-amber-600">{item.carbs}g Carbs</span>
+                              <span className="text-[#cbd7c8]">•</span>
+                              <span className="font-medium text-sky-600">{item.fat}g Fat</span>
+                              <span className="text-[#cbd7c8]">•</span>
+                              <span className="font-medium text-emerald-600">{item.fiber}g Fiber</span>
+                            </div>
                           </div>
                         </div>
 
@@ -1677,31 +1711,42 @@ export default function FoodTrackerPage() {
                             <div
                               key={food.id}
                               onClick={() => handleSelectFood(food)}
-                              className={`p-3 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
+                              className={`p-3 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between gap-3 ${
                                 isSelected
                                   ? 'bg-[#eef7eb] border-[#5ba83c] shadow-xs'
                                   : 'bg-white border-[#e8ede6] hover:border-[#cbd7c8] hover:bg-[#fcfdfc]'
                               }`}
                             >
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <h4 className="text-xs font-bold text-[#192418] truncate">
-                                    {food.name}
-                                  </h4>
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
-                                    food.dietaryType === 'vegetarian' || food.dietaryType === 'vegan'
-                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                      : food.dietaryType === 'pescatarian'
-                                      ? 'bg-sky-50 text-sky-700 border border-sky-200'
-                                      : 'bg-rose-50 text-rose-700 border border-rose-200'
-                                  }`}>
-                                    {food.dietaryType === 'vegetarian' ? 'Veg' : food.dietaryType === 'vegan' ? 'Vegan' : food.dietaryType === 'pescatarian' ? 'Seafood' : 'Non-Veg'}
-                                  </span>
+                              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] shadow-2xs bg-[#f4f7f3]">
+                                  <FoodImage
+                                    name={food.name}
+                                    category={food.category}
+                                    imageUrl={food.imageUrl}
+                                    className="w-full h-full object-cover"
+                                    alt={food.name}
+                                  />
                                 </div>
-                                <div className="text-[10px] text-[#7a8c79] mt-0.5 flex items-center gap-2">
-                                  <span className="capitalize">{food.region}</span>
-                                  <span>•</span>
-                                  <span>{food.defaultServing.label}</span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <h4 className="text-xs font-bold text-[#192418] truncate">
+                                      {food.name}
+                                    </h4>
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                                      food.dietaryType === 'vegetarian' || food.dietaryType === 'vegan'
+                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                        : food.dietaryType === 'pescatarian'
+                                        ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                                        : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                    }`}>
+                                      {food.dietaryType === 'vegetarian' ? 'Veg' : food.dietaryType === 'vegan' ? 'Vegan' : food.dietaryType === 'pescatarian' ? 'Seafood' : 'Non-Veg'}
+                                    </span>
+                                  </div>
+                                  <div className="text-[10px] text-[#7a8c79] mt-0.5 flex items-center gap-2">
+                                    <span className="capitalize">{food.region}</span>
+                                    <span>•</span>
+                                    <span>{food.defaultServing.label}</span>
+                                  </div>
                                 </div>
                               </div>
 
@@ -1735,6 +1780,21 @@ export default function FoodTrackerPage() {
                       {selectedFood && activeServingNutrition ? (
                         <div className="space-y-3.5">
                           <div>
+                            {/* Real Food Hero Photo */}
+                            <div className="relative w-full h-28 rounded-xl overflow-hidden mb-2.5 border border-[#e8ede6] shadow-2xs bg-[#f4f7f3]">
+                              <FoodImage
+                                name={selectedFood.name}
+                                category={selectedFood.category}
+                                imageUrl={selectedFood.imageUrl}
+                                className="w-full h-full object-cover"
+                                alt={selectedFood.name}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                              <div className="absolute bottom-1.5 left-2.5 right-2.5 text-white text-[11px] font-bold truncate drop-shadow-xs">
+                                {selectedFood.name}
+                              </div>
+                            </div>
+
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-[9px] font-bold uppercase tracking-wider text-[#3b7e23] bg-[#eef7eb] px-2 py-0.5 rounded-full border border-[#d6ebd0]">
                                 {selectedFood.cuisine.toUpperCase()} • {selectedFood.category.replace('_', ' ')}
@@ -1923,31 +1983,42 @@ export default function FoodTrackerPage() {
                           className="bg-white border border-[#e8ede6] p-3.5 rounded-2xl hover:border-[#5ba83c] transition-all flex flex-col justify-between shadow-xs group"
                         >
                           <div>
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <h4 className="text-xs font-bold text-[#192418] group-hover:text-[#5ba83c] transition-colors">
-                                  {food.name}
-                                </h4>
-                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md inline-block mt-0.5 ${
-                                  food.dietaryType === 'vegetarian' || food.dietaryType === 'vegan'
-                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                    : food.dietaryType === 'pescatarian'
-                                    ? 'bg-sky-50 text-sky-700 border border-sky-200'
-                                    : 'bg-rose-50 text-rose-700 border border-rose-200'
-                                }`}>
-                                  {food.dietaryType === 'vegetarian' ? 'Veg' : food.dietaryType === 'vegan' ? 'Vegan' : food.dietaryType === 'pescatarian' ? 'Seafood' : 'Non-Veg'}
-                                </span>
+                            <div className="flex items-start justify-between gap-2.5 mb-2">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#e8ede6] shadow-2xs bg-[#f4f7f3]">
+                                  <FoodImage
+                                    name={food.name}
+                                    category={food.category}
+                                    imageUrl={food.imageUrl}
+                                    className="w-full h-full object-cover"
+                                    alt={food.name}
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-[#192418] group-hover:text-[#5ba83c] transition-colors truncate">
+                                    {food.name}
+                                  </h4>
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md inline-block mt-0.5 ${
+                                    food.dietaryType === 'vegetarian' || food.dietaryType === 'vegan'
+                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                      : food.dietaryType === 'pescatarian'
+                                      ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                                      : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  }`}>
+                                    {food.dietaryType === 'vegetarian' ? 'Veg' : food.dietaryType === 'vegan' ? 'Vegan' : food.dietaryType === 'pescatarian' ? 'Seafood' : 'Non-Veg'}
+                                  </span>
+                                </div>
                               </div>
                               <button
                                 type="button"
                                 onClick={(e) => handleToggleFavorite(e, food.id)}
-                                className="text-amber-500 hover:text-amber-600"
+                                className="text-amber-500 hover:text-amber-600 shrink-0"
                               >
                                 <Star className="w-4 h-4 fill-amber-400" />
                               </button>
                             </div>
 
-                            <div className="text-[10px] text-[#7a8c79] mt-1">
+                            <div className="text-[10px] text-[#7a8c79]">
                               Default: {food.defaultServing.label}
                             </div>
 
@@ -1998,14 +2069,25 @@ export default function FoodTrackerPage() {
                       {recentFoodsList.map((item, idx) => (
                         <div
                           key={idx}
-                          className="py-2.5 px-3 flex items-center justify-between hover:bg-[#f6f8f5] rounded-xl transition-colors"
+                          className="py-2.5 px-3 flex items-center justify-between hover:bg-[#f6f8f5] rounded-xl transition-colors gap-2.5"
                         >
-                          <div>
-                            <h4 className="text-xs font-bold text-[#192418]">{item.name}</h4>
-                            <span className="text-[10px] text-[#7a8c79]">{item.portion}</span>
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-[#e8ede6] shadow-2xs bg-[#f4f7f3]">
+                              <FoodImage
+                                name={item.name}
+                                category={item.category}
+                                imageUrl={item.imageUrl}
+                                className="w-full h-full object-cover"
+                                alt={item.name}
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-[#192418] truncate">{item.name}</h4>
+                              <span className="text-[10px] text-[#7a8c79]">{item.portion}</span>
+                            </div>
                           </div>
 
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 shrink-0">
                             <span className="text-xs font-bold text-[#192418]">
                               {item.calories} kcal • {item.protein}g P
                             </span>
